@@ -21,5 +21,7 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   the size is now calculated from the viewport.
 - **Bug: "repository" labels were invisible.** A CSS rule overrode the SVG `fill` attribute with the same dark colour
   as the box. Fix: the label sets its colour in an inline style.
+- **Bug: the road covered the Play button on short laptop screens.** It only showed up in the 1200 × 630 share image.
+  Fix: a smaller title on short screens, and reserved space above the road. Checked at 1366 × 620.
 - **Decision: no PixiJS.** With free driving cut, the map and missions don't need a WebGL renderer. SVG, DOM and GSAP
   keep the game bundle small and remove WebGL failure as a risk.

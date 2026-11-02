@@ -81,8 +81,10 @@ import Auto from './Auto.astro';
 
   .hero__copy {
     position: relative;
-    z-index: 2;
+    z-index: 4;
     align-self: start;
+    /* Keeps the Play button clear of the road on short screens. */
+    padding-bottom: calc(clamp(64px, 11vh, 96px) + 18px);
   }
 
   .hero__issue {
@@ -99,7 +101,7 @@ import Auto from './Auto.astro';
   .hero__title {
     margin-top: 10px;
     color: var(--yellow);
-    font-size: clamp(5.4rem, min(15.5vw, 29vh), 15.5rem);
+    font-size: clamp(4.6rem, min(15.5vw, 24vh), 15.5rem);
     line-height: 0.92;
     text-shadow:
       5px 5px 0 var(--ink),
@@ -303,6 +305,10 @@ import Auto from './Auto.astro';
     .hero {
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr;
+    }
+
+    .hero__copy {
+      padding-bottom: 0;
     }
 
     .hero__moon {
