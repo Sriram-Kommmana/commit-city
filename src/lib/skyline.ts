@@ -18,7 +18,7 @@ const files = import.meta.glob<Snapshot>('../../content/skyline*.json', { eager:
 export const skyline: Snapshot =
   files['../../content/skyline.json'] ?? files['../../content/skyline.fallback.json'];
 
-export const COLS = 4;
+export const COLS = 8;
 export const CELL = 7;
 export const GAP = 7;
 export const BUILDING_W = COLS * CELL + 8;
