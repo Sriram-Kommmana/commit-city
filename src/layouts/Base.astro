@@ -25,6 +25,11 @@ const home = Astro.url.pathname === '/' ? '' : '/';
     <meta property="og:description" content={description} />
     <meta property="og:image" content="/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      if (location.pathname === '/' && !location.search && scrollY < 40 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('holding');
+      }
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

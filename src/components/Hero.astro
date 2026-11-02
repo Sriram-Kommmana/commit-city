@@ -36,6 +36,51 @@ import site from '../../content/site.json';
     width: min(100%, 700px);
   }
 
+  /* Held offstage until the opening shots hand over, then each part slams in. */
+  :global(html.holding) .hero__stack,
+  :global(html.holding) .jump {
+    visibility: hidden;
+  }
+
+  :global(html.title-in) .title__line {
+    animation:
+      letter-slam 0.34s steps(5) backwards,
+      boil 0.5s steps(1) 0.34s infinite;
+  }
+
+  :global(html.title-in) .title__line--2 {
+    animation-delay: 0.16s, 0.5s;
+  }
+
+  :global(html.title-in) .hero__tag,
+  :global(html.title-in) .hero__sub,
+  :global(html.title-in) .play {
+    animation: pop-in 0.22s 0.42s steps(4) backwards;
+  }
+
+  :global(html.title-in) .hero__sub {
+    animation-delay: 0.52s;
+  }
+
+  :global(html.title-in) .play {
+    animation-delay: 0.62s;
+  }
+
+  @keyframes letter-slam {
+    from {
+      transform: scale(3.2) rotate(-7deg);
+    }
+    70% {
+      transform: scale(0.94) rotate(1deg);
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      transform: scale(1.7) rotate(5deg);
+    }
+  }
+
   .hero__issue {
     display: inline-flex;
     align-items: center;
@@ -193,6 +238,7 @@ import site from '../../content/site.json';
   }
 
   .jump {
+    opacity: calc(1 - var(--p, 0) * 40);
     position: absolute;
     right: 36%;
     top: calc(100svh - var(--nav-h) - 158px);

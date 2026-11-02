@@ -1,0 +1,171 @@
+// An original soundtrack, synthesised live with no audio files. Off until the visitor asks for it.
+// A slow hip-hop loop plays underneath; wind, sirens and hits react to the journey.
+
+const BPM = 86;
+const STEP = 60 / BPM / 4;
+const BASS = [41, 0, 0, 41, 0, 0, 44, 0, 39, 0, 0, 39, 0, 36, 0, 0];
+const STAB = [65, 68, 72];
+
+export function createSound() {
+  let ctx: AudioContext | null = null;
+  let master: GainNode;
+  let wind: GainNode;
+  let windFilter: BiquadFilterNode;
+  let sirenGain: GainNode;
+  let sirenOsc: OscillatorNode;
+  let noise: AudioBuffer;
+  let step = 0;
+  let nextAt = 0;
+  let timer = 0;
+  let on = false;
+
+  const freq = (n: number) => 440 * 2 ** ((n - 69) / 12);
+
+  const kick = (t: number) => {
+    const o = ctx!.createOscillator();
+    const g = ctx!.createGain();
+    o.frequency.setValueAtTime(130, t);
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.12);
+    g.gain.setValueAtTime(0.9, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+    o.connect(g).connect(master);
+    o.start(t);
+    o.stop(t + 0.3);
+  };
+
+  const burst = (t: number, length: number, level: number, type: BiquadFilterType, cutoff: number) => {
+    const s = ctx!.createBufferSource();
+    s.buffer = noise;
+    const f = ctx!.createBiquadFilter();
+    f.type = type;
+    f.frequency.value = cutoff;
+    const g = ctx!.createGain();
+    g.gain.setValueAtTime(level, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + length);
+    s.connect(f).connect(g).connect(master);
+    s.start(t);
+    s.stop(t + length + 0.02);
+  };
+
+  const bass = (t: number, note: number) => {
+    const o = ctx!.createOscillator();
+    const g = ctx!.createGain();
+    o.type = 'triangle';
+    o.frequency.value = freq(note);
+    g.gain.setValueAtTime(0.42, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + STEP * 2.6);
+    o.connect(g).connect(master);
+    o.start(t);
+    o.stop(t + STEP * 3);
+  };
+
+  const stab = (t: number, shift: number) => {
+    const f = ctx!.createBiquadFilter();
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(1800, t);
+    f.frequency.exponentialRampToValueAtTime(400, t + 0.3);
+    const g = ctx!.createGain();
+    g.gain.setValueAtTime(0.09, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    f.connect(g).connect(master);
+    for (const n of STAB) {
+      const o = ctx!.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.value = freq(n + shift);
+      o.connect(f);
+      o.start(t);
+      o.stop(t + 0.42);
+    }
+  };
+
+  const schedule = () => {
+    if (!ctx) return;
+    while (nextAt < ctx.currentTime + 0.2) {
+      const s = step % 16;
+      const bar = Math.floor(step / 16) % 4;
+      if (s === 0 || s === 7 || (s === 10 && bar % 2 === 1)) kick(nextAt);
+      if (s === 4 || s === 12) burst(nextAt, 0.17, 0.42, 'highpass', 1400);
+      if (s % 2 === 0) burst(nextAt, 0.04, s % 4 === 2 ? 0.13 : 0.07, 'highpass', 7000);
+      if (BASS[s]) bass(nextAt, BASS[s] + (bar === 3 ? -2 : 0));
+      if (s === 3 || s === 11) stab(nextAt, bar === 3 ? -2 : 0);
+      nextAt += STEP;
+      step++;
+    }
+  };
+
+  const start = () => {
+    ctx = new AudioContext();
+    master = ctx.createGain();
+    master.gain.value = 0.5;
+    const comp = ctx.createDynamicsCompressor();
+    master.connect(comp).connect(ctx.destination);
+
+    const size = ctx.sampleRate * 2;
+    noise = ctx.createBuffer(1, size, ctx.sampleRate);
+    const data = noise.getChannelData(0);
+    for (let i = 0; i < size; i++) data[i] = Math.random() * 2 - 1;
+
+    // Wind for the fall, as filtered noise that opens up with speed.
+    const src = ctx.createBufferSource();
+    src.buffer = noise;
+    src.loop = true;
+    windFilter = ctx.createBiquadFilter();
+    windFilter.type = 'bandpass';
+    windFilter.frequency.value = 500;
+    windFilter.Q.value = 0.7;
+    wind = ctx.createGain();
+    wind.gain.value = 0;
+    src.connect(windFilter).connect(wind).connect(master);
+    src.start();
+
+    // A two-tone siren for the chase, quiet and off-key enough to stay out of the way.
+    sirenOsc = ctx.createOscillator();
+    sirenOsc.type = 'square';
+    sirenOsc.frequency.value = 660;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 1400;
+    sirenGain = ctx.createGain();
+    sirenGain.gain.value = 0;
+    sirenOsc.connect(lp).connect(sirenGain).connect(master);
+    sirenOsc.start();
+
+    nextAt = ctx.currentTime + 0.05;
+    timer = window.setInterval(schedule, 60);
+  };
+
+  return {
+    toggle() {
+      on = !on;
+      if (on) {
+        if (!ctx) start();
+        else ctx.resume();
+      } else {
+        ctx?.suspend();
+      }
+      return on;
+    },
+    /** Called as the journey moves, with its position and speed. */
+    update(p: number, speed: number) {
+      if (!ctx || !on) return;
+      const t = ctx.currentTime;
+      const falling = p > 0.08 && p < 0.5 ? 1 : 0.25;
+      wind.gain.setTargetAtTime(Math.min(speed * 0.9 * falling, 0.5), t, 0.08);
+      windFilter.frequency.setTargetAtTime(400 + speed * 2200, t, 0.1);
+      const chase = p > 0.57 && p < 0.77;
+      sirenGain.gain.setTargetAtTime(chase ? 0.035 : 0, t, 0.2);
+      if (chase) sirenOsc.frequency.setValueAtTime(Math.floor(t * 2.4) % 2 ? 660 : 880, t);
+    },
+    /** A hit for cuts and impacts. */
+    hit() {
+      if (!ctx || !on) return;
+      const t = ctx.currentTime;
+      burst(t, 0.3, 0.6, 'lowpass', 900);
+      kick(t);
+    },
+    stop() {
+      clearInterval(timer);
+      ctx?.close();
+    },
+  };
+}

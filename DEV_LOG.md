@@ -32,3 +32,15 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
 - **Speed.** Measured on an Intel UHD integrated GPU while scrolling the whole journey: 69 fps at 1080p and 117 fps at
   720p. Lighthouse's mobile test dropped to 66 for performance, because it renders WebGL on a throttled CPU.
 - **Bug: bash heredocs mangled a long patch.** Patches went into script files instead.
+- **Second redesign pass.** Reviewing the journey frame by frame showed four weak spots: the character held one pose,
+  nothing happened on load, there was only one camera, and the street was empty. Added: a 15-pose hand-inked character
+  with a look back at the camera before the jump, an opening shot sequence on load, live split-screen comic panels from
+  several cameras, traffic, a DEADLINE van chase with sirens, a stunt jump, rooftop tanks, wires, kites and a soundtrack
+  synthesised live with no audio files.
+- **Bug: the comic panels vanished in testing.** The slow software renderer used for screenshots tripped the automatic
+  quality drop, which turns the extra cameras off. Fix: a test flag holds the quality fixed. The drop stays on for real
+  visitors on slow devices.
+- **Bug: close-ups showed nothing.** Every panel aimed its subject at the centre of the screen, which was outside the
+  panel. Fix: each panel's camera now shifts its view so the subject sits inside that panel.
+- **Bug: stars pinched into a spiral overhead.** Their grid used an angle that bunches up at the zenith. Fix: a
+  projection with no pole.

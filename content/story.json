@@ -57,9 +57,15 @@
     },
     {
       "from": 0.56,
-      "to": 0.78,
+      "to": 0.64,
       "who": "SRIRAM",
       "line": "And this is what I've shipped. Keep up."
+    },
+    {
+      "from": 0.65,
+      "to": 0.76,
+      "who": "SRIRAM",
+      "line": "That van? That's the deadline. It's been behind me my whole life."
     },
     {
       "from": 0.86,
@@ -90,7 +96,7 @@
       "to": 0.545,
       "word": "SKREEEEE!",
       "x": 22,
-      "y": 58,
+      "y": 66,
       "rot": -5
     },
     {
@@ -100,6 +106,14 @@
       "x": 62,
       "y": 20,
       "rot": 6
+    },
+    {
+      "from": 0.78,
+      "to": 0.85,
+      "word": "AIRBORNE!",
+      "x": 30,
+      "y": 16,
+      "rot": -7
     }
   ]
 }

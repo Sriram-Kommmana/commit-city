@@ -38,7 +38,7 @@ void main() {
   c = mix(c, vec3(1.0, 0.55, 0.62), cloud * cloudLine);
 
   // Stars.
-  vec2 g = floor(vec2(atan(d.x, d.z) * 90.0, d.y * 160.0));
+  vec2 g = floor((d.xz / (1.0 + max(d.y, 0.0))) * 120.0);
   float star = step(0.992, hash(g)) * smoothstep(0.3, 0.6, h);
   c = mix(c, vec3(1.0, 0.96, 0.75), star);
   gl_FragColor = vec4(c, 1.0);
@@ -165,6 +165,9 @@ uniform float uNear;
 uniform float uFar;
 uniform float uPx;      // device pixel scale
 uniform float uFlash;
+uniform float uSiren;   // red and blue chase lights at the screen edge
+uniform vec3 uClip[3];  // edges of this comic panel, as lines in screen space
+uniform float uPanels;  // 1 while the screen is split into panels
 
 float linearDepth(vec2 uv) {
   float z = texture2D(tDepth, uv).x * 2.0 - 1.0;
@@ -175,6 +178,16 @@ float hash(float x) { return fract(sin(x * 91.17) * 43758.5453); }
 float lum(vec3 c) { return dot(c, vec3(0.3, 0.59, 0.11)); }
 
 void main() {
+  // A split screen draws once per panel, and each pass only keeps its own panel.
+  float frame = 1000.0;
+  if (uPanels > 0.5) {
+    for (int i = 0; i < 3; i++) {
+      float line = dot(uClip[i], vec3(vUv, 1.0));
+      float w = fwidth(line);
+      if (w > 0.0) frame = min(frame, line / w);
+    }
+    if (frame < 5.0 * uPx) discard;
+  }
   vec2 px = 1.0 / uRes;
   // Boil: the whole drawing shifts by under a pixel, 12 times a second.
   vec2 boil = (vec2(hash(uTick), hash(uTick + 7.0)) - 0.5) * px * 1.2 * uPx;
@@ -250,7 +263,18 @@ void main() {
   float vigDot = smoothstep(0.42, 0.36, length(fract(frag / (size * 1.5)) - 0.5));
   col = mix(col, col * vec3(0.32, 0.18, 0.5), vig * vigDot * 0.45);
 
+  // Chase lights wash in from the edges, swapping sides on twos.
+  if (uSiren > 0.01) {
+    float swap = 0.5 + 0.5 * sin(uTick * 0.26);
+    float e = smoothstep(0.26, 0.5, abs(vUv.x - 0.5));
+    float left = step(vUv.x, 0.5);
+    vec3 tint = mix(vec3(1.0, 0.1, 0.16), vec3(0.1, 0.34, 1.0), abs(left - swap));
+    col = mix(col, tint, e * uSiren * 0.62);
+  }
+
   // A white frame on impacts.
   col = mix(col, vec3(1.0, 0.96, 0.82), uFlash);
+  // The ink frame around a comic panel.
+  if (uPanels > 0.5 && frame < 12.0 * uPx) col = vec3(0.03, 0.015, 0.06);
   gl_FragColor = vec4(col, 1.0);
 }`;

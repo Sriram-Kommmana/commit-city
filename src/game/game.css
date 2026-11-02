@@ -6,6 +6,7 @@ html.game-open body {
 /* Only the city stays visible behind story mode. */
 html.game-open main,
 html.game-open .hud,
+html.game-open .sound,
 html.game-open .nav {
   display: none;
 }
