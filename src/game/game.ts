@@ -18,11 +18,11 @@ const RING = 'M180 190 C320 90 690 90 820 210 C930 320 920 650 810 790 C690 920 
 
 // Districts on the map, in the same order as the stops.
 const DISTRICTS: Record<string, string> = {
-  solvefx: `<g transform="translate(62 18)"><rect width="120" height="84" fill="#2a241b" stroke="#ffc917" stroke-width="3"/>${[0, 1, 2, 3].map((i) => `<rect x="${12 + i * 26}" y="14" width="16" height="16" fill="#ffc917"/><rect x="${12 + i * 26}" y="46" width="16" height="16" fill="${i === 2 ? '#ffc917' : '#3a3122'}"/>`).join('')}</g>`,
-  'ipl-auction': `<g transform="translate(600 245)"><ellipse cx="120" cy="90" rx="124" ry="92" fill="#2f5d3a" stroke="#ffc917" stroke-width="3"/><rect x="104" y="42" width="32" height="96" fill="#d9c58c"/><path d="M104 56 h32 M104 124 h32" stroke="#f6eedb" stroke-width="3"/></g>`,
-  'repomind-ai': `<g transform="translate(610 610)" stroke="#ffc917" stroke-width="3">${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${c * 46}" y="${r * 42}" width="38" height="34" fill="${(r + c) % 2 ? '#2a241b' : '#14110d'}"/>`).join('')).join('')}</g>`,
-  clipper: `<g transform="translate(250 620)"><rect width="190" height="104" fill="#14110d" stroke="#ffc917" stroke-width="3"/>${[0, 1, 2, 3, 4].map((i) => `<rect x="${10 + i * 36}" y="8" width="24" height="12" fill="#f6eedb"/><rect x="${10 + i * 36}" y="84" width="24" height="12" fill="#f6eedb"/>`).join('')}<rect x="14" y="30" width="162" height="44" fill="#e5322d"/></g>`,
-  'mimic-hunt': `<g transform="translate(150 270)"><path d="M0 170 V70 L90 12 L180 70 V170 Z" fill="#2a241b" stroke="#ffc917" stroke-width="3"/><rect x="72" y="104" width="36" height="66" fill="#14110d" stroke="#ffc917" stroke-width="2"/><rect x="24" y="84" width="28" height="28" fill="#ffc917"/><rect x="128" y="84" width="28" height="28" fill="#3a3122"/></g>`,
+  solvefx: `<g transform="translate(62 18)"><rect width="120" height="84" fill="#2a0f5e" stroke="#ffc917" stroke-width="3"/>${[0, 1, 2, 3].map((i) => `<rect x="${12 + i * 26}" y="14" width="16" height="16" fill="#ffc917"/><rect x="${12 + i * 26}" y="46" width="16" height="16" fill="${i === 2 ? '#ffc917' : '#4a2a90'}"/>`).join('')}</g>`,
+  'ipl-auction': `<g transform="translate(600 245)"><ellipse cx="120" cy="90" rx="124" ry="92" fill="#1f9d57" stroke="#ffc917" stroke-width="3"/><rect x="104" y="42" width="32" height="96" fill="#d9c58c"/><path d="M104 56 h32 M104 124 h32" stroke="#fff4d6" stroke-width="3"/></g>`,
+  'repomind-ai': `<g transform="translate(610 610)" stroke="#ffc917" stroke-width="3">${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${c * 46}" y="${r * 42}" width="38" height="34" fill="${(r + c) % 2 ? '#2a0f5e' : '#07040e'}"/>`).join('')).join('')}</g>`,
+  clipper: `<g transform="translate(250 620)"><rect width="190" height="104" fill="#07040e" stroke="#ffc917" stroke-width="3"/>${[0, 1, 2, 3, 4].map((i) => `<rect x="${10 + i * 36}" y="8" width="24" height="12" fill="#fff4d6"/><rect x="${10 + i * 36}" y="84" width="24" height="12" fill="#fff4d6"/>`).join('')}<rect x="14" y="30" width="162" height="44" fill="#ff2e88"/></g>`,
+  'mimic-hunt': `<g transform="translate(150 270)"><path d="M0 170 V70 L90 12 L180 70 V170 Z" fill="#2a0f5e" stroke="#ffc917" stroke-width="3"/><rect x="72" y="104" width="36" height="66" fill="#07040e" stroke="#ffc917" stroke-width="2"/><rect x="24" y="84" width="28" height="28" fill="#ffc917"/><rect x="128" y="84" width="28" height="28" fill="#4a2a90"/></g>`,
 };
 const LABELS: Record<string, [number, number, string]> = {
   solvefx: [122, 138, 'The Hostel'],
@@ -135,13 +135,13 @@ export function startGame(startAt?: string) {
       <div class="g-map">
         <div class="g-map__board">
           <svg class="g-city" viewBox="0 0 1000 1000" role="group" aria-label="Map of Commit City">
-            <defs><pattern id="g-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="2.4" fill="#2a241b"/></pattern></defs>
-            <rect width="1000" height="1000" fill="#1b1712"/><rect width="1000" height="1000" fill="url(#g-dots)"/>
-            <path d="M0 1000 Q300 880 500 980 T1000 860 V1000 Z" fill="#163a44"/>
-            <path d="M180 190 C340 420 660 470 810 790 M820 210 C620 400 370 560 190 790" fill="none" stroke="#2a241b" stroke-width="30"/>
+            <defs><pattern id="g-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="2.4" fill="#2a0f5e"/></pattern></defs>
+            <rect width="1000" height="1000" fill="#14082f"/><rect width="1000" height="1000" fill="url(#g-dots)"/>
+            <path d="M0 1000 Q300 880 500 980 T1000 860 V1000 Z" fill="#0d8fa0"/>
+            <path d="M180 190 C340 420 660 470 810 790 M820 210 C620 400 370 560 190 790" fill="none" stroke="#2a0f5e" stroke-width="30"/>
             ${data.order.map((s) => DISTRICTS[s]).join('')}
-            <path d="${RING}" fill="none" stroke="#14110d" stroke-width="58"/>
-            <path d="${RING}" fill="none" stroke="#3a3122" stroke-width="48"/>
+            <path d="${RING}" fill="none" stroke="#07040e" stroke-width="58"/>
+            <path d="${RING}" fill="none" stroke="#4a2a90" stroke-width="48"/>
             <path class="g-city__ring" data-ring d="${RING}" fill="none" stroke="#ffc917" stroke-width="4" stroke-dasharray="26 22"/>
             ${data.order
               .map((s) => {
@@ -151,9 +151,9 @@ export function startGame(startAt?: string) {
               .join('')}
             <g data-markers></g>
             <g data-car><g transform="translate(-37 -23)">
-              <rect x="0" y="4" width="74" height="38" rx="14" fill="#14110d"/>
-              <rect x="4" y="0" width="60" height="46" rx="12" fill="#ffc917" stroke="#14110d" stroke-width="4"/>
-              <rect x="14" y="8" width="38" height="30" rx="8" fill="#14110d"/>
+              <rect x="0" y="4" width="74" height="38" rx="14" fill="#07040e"/>
+              <rect x="4" y="0" width="60" height="46" rx="12" fill="#ffc917" stroke="#07040e" stroke-width="4"/>
+              <rect x="14" y="8" width="38" height="30" rx="8" fill="#07040e"/>
               <path d="M74 12 L120 2 V44 L74 34 Z" fill="#ffc917" opacity="0.28"/>
             </g></g>
           </svg>

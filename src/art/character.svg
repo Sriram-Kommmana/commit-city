@@ -1,12 +1,12 @@
 <svg class="hero-char" data-mood="smirk" viewBox="0 0 320 600" role="img" aria-label="An ink-drawn student in a hoodie, smirking at a glowing phone">
-  <g stroke="#ffc917" stroke-width="3" stroke-linejoin="round" fill="#14110d">
+  <g stroke="#07040e" stroke-width="5" stroke-linejoin="round" fill="#ffc917">
     <!-- backpack -->
-    <path d="M78 196 Q30 220 36 306 Q40 356 70 368 L104 270 Z"></path>
+    <path fill="#17c4d6" d="M78 196 Q30 220 36 306 Q40 356 70 368 L104 270 Z"></path>
     <!-- legs -->
-    <path d="M88 386 Q78 480 70 566 L130 570 L158 446 L176 570 L234 564 Q238 470 220 386 Z"></path>
+    <path fill="#253a98" d="M88 386 Q78 480 70 566 L130 570 L158 446 L176 570 L234 564 Q238 470 220 386 Z"></path>
     <!-- sneakers -->
-    <path d="M66 560 L132 564 Q146 576 138 592 L50 590 Q44 570 66 560 Z"></path>
-    <path d="M172 564 L236 558 Q262 572 270 590 L172 592 Q164 576 172 564 Z"></path>
+    <path fill="#f03a2e" d="M66 560 L132 564 Q146 576 138 592 L50 590 Q44 570 66 560 Z"></path>
+    <path fill="#f03a2e" d="M172 564 L236 558 Q262 572 270 590 L172 592 Q164 576 172 564 Z"></path>
     <!-- arm in pocket -->
     <path d="M84 204 Q54 272 66 344 Q74 376 108 372 L116 340 Q98 330 100 292 L112 240 Z"></path>
     <!-- torso -->
@@ -14,16 +14,16 @@
     <!-- arm holding the phone -->
     <path d="M226 192 Q280 240 286 312 Q284 340 256 332 L196 292 L214 262 L246 282 Q244 244 214 218 Z"></path>
     <!-- hood behind the neck -->
-    <path d="M112 182 Q160 214 208 180 Q218 158 200 140 L122 140 Q102 158 112 182 Z"></path>
+    <path fill="#e8a800" d="M112 182 Q160 214 208 180 Q218 158 200 140 L122 140 Q102 158 112 182 Z"></path>
   </g>
 
   <!-- drawn details -->
-  <g fill="none" stroke="#f6eedb" stroke-linecap="round">
+  <g fill="none" stroke="#07040e" stroke-linecap="round">
     <path d="M112 330 H196 L208 384 H100 Z" stroke-width="2.5" opacity="0.55"></path>
     <path d="M144 196 Q142 226 146 250 M178 194 Q180 216 176 238" stroke-width="3" opacity="0.85"></path>
     <path d="M120 480 L128 548 M196 490 L200 548" stroke-width="2" opacity="0.3"></path>
   </g>
-  <path d="M100 176 Q86 240 96 318" fill="none" stroke="#ffc917" stroke-width="8"></path>
+  <path d="M100 176 Q86 240 96 318" fill="none" stroke="#0d8fa0" stroke-width="10"></path>
   <path d="M54 568 L134 572 M176 572 L262 572" fill="none" stroke="#f6eedb" stroke-width="5" stroke-linecap="round"></path>
 
   <!-- phone -->
@@ -34,9 +34,9 @@
   </g>
 
   <!-- head -->
-  <path d="M116 88 Q114 42 160 38 Q208 40 206 90 Q206 122 190 142 Q176 158 160 158 Q142 158 130 142 Q116 124 116 88 Z" fill="#14110d" stroke="#ffc917" stroke-width="3"></path>
+  <path d="M116 88 Q114 42 160 38 Q208 40 206 90 Q206 122 190 142 Q176 158 160 158 Q142 158 130 142 Q116 124 116 88 Z" fill="#a9673c" stroke="#07040e" stroke-width="5"></path>
   <!-- hair -->
-  <path d="M106 96 Q96 62 114 46 Q108 26 136 28 Q142 8 170 16 Q194 2 208 24 Q232 30 224 60 Q232 80 214 100 Q212 76 198 66 Q170 82 134 64 Q118 72 106 96 Z" fill="#14110d" stroke="#ffc917" stroke-width="3" stroke-linejoin="round"></path>
+  <path d="M106 96 Q96 62 114 46 Q108 26 136 28 Q142 8 170 16 Q194 2 208 24 Q232 30 224 60 Q232 80 214 100 Q212 76 198 66 Q170 82 134 64 Q118 72 106 96 Z" fill="#0b0912" stroke="#07040e" stroke-width="5" stroke-linejoin="round"></path>
 
   <!-- face -->
   <g class="hero-char__blink">
@@ -47,7 +47,7 @@
       <circle cx="180" cy="98" r="5.5" fill="#14110d"></circle>
     </g>
   </g>
-  <g fill="none" stroke="#f6eedb" stroke-linecap="round">
+  <g fill="none" stroke="#07040e" stroke-linecap="round">
     <g class="mood mood--smirk"><path d="M130 84 L156 82 M170 80 L196 86" stroke-width="4"></path><path d="M146 134 Q164 144 182 126" stroke-width="3.5"></path></g>
     <g class="mood mood--happy"><path d="M130 80 Q144 70 156 78 M170 78 Q184 70 196 80" stroke-width="4"></path><path d="M142 124 Q164 150 186 124 Z" fill="#f6eedb" stroke-width="2"></path></g>
     <g class="mood mood--worried"><path d="M132 78 L156 86 M170 86 L194 78" stroke-width="4"></path><path d="M146 138 Q164 124 182 138" stroke-width="3.5"></path></g>

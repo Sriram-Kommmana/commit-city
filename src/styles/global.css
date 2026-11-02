@@ -4,18 +4,23 @@
 @import '@fontsource/kalam/latin-700.css';
 @import '@fontsource/teko/latin-500.css';
 @import '@fontsource/teko/latin-700.css';
+@import '@fontsource/bowlby-one/latin-400.css';
+@import '@fontsource/sedgwick-ave-display/latin-400.css';
 
 :root {
-  --ink: #14110d;
-  --night: #1b1712;
-  --night-2: #2a241b;
+  --ink: #07040e;
+  --night: #14082f;
+  --night-2: #2a0f5e;
   --yellow: #ffc917;
   --yellow-deep: #e8a800;
-  --paper: #f6eedb;
+  --pink: #ff2e88;
+  --paper: #fff4d6;
   --paper-2: #eadfc4;
-  --red: #e5322d;
-  --cyan: #18b7c9;
+  --red: #f03a2e;
+  --cyan: #17c4d6;
   --display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --poster: 'Bowlby One', 'Anton', Impact, sans-serif;
+  --tag: 'Sedgwick Ave Display', 'Kalam', cursive;
   --label: 'Teko', 'Arial Narrow', sans-serif;
   --hand: 'Kalam', 'Comic Sans MS', cursive;
   --body: 'Hind', system-ui, sans-serif;
@@ -32,6 +37,7 @@
 }
 
 html {
+  background: var(--night);
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--nav-h) + 12px);
   -webkit-text-size-adjust: 100%;
@@ -39,7 +45,6 @@ html {
 
 body {
   margin: 0;
-  background: var(--night);
   color: var(--paper);
   font: 400 1.0625rem/1.6 var(--body);
   overflow-x: clip;

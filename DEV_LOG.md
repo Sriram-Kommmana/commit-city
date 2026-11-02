@@ -25,3 +25,10 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   Fix: a smaller title on short screens, and reserved space above the road. Checked at 1366 × 620.
 - **Decision: no PixiJS.** With free driving cut, the map and missions don't need a WebGL renderer. SVG, DOM and GSAP
   keep the game bundle small and remove WebGL failure as a risk.
+- **Redesign: the first version looked like a static poster.** It had a strong title but no depth and no motion, so
+  the landing page was rebuilt as a real-time 3D city with a comic shader (ink lines, print dots, off-register colour).
+  Scrolling now jumps off the tallest tower and falls through the city into a street chase. Story mode plays over the
+  moving city. The 3D city is decoration: with WebGL off, the page and story mode still work over a painted sky.
+- **Speed.** Measured on an Intel UHD integrated GPU while scrolling the whole journey: 69 fps at 1080p and 117 fps at
+  720p. Lighthouse's mobile test dropped to 66 for performance, because it renders WebGL on a throttled CPU.
+- **Bug: bash heredocs mangled a long patch.** Patches went into script files instead.

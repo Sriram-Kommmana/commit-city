@@ -1,0 +1,188 @@
+---
+// GTA-style overlay: minimap, commit counter, subtitles and comic sound effects, driven by scroll.
+import story from '../../content/story.json';
+import { totalCommits } from '../lib/skyline';
+---
+
+<div class="hud" aria-hidden="true" data-hud data-total={totalCommits}>
+  <div class="hud__cash">
+    <small>Commits</small>
+    <b data-cash>000</b>
+  </div>
+  <svg class="hud__map" viewBox="-50 -50 100 100">
+    <defs><clipPath id="mapc"><circle r="47"></circle></clipPath></defs>
+    <circle r="50" fill="#07040e"></circle>
+    <g clip-path="url(#mapc)">
+      <g data-map>
+        <rect x="-400" y="-400" width="800" height="800" fill="#2a0f5e"></rect>
+        <path d="M-400 -320H400M-400 -240H400M-400 -160H400M-400 -80H400M-400 0H400M-400 80H400M-400 160H400M-400 240H400M-400 320H400M-320 -400V400M-240 -400V400M-160 -400V400M-80 -400V400M0 -400V400M80 -400V400M160 -400V400M240 -400V400M320 -400V400" stroke="#ff2e88" stroke-width="5" opacity="0.8"></path>
+        <rect x="-4" y="-4" width="22" height="22" fill="#ffc917"></rect>
+      </g>
+    </g>
+    <path d="M0 -9 L7 8 L0 4 L-7 8 Z" fill="#fff4d6" stroke="#07040e" stroke-width="2"></path>
+    <circle r="47" fill="none" stroke="#ffc917" stroke-width="4"></circle>
+  </svg>
+  <p class="hud__sub" data-sub></p>
+  {
+    story.sfx.map((s) => (
+      <span class="sfx" data-sfx data-from={s.from} data-to={s.to} style={`left:${s.x}%;top:${s.y}%;--r:${s.rot}deg`}>
+        {s.word}
+      </span>
+    ))
+  }
+</div>
+
+<script>
+  import story from '../../content/story.json';
+
+  const hud = document.querySelector<HTMLElement>('[data-hud]');
+  if (hud) {
+    const total = Number(hud.dataset.total);
+    const cash = hud.querySelector<HTMLElement>('[data-cash]')!;
+    const sub = hud.querySelector<HTMLElement>('[data-sub]')!;
+    const map = hud.querySelector<SVGGElement>('[data-map]')!;
+    const sfx = [...hud.querySelectorAll<HTMLElement>('[data-sfx]')];
+    let shown = '';
+    addEventListener('world:progress', (e) => {
+      const p = (e as CustomEvent<number>).detail;
+      hud.classList.add('is-on');
+      hud.classList.toggle('at-top', p < 0.03);
+      map.closest('svg')!.style.visibility = p > 0.03 ? 'visible' : 'hidden';
+      cash.textContent = String(Math.round(total * Math.min(p / 0.92, 1))).padStart(3, '0');
+      // The minimap follows the same journey as the camera: south down the avenue.
+      const y = p < 0.46 ? p * 220 : p * 520;
+      map.setAttribute('transform', `translate(${p > 0.46 ? 40 : p * 80} ${y})`);
+      const s = story.subtitles.find((x) => p >= x.from && p <= x.to);
+      const key = s ? s.line : '';
+      if (key !== shown) {
+        shown = key;
+        sub.innerHTML = s ? `<b class="${s.who === 'SRIRAM' ? '' : 'alt'}">${s.who}:</b> ${s.line}` : '';
+        sub.classList.toggle('is-on', !!s);
+      }
+      sfx.forEach((el) => {
+        el.classList.toggle('is-on', p >= Number(el.dataset.from) && p <= Number(el.dataset.to));
+      });
+    });
+  }
+</script>
+
+<style>
+  .hud {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .hud:global(.is-on) {
+    opacity: 1;
+  }
+
+  .hud__cash {
+    position: absolute;
+    top: calc(var(--nav-h) + 10px);
+    right: var(--gutter);
+    display: grid;
+    justify-items: end;
+    line-height: 0.95;
+    color: #7dff5e;
+    text-shadow:
+      2px 2px 0 var(--ink),
+      -1px -1px 0 var(--ink),
+      1px -1px 0 var(--ink),
+      -1px 1px 0 var(--ink);
+  }
+
+  .hud__cash small {
+    font: 700 1.05rem/1 var(--label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hud__cash b {
+    font: 400 clamp(2rem, 4vw, 3rem) / 1 var(--display);
+    letter-spacing: 0.04em;
+  }
+
+  .hud__map {
+    position: absolute;
+    left: var(--gutter);
+    bottom: clamp(14px, 3vh, 28px);
+    width: clamp(84px, 11vw, 150px);
+    height: auto;
+  }
+
+  .hud__sub {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(16px, 4vh, 36px);
+    width: fit-content;
+    max-width: min(62ch, calc(100% - clamp(120px, 28vw, 380px)));
+    margin: 0;
+    padding: 4px 12px;
+    background: rgb(7 4 14 / 0.82);
+    color: var(--paper);
+    font: 600 clamp(0.95rem, 1.7vw, 1.25rem) / 1.3 var(--body);
+    text-align: center;
+    transform: translateX(-50%);
+    visibility: hidden;
+  }
+
+  .hud__sub:global(.is-on) {
+    visibility: visible;
+  }
+
+  .hud__sub :global(b) {
+    color: var(--yellow);
+  }
+
+  .hud__sub :global(b.alt) {
+    color: var(--pink);
+  }
+
+  .sfx {
+    position: absolute;
+    padding: 0.14em 0.42em 0.08em;
+    background: var(--yellow);
+    color: var(--ink);
+    border: 5px solid var(--ink);
+    font: 400 clamp(2.5rem, 8.5vw, 7.4rem) / 1 var(--poster);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    box-shadow:
+      6px 6px 0 var(--pink),
+      12px 12px 0 var(--ink);
+    clip-path: polygon(0 12%, 5% 2%, 18% 8%, 34% 0, 52% 7%, 72% 0, 90% 6%, 100% 18%, 97% 46%, 100% 76%, 92% 96%, 70% 90%, 48% 100%, 28% 91%, 8% 100%, 2% 76%, 4% 44%);
+    transform: rotate(var(--r)) scale(0);
+    transition: transform 0.14s steps(3);
+  }
+
+  .sfx:global(.is-on) {
+    transform: rotate(var(--r)) scale(1);
+  }
+
+  @media (max-width: 760px) {
+    .hud__sub {
+      left: auto;
+      right: 10px;
+      width: calc(100% - 108px);
+      transform: none;
+      text-align: left;
+    }
+
+    .hud__map {
+      left: 10px;
+    }
+
+    .hud:global(.at-top) .hud__cash,
+    .hud:global(.at-top) .hud__sub {
+      visibility: hidden;
+    }
+
+    .sfx {
+      border-width: 4px;
+    }
+  }
+</style>

@@ -12,6 +12,7 @@ A portfolio you can read in 30 seconds or ride through in 3 minutes. It's my ent
 | Part | Choice | Why |
 |---|---|---|
 | Site | Astro, static output | Real HTML for every page, with almost no JavaScript on load |
+| 3D city | Three.js and a custom comic shader | Scrolling falls through a living city, with a painted fallback if WebGL is off |
 | Story mode | TypeScript, SVG, DOM and GSAP | Downloads only after Play, and needs no WebGL |
 | Hosting | AWS Amplify Hosting | Builds from GitHub and serves over HTTPS from a global CDN |
 | Data | `npm run snapshot` | GitHub data is captured locally and committed, so the live site calls no APIs |

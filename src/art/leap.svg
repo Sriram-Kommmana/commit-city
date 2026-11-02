@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 620">
+  <!-- Mid-fall: a student in a yellow hoodie, arms out, hood and laces flying upwards. -->
+  <defs>
+    <pattern id="d" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(28)"><circle cx="4.5" cy="4.5" r="2.5" fill="#b4176f"/></pattern>
+    <pattern id="h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><path d="M0 0H7" stroke="#07040e" stroke-width="2.4"/></pattern>
+  </defs>
+  <g stroke="#07040e" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+    <!-- back leg -->
+    <path d="M262 318 Q330 300 372 226 L424 164 L462 196 L410 282 Q354 372 282 396 Z" fill="#1c2b7a"/>
+    <path d="M424 164 L442 116 Q470 110 498 138 L510 176 L462 196 Z" fill="#f03a2e"/>
+    <path d="M444 118 L506 170" stroke="#fff4d6" stroke-width="10"/>
+    <!-- front leg -->
+    <path d="M214 332 Q198 262 214 190 L222 106 L272 108 L276 206 Q290 276 286 358 Z" fill="#253a98"/>
+    <path d="M222 106 L200 60 Q218 28 258 26 L288 44 L272 108 Z" fill="#f03a2e"/>
+    <path d="M204 56 L284 40" stroke="#fff4d6" stroke-width="10"/>
+    <!-- backpack, floating off his back -->
+    <path d="M120 300 Q84 244 124 196 L196 214 L212 306 L150 340 Z" fill="#17c4d6"/>
+    <path d="M124 196 Q168 186 196 214 L188 244 L128 232 Z" fill="#0d8fa0"/>
+    <!-- torso -->
+    <path d="M186 300 Q240 280 296 306 L322 470 Q262 508 182 472 Z" fill="#ffc917"/>
+    <path d="M186 300 Q214 292 232 296 L232 486 L182 472 Z" fill="url(#d)"/>
+    <!-- arm flung up-left -->
+    <path d="M196 440 Q130 452 70 412 L26 360 L60 330 L104 374 Q150 396 192 384 Z" fill="#ffc917"/>
+    <path d="M26 360 L8 322 Q18 296 46 300 L72 322 L60 330 Z" fill="#a9673c"/>
+    <!-- arm flung right -->
+    <path d="M312 442 Q384 462 438 420 L486 386 L466 346 L420 376 Q372 396 310 384 Z" fill="#ffc917"/>
+    <path d="M486 386 L512 372 Q520 342 496 330 L466 346 Z" fill="#a9673c"/>
+    <!-- hood -->
+    <path d="M186 478 Q210 526 252 530 Q302 526 322 474 Q258 454 186 478 Z" fill="#e8a800"/>
+    <!-- head, seen from above and behind, hair streaming down -->
+    <path d="M204 500 Q200 452 252 448 Q310 452 304 504 Q300 560 254 566 Q208 560 204 500 Z" fill="#a9673c"/>
+    <path d="M198 510 Q190 560 214 592 L232 562 L246 606 L264 566 L286 600 L300 556 Q318 540 310 500 Q276 524 250 516 Q224 524 198 510 Z" fill="#0b0912"/>
+  </g>
+  <!-- flat shadow shapes and drawing marks -->
+  <path d="M322 470 Q280 494 240 492 L232 404 L306 372 Z" fill="url(#h)" opacity="0.9"/>
+  <path d="M240 330 L238 420 M278 336 L282 410" stroke="#07040e" stroke-width="5" stroke-linecap="round"/>
+  <path d="M212 420 H300 L310 462 H204 Z" fill="none" stroke="#07040e" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M34 346 L80 386 M470 372 L432 400" stroke="#07040e" stroke-width="4"/>
+  <!-- face turned to the side: one eye, wide open -->
+  <path d="M214 506 Q226 492 244 504 Q238 524 224 522 Q214 518 214 506 Z" fill="#fff4d6" stroke="#07040e" stroke-width="4"/>
+  <circle cx="228" cy="510" r="5" fill="#07040e"/>
+</svg>

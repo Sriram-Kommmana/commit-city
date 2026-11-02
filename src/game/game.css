@@ -3,14 +3,26 @@ html.game-open body {
   overflow: hidden;
 }
 
+/* Only the city stays visible behind story mode. */
+html.game-open main,
+html.game-open .hud,
+html.game-open .nav {
+  display: none;
+}
+
 .game {
   position: fixed;
   inset: 0;
   z-index: 200;
   display: flex;
   flex-direction: column;
-  background: var(--night);
+  background: rgb(20 8 47 / 0.52);
   color: var(--paper);
+}
+
+/* On pages without the 3D city, a painted sky stands in. */
+body:not(:has(.world)) .game {
+  background: linear-gradient(#120733, #5f0f9e 45%, #fb1778 85%);
 }
 
 /* HUD */
@@ -118,8 +130,8 @@ html.game-open body {
 .g-banner i {
   position: absolute;
   inset: -20% -20%;
-  background-color: var(--yellow);
-  background-image: radial-gradient(circle, var(--yellow-deep) 30%, transparent 32%);
+  background-color: var(--pink);
+  background-image: radial-gradient(circle, #c4135f 30%, transparent 32%);
   background-size: 14px 14px;
   transform: skewX(-14deg);
 }
@@ -153,12 +165,11 @@ html.game-open body {
   min-height: 340px;
   overflow: hidden;
   background:
-    repeating-conic-gradient(from 0deg at 72% 58%, rgb(255 201 23 / 0.09) 0 7deg, transparent 7deg 18deg),
-    radial-gradient(circle, #3a3122 30%, transparent 32%) 0 0 / 11px 11px,
-    #241e15;
+    repeating-conic-gradient(from 0deg at 72% 58%, rgb(255 255 255 / 0.1) 0 6deg, transparent 6deg 16deg),
+    radial-gradient(circle, rgb(120 10 110 / 0.5) 30%, transparent 32%) 0 0 / 11px 11px,
+    linear-gradient(#3a0f86, #d3126f 70%, #ff7a18);
   border: var(--border);
-  outline: 3px solid var(--yellow);
-  box-shadow: 8px 8px 0 var(--red);
+  box-shadow: 9px 9px 0 var(--pink), 18px 18px 0 var(--ink);
 }
 
 .g-panel__moon {
@@ -389,6 +400,10 @@ html.game-open body {
 .g-mission {
   width: min(100%, 920px);
   margin-inline: auto;
+  padding: clamp(14px, 3vw, 28px);
+  background: #0f0820;
+  border: 5px solid var(--ink);
+  box-shadow: 9px 9px 0 var(--pink), 18px 18px 0 var(--ink);
 }
 
 .g-mission header {
@@ -831,7 +846,7 @@ html.game-open body {
   justify-items: center;
   gap: 18px;
   padding: 20px;
-  background: rgb(10 8 6 / 0.84);
+  background: rgb(20 8 47 / 0.78);
   text-align: center;
 }
 
@@ -840,15 +855,14 @@ html.game-open body {
   background: var(--yellow);
   color: var(--ink);
   border: 6px solid var(--ink);
-  outline: 4px solid var(--yellow);
-  font: 400 clamp(3rem, 12vw, 9rem) / 1.05 var(--display);
+  box-shadow: 12px 12px 0 var(--pink), 24px 24px 0 var(--ink);
+  font: 400 clamp(2.6rem, 10vw, 7.6rem) / 1.05 var(--poster);
   text-transform: uppercase;
 }
 
 .g-stamp--fail b {
   background: var(--red);
   color: var(--paper);
-  outline-color: var(--red);
 }
 
 .g-stamp p {

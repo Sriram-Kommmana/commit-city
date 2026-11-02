@@ -15,10 +15,16 @@
   },
   "dependencies": {
     "@fontsource/anton": "^5.3.0",
+    "@fontsource/bowlby-one": "^5.3.0",
     "@fontsource/hind": "^5.3.0",
     "@fontsource/kalam": "^5.3.0",
+    "@fontsource/sedgwick-ave-display": "^5.3.0",
     "@fontsource/teko": "^5.3.0",
     "astro": "^7.4.5",
-    "gsap": "^3.15.0"
+    "gsap": "^3.15.0",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0"
   }
 }

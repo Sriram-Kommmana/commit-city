@@ -29,5 +29,77 @@
     "line": "You asked me to show you what I've built. So: do we have a job?",
     "accept": "Accept mission"
   },
-  "acceptedLine": "Great. Here's how to reach me."
+  "acceptedLine": "Great. Here's how to reach me.",
+  "subtitles": [
+    {
+      "from": 0,
+      "to": 0.045,
+      "who": "SRIRAM",
+      "line": "Tallest building in town. 280 commits of data structures, one floor at a time."
+    },
+    {
+      "from": 0.05,
+      "to": 0.12,
+      "who": "SRIRAM",
+      "line": "Only one way to see the rest of this city."
+    },
+    {
+      "from": 0.14,
+      "to": 0.3,
+      "who": "SRIRAM",
+      "line": "Every big build starts like this: a leap, and no idea where the floor is."
+    },
+    {
+      "from": 0.34,
+      "to": 0.48,
+      "who": "SRIRAM",
+      "line": "Those signs? That's everything I've picked up on the way down."
+    },
+    {
+      "from": 0.56,
+      "to": 0.78,
+      "who": "SRIRAM",
+      "line": "And this is what I've shipped. Keep up."
+    },
+    {
+      "from": 0.86,
+      "to": 0.97,
+      "who": "UNKNOWN CALLER",
+      "line": "Nice city. I hear you can build things. Got a job for you."
+    }
+  ],
+  "sfx": [
+    {
+      "from": 0.075,
+      "to": 0.15,
+      "word": "FORCE PUSH!",
+      "x": 14,
+      "y": 22,
+      "rot": -9
+    },
+    {
+      "from": 0.2,
+      "to": 0.29,
+      "word": "WHOOOSH",
+      "x": 58,
+      "y": 62,
+      "rot": 7
+    },
+    {
+      "from": 0.47,
+      "to": 0.545,
+      "word": "SKREEEEE!",
+      "x": 22,
+      "y": 58,
+      "rot": -5
+    },
+    {
+      "from": 0.6,
+      "to": 0.66,
+      "word": "VROOM",
+      "x": 62,
+      "y": 20,
+      "rot": 6
+    }
+  ]
 }

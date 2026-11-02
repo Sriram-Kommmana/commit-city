@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 800">
+  <!-- Standing on the ledge, seen from behind, looking out at the sun. -->
+  <defs>
+    <pattern id="p-d" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(28)"><circle cx="4" cy="4" r="2.3" fill="#a81468"/></pattern>
+    <pattern id="p-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)"><path d="M0 0H6" stroke="#07040e" stroke-width="2.2"/></pattern>
+  </defs>
+  <g stroke="#07040e" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+    <!-- strap tail, caught by the wind -->
+    <path d="M272 372 Q330 386 372 352 L384 372 Q334 416 266 398 Z" fill="#0d8fa0"/>
+    <!-- left leg -->
+    <path d="M144 436 Q120 540 118 610 L96 736 L156 744 L188 612 L210 480 Z" fill="#1c2b7a"/>
+    <!-- right leg, weight on it, stepped out -->
+    <path d="M210 480 L236 612 L280 736 L338 722 L300 596 L282 436 Z" fill="#253a98"/>
+    <path d="M96 736 L156 744 Q166 766 158 784 L74 782 Q66 756 96 736 Z" fill="#f03a2e"/>
+    <path d="M280 736 L338 722 Q366 742 374 768 L286 782 Q272 758 280 736 Z" fill="#f03a2e"/>
+    <path d="M72 780 L160 782 M284 780 L376 766" stroke="#fff4d6" stroke-width="9"/>
+    <!-- left arm, hanging loose -->
+    <path d="M132 216 Q96 256 88 336 L78 430 L118 440 L132 346 L150 276 Z" fill="#e8a800"/>
+    <path d="M78 430 L118 440 L116 472 Q96 490 78 470 Z" fill="#a9673c"/>
+    <!-- right arm, hand tucked in the hoodie pocket -->
+    <path d="M288 216 Q326 256 336 336 Q342 396 318 430 L286 412 Q298 372 288 336 L270 276 Z" fill="#ffc917"/>
+    <!-- hoodie -->
+    <path d="M132 214 Q210 176 288 214 L304 310 L290 456 Q210 490 130 456 L116 310 Z" fill="#ffc917"/>
+    <!-- backpack -->
+    <path d="M160 244 Q210 224 260 244 L270 376 Q210 400 150 376 Z" fill="#17c4d6"/>
+    <path d="M160 244 Q210 224 260 244 L258 276 Q210 258 162 276 Z" fill="#0d8fa0"/>
+    <rect x="176" y="304" width="68" height="50" rx="7" fill="#0d8fa0"/>
+    <path d="M152 214 Q148 300 152 340 M268 214 Q272 300 268 340" stroke-width="11" fill="none"/>
+    <!-- hood, down -->
+    <path d="M152 204 Q210 166 268 204 Q258 246 210 250 Q162 246 152 204 Z" fill="#e8a800"/>
+    <!-- neck -->
+    <path d="M186 158 H234 L236 200 Q210 212 184 200 Z" fill="#a9673c"/>
+    <!-- head -->
+    <path d="M164 104 Q162 50 210 46 Q258 50 256 104 Q252 158 210 166 Q168 158 164 104 Z" fill="#0b0912"/>
+    <!-- ear -->
+    <path d="M256 104 Q272 104 270 124 Q262 138 252 130 Z" fill="#a9673c"/>
+    <!-- hair, messy, pushed by the wind -->
+    <path d="M160 116 Q146 92 158 66 Q150 44 176 40 Q182 20 208 28 Q230 14 246 34 Q272 34 268 62 Q282 78 262 100 Q258 70 236 64 Q204 78 176 66 Q164 86 160 116 Z" fill="#0b0912"/>
+  </g>
+  <!-- printed shadow on the side away from the light -->
+  <path d="M132 214 Q154 202 168 198 L150 376 L160 468 Q144 464 130 456 L116 310 Z" fill="url(#p-d)"/>
+  <path d="M262 244 L270 376 Q248 386 226 390 L234 236 Z" fill="url(#p-h)" opacity="0.8"/>
+  <path d="M150 396 Q210 420 276 396 L288 454 Q210 486 134 454 Z" fill="url(#p-h)" opacity="0.65"/>
+  <path d="M196 318 H224 M186 332 H234" stroke="#07040e" stroke-width="3"/>
+  <!-- rim light from the sun -->
+  <path d="M170 84 Q186 56 214 54 Q250 56 252 96" fill="none" stroke="#ff5a2e" stroke-width="4" stroke-linecap="round"/>
+  <path d="M284 226 Q298 284 300 320" fill="none" stroke="#fff4d6" stroke-width="4" stroke-linecap="round"/>
+</svg>

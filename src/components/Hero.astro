@@ -1,137 +1,141 @@
 ---
 import site from '../../content/site.json';
-import SkylineArt from './SkylineArt.astro';
-import Character from './Character.astro';
-import Auto from './Auto.astro';
 ---
 
-<section class="hero" id="top" aria-labelledby="hero-title">
-  <div class="hero__moon" aria-hidden="true"></div>
-  <div class="hero__city"><SkylineArt decorative /></div>
-
-  <div class="hero__copy">
-    <p class="hero__issue">Issue #01 · A playable comic</p>
-    <h1 id="hero-title" class="hero__title"><span>Commit</span> <span>City</span></h1>
-    <p class="hero__who">The portfolio of <strong>{site.name}</strong></p>
+<section class="hero" id="top" data-p="0" aria-labelledby="hero-title">
+  <div class="hero__stack">
+    <p class="hero__issue"><span>Issue #01</span> A playable comic</p>
+    <h1 id="hero-title" class="title">
+      <span class="title__line" data-t="COMMIT">COMMIT</span>
+      <span class="title__line title__line--2" data-t="CITY">CITY</span>
+    </h1>
+    <p class="hero__tag">{site.shortName} <span>Kommana</span></p>
+    <p class="hero__sub">Student developer. Builder of games, AI tools and very questionable side projects.</p>
     <div class="hero__cta">
       <a class="play" href="#about" data-play>
         <span class="play__tri" aria-hidden="true">▶</span>
-        <span class="play__txt">Play my story<small>3 minutes · works on your phone</small></span>
+        <span class="play__txt">Play my story<small>3 minutes, works on your phone</small></span>
       </a>
-      <a class="hero__read" href="#about">or just read the portfolio ↓</a>
     </div>
   </div>
 
-  <div class="hero__char">
-    <p class="bubble">{site.bubble}</p>
-    <Character />
-  </div>
-
-  <div class="hero__road" aria-hidden="true">
-    <div class="hero__auto"><Auto /></div>
-  </div>
+  <a class="jump" href="#about">
+    <b>Scroll to jump</b>
+    <i aria-hidden="true">▼</i>
+  </a>
 </section>
 
 <style>
   .hero {
     position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    min-height: calc(100svh - var(--nav-h));
-    padding: clamp(18px, 4vh, 44px) var(--gutter) 0;
-    overflow: clip;
-    isolation: isolate;
-    background:
-      radial-gradient(circle at 76% 34%, #5c4a14 0, transparent 44%),
-      var(--night);
+    min-height: 118svh;
+    padding: clamp(14px, 3vh, 32px) var(--gutter) 0;
   }
 
-  .hero__moon {
-    position: absolute;
-    z-index: -2;
-    top: 8%;
-    right: 3%;
-    width: min(50vw, 76vh);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--yellow);
-    box-shadow:
-      12px 0 0 var(--cyan),
-      -12px 0 0 var(--red);
-    mix-blend-mode: normal;
-  }
-
-  .hero__moon::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background-image: radial-gradient(circle, var(--yellow-deep) 34%, transparent 36%);
-    background-size: 12px 12px;
-    mask-image: linear-gradient(200deg, transparent 40%, #000);
-  }
-
-  .hero__city {
-    position: absolute;
-    z-index: -1;
-    inset: auto 0 clamp(64px, 11vh, 96px) 0;
-    height: min(46vh, 420px);
-    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18) 0 34%, #000 62%);
-  }
-
-  .hero__copy {
-    position: relative;
-    z-index: 4;
-    align-self: start;
-    /* Keeps the Play button clear of the road on short screens. */
-    padding-bottom: calc(clamp(64px, 11vh, 96px) + 18px);
+  .hero__stack {
+    width: min(100%, 700px);
   }
 
   .hero__issue {
-    display: inline-block;
-    padding: 3px 10px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 12px 0 0;
     background: var(--paper);
     color: var(--ink);
-    font: 700 clamp(1.05rem, 2.2vw, 1.35rem) / 1.2 var(--label);
-    letter-spacing: 0.08em;
+    font: 700 clamp(1.05rem, 2.1vw, 1.35rem) / 1.2 var(--label);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    transform: rotate(-1.2deg);
+    transform: rotate(-1.6deg);
   }
 
-  .hero__title {
-    margin-top: 10px;
-    color: var(--yellow);
-    font-size: clamp(4.6rem, min(15.5vw, 24vh), 15.5rem);
-    line-height: 0.92;
-    text-shadow:
-      5px 5px 0 var(--ink),
-      -3px 0 0 var(--red),
-      8px 2px 0 var(--cyan);
-    transform: skewY(-2.5deg);
+  .hero__issue span {
+    margin-block: -3px 0;
+    padding: 3px 10px 0;
+    background: var(--pink);
+    color: var(--paper);
+  }
+
+  .title {
+    margin: 8px 0 0 -4px;
+    font-family: var(--poster);
+    font-size: clamp(4.2rem, min(10.8vw, 21vh), 13rem);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    transform: skewY(-3deg) rotate(-1deg);
     transform-origin: left;
-    animation: slam 0.42s steps(5);
   }
 
-  .hero__title span {
+  .title__line {
+    position: relative;
     display: block;
-  }
-
-  .hero__who {
-    margin-top: 14px;
-    font: 500 clamp(1.3rem, 2.8vw, 1.9rem) / 1.1 var(--label);
-    letter-spacing: 0.03em;
-  }
-
-  .hero__who strong {
+    width: fit-content;
     color: var(--yellow);
-    font-weight: 700;
+    -webkit-text-stroke: clamp(2px, 0.5vw, 5px) var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 0.055em 0.055em 0 var(--ink);
+    animation: boil 0.5s steps(1) infinite;
+  }
+
+  .title__line--2 {
+    margin-left: 0.5em;
+    color: var(--paper);
+  }
+
+  /* Cut slices of the word in off-register colour, slipping on twos like a misprint. */
+  .title__line::before,
+  .title__line::after {
+    content: attr(data-t);
+    position: absolute;
+    inset: 0;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+    pointer-events: none;
+  }
+
+  .title__line::before {
+    color: inherit;
+    text-shadow: -4px 0 0 var(--cyan);
+    clip-path: polygon(0 34%, 100% 34%, 100% 46%, 0 46%);
+    animation: slip-a 1.7s steps(1) infinite;
+  }
+
+  .title__line::after {
+    color: inherit;
+    text-shadow: 4px 0 0 var(--pink);
+    clip-path: polygon(0 68%, 100% 68%, 100% 76%, 0 76%);
+    animation: slip-b 1.3s steps(1) infinite;
+  }
+
+  .hero__tag {
+    margin-top: -0.2em;
+    margin-left: min(13vw, 150px);
+    color: var(--pink);
+    font: 400 clamp(2.3rem, 5.4vw, 4.2rem) / 1 var(--tag);
+    text-shadow:
+      3px 3px 0 var(--ink),
+      -2px -1px 0 var(--ink);
+    transform: rotate(-6deg);
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .hero__tag span {
+    color: var(--paper);
+  }
+
+  .hero__sub {
+    width: fit-content;
+    max-width: 30em;
+    margin-top: clamp(4px, 1vh, 12px);
+    padding: 7px 12px 5px;
+    background: var(--ink);
+    color: var(--paper);
+    font: 600 clamp(0.98rem, 1.6vw, 1.12rem) / 1.3 var(--body);
+    transform: rotate(-0.8deg);
   }
 
   .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px 20px;
     margin-top: clamp(12px, 2.4vh, 24px);
   }
 
@@ -140,31 +144,32 @@ import Auto from './Auto.astro';
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    padding: 10px 22px 8px 14px;
+    padding: 10px 24px 7px 14px;
     background: var(--yellow);
     color: var(--ink);
-    border: 4px solid var(--ink);
-    outline: 3px solid var(--yellow);
-    font: 400 clamp(1.8rem, 4.4vw, 2.7rem) / 1 var(--display);
+    border: 5px solid var(--ink);
+    font: 400 clamp(1.9rem, 4.6vw, 3rem) / 1 var(--display);
     text-decoration: none;
     text-transform: uppercase;
-    box-shadow: 8px 8px 0 var(--red);
-    transform: rotate(-1.5deg);
+    box-shadow:
+      7px 7px 0 var(--pink),
+      14px 14px 0 var(--ink);
+    transform: rotate(-2deg);
     transition:
-      transform 0.12s steps(2),
-      box-shadow 0.12s steps(2);
-    animation: nudge 3.2s steps(1) infinite;
+      transform 0.1s steps(2),
+      box-shadow 0.1s steps(2);
   }
 
   .play:hover {
-    transform: rotate(0) translate(-3px, -3px);
-    box-shadow: 12px 12px 0 var(--red);
-    animation: none;
+    transform: rotate(0) translate(-4px, -4px) scale(1.03);
+    box-shadow:
+      10px 10px 0 var(--cyan),
+      20px 20px 0 var(--ink);
   }
 
   .play:active {
-    transform: translate(4px, 4px);
-    box-shadow: 3px 3px 0 var(--red);
+    transform: translate(5px, 5px);
+    box-shadow: 2px 2px 0 var(--pink);
   }
 
   .play__tri {
@@ -182,180 +187,106 @@ import Auto from './Auto.astro';
   .play__txt small {
     display: block;
     margin-top: 2px;
-    font: 500 clamp(1.02rem, 2vw, 1.25rem) / 1 var(--label);
+    font: 500 clamp(1rem, 1.9vw, 1.2rem) / 1 var(--label);
     letter-spacing: 0.02em;
     text-transform: none;
   }
 
-  .hero__read {
-    font: 500 1.3rem/1.2 var(--label);
-    letter-spacing: 0.02em;
-    text-underline-offset: 3px;
-  }
-
-  .hero__read:hover {
-    color: var(--yellow);
-  }
-
-  .hero__char {
-    position: relative;
-    z-index: 1;
-    align-self: end;
-    justify-self: center;
-    width: min(100%, 44vh);
-    margin-bottom: clamp(22px, 4vh, 42px);
-  }
-
-  .bubble {
+  .jump {
     position: absolute;
-    z-index: 2;
-    left: -30%;
-    top: 3%;
-    width: min(66%, 230px);
-    padding: 12px 16px;
-    background: var(--paper);
+    right: 36%;
+    top: calc(100svh - var(--nav-h) - 158px);
+    display: grid;
+    justify-items: center;
     color: var(--ink);
-    border: 3px solid var(--ink);
-    border-radius: 50% 46% 48% 52% / 56% 52% 56% 50%;
-    font: 700 clamp(1rem, 1.9vw, 1.28rem) / 1.2 var(--hand);
-    text-align: center;
-    transform: rotate(-3deg);
-    animation: pop 0.3s 0.5s steps(3);
+    text-decoration: none;
+    transform: rotate(4deg);
   }
 
-  .bubble::after {
-    content: '';
-    position: absolute;
-    right: 14%;
-    bottom: -18px;
-    width: 26px;
-    height: 24px;
+  .jump b {
+    padding: 8px 16px 5px;
     background: var(--paper);
-    border-right: 3px solid var(--ink);
-    border-bottom: 3px solid var(--ink);
-    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    border: 4px solid var(--ink);
+    border-radius: 50% 46% 48% 52% / 58% 52% 58% 50%;
+    font: 700 clamp(1.1rem, 2vw, 1.5rem) / 1 var(--hand);
   }
 
-  .hero__road {
-    position: absolute;
-    z-index: 3;
-    inset: auto 0 0 0;
-    height: clamp(64px, 11vh, 96px);
-    background:
-      repeating-linear-gradient(90deg, var(--yellow) 0 44px, transparent 44px 92px) 0 72% / 100% 4px no-repeat,
-      var(--ink);
-    border-top: 4px solid var(--yellow);
+  .jump i {
+    margin-top: 2px;
+    color: var(--yellow);
+    font-style: normal;
+    font-size: 1.8rem;
+    text-shadow: 0 0 0 var(--ink), 2px 2px 0 var(--ink);
+    animation: hop 0.66s steps(2) infinite alternate;
   }
 
-  .hero__auto {
-    --spin: running;
-    position: absolute;
-    bottom: 28%;
-    left: 0;
-    width: clamp(112px, 15vw, 190px);
-    animation: drive 15s linear infinite;
-  }
-
-  @keyframes drive {
-    from {
-      transform: translateX(-30vw);
-    }
+  @keyframes hop {
     to {
-      transform: translateX(112vw);
+      translate: 0 9px;
     }
   }
 
-  /* Scale only, never opacity: the title must stay visible even if animations stall. */
-  @keyframes slam {
-    from {
-      scale: 1.1;
-    }
-    to {
-      scale: 1;
-    }
-  }
-
-  @keyframes pop {
-    from {
-      scale: 0.8;
-    }
-    to {
-      scale: 1;
-    }
-  }
-
-  @keyframes nudge {
+  @keyframes boil {
     0%,
-    88%,
     100% {
       translate: 0 0;
     }
-    90% {
-      translate: -2px 0;
+    50% {
+      translate: 0.5px -0.5px;
     }
-    92% {
-      translate: 3px 0;
+  }
+
+  @keyframes slip-a {
+    0%,
+    100% {
+      translate: -5px 1px;
     }
-    94% {
-      translate: -2px 0;
+    23% {
+      translate: 9px -2px;
+    }
+    47% {
+      translate: -3px 2px;
+    }
+    73% {
+      translate: 5px 0;
+    }
+  }
+
+  @keyframes slip-b {
+    0%,
+    100% {
+      translate: 5px -1px;
+    }
+    31% {
+      translate: -8px 2px;
+    }
+    64% {
+      translate: 3px -2px;
     }
   }
 
   @media (max-width: 760px) {
-    .hero {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+    .title {
+      font-size: min(19vw, 14vh);
     }
 
-    .hero__copy {
-      padding-bottom: 0;
+    .hero__tag {
+      margin-left: 6vw;
     }
 
-    .hero__moon {
-      top: auto;
-      bottom: 13%;
-      right: -14%;
-      width: 76vw;
-      box-shadow:
-        7px 0 0 var(--cyan),
-        -7px 0 0 var(--red);
+    .hero__stack {
+      width: 100%;
     }
 
-    .hero__city {
-      height: 34vh;
+    .jump {
+      right: 8%;
+      top: calc(100svh - var(--nav-h) - 110px);
     }
+  }
 
-    .hero__title {
-      font-size: min(28vw, 15vh);
-      text-shadow:
-        4px 4px 0 var(--ink),
-        -2px 0 0 var(--red),
-        5px 1px 0 var(--cyan);
-    }
-
-    .hero__title span {
-      display: inline;
-    }
-
-    .hero__title span:first-child {
-      display: block;
-    }
-
-    .hero__char {
-      justify-self: end;
-      width: min(43vw, 25vh);
-      margin-top: 18px;
-      margin-bottom: 44px;
-    }
-
-    .bubble {
-      left: -92%;
-      top: 6%;
-      width: 88%;
-    }
-
-    .play {
-      box-shadow: 6px 6px 0 var(--red);
+  @media (max-height: 640px) and (min-width: 761px) {
+    .hero__sub {
+      display: none;
     }
   }
 </style>
