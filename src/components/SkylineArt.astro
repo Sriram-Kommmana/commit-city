@@ -1,0 +1,131 @@
+---
+// One lit window is one real commit. Interactive by default; pass decorative for the hero.
+import { skyline, COLS, CELL, GAP, BUILDING_W, rowsFor, heightFor } from '../lib/skyline';
+
+interface Props {
+  decorative?: boolean;
+}
+const { decorative = false } = Astro.props;
+
+const LABEL = decorative ? 0 : 118;
+const repos = skyline.repos;
+const maxH = Math.max(...repos.map((r) => heightFor(r.commits)));
+const width = repos.length * (BUILDING_W + GAP) + GAP;
+const height = maxH + LABEL + 8;
+
+const buildings = repos.map((r, i) => {
+  const h = heightFor(r.commits);
+  const x = GAP + i * (BUILDING_W + GAP);
+  const y = height - h;
+  const rows = rowsFor(r.commits);
+  const windows = Array.from({ length: r.commits }, (_, n) => ({
+    x: x + 4 + (n % COLS) * CELL + 1,
+    y: y + 5 + (rows - 1 - Math.floor(n / COLS)) * CELL,
+    twinkle: (n * 7 + i * 13) % 37 === 0,
+  }));
+  return { ...r, h, x, y, windows };
+});
+const short = (s: string) => (s.length > 18 ? `${s.slice(0, 17)}…` : s);
+---
+
+<svg
+  class:list={['city', { 'city--bg': decorative }]}
+  viewBox={`0 0 ${width} ${height}`}
+  preserveAspectRatio={decorative ? 'xMidYMax slice' : 'xMidYMax meet'}
+  role={decorative ? undefined : 'group'}
+  aria-hidden={decorative ? 'true' : undefined}
+  aria-label={decorative ? undefined : 'Skyline of my public GitHub repositories'}
+>
+  {
+    buildings.map((b) => {
+      const art = (
+        <>
+          <rect class="city__tower" x={b.x} y={b.y} width={BUILDING_W} height={b.h} />
+          {b.windows.map((w) => (
+            <rect
+              class:list={['city__win', { 'city__win--twinkle': w.twinkle }]}
+              x={w.x}
+              y={w.y}
+              width={CELL - 2}
+              height={CELL - 2}
+            />
+          ))}
+          {!decorative && (
+            <text
+              class="city__sign"
+              transform={`translate(${b.x + BUILDING_W / 2 + 4} ${b.y - 6}) rotate(-90)`}
+            >
+              {short(b.name)}
+            </text>
+          )}
+        </>
+      );
+      if (decorative) return <g>{art}</g>;
+      const href = b.slug ? `/projects/${b.slug}/` : b.url;
+      return (
+        <a href={href} class="city__link" aria-label={`${b.name}: ${b.commits} commits`}>
+          <title>{`${b.name}: ${b.commits} commit${b.commits === 1 ? '' : 's'}`}</title>
+          {art}
+        </a>
+      );
+    })
+  }
+</svg>
+
+<style>
+  .city {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .city__tower {
+    fill: var(--ink);
+    stroke: var(--night-2);
+    stroke-width: 1;
+  }
+
+  .city--bg .city__tower {
+    fill: #100d09;
+    stroke: #3a3122;
+  }
+
+  .city__win {
+    fill: var(--yellow);
+  }
+
+  .city--bg .city__win {
+    opacity: 0.8;
+  }
+
+  .city__win--twinkle {
+    animation: twinkle 3.4s steps(1) infinite;
+  }
+
+  .city__sign {
+    fill: var(--paper);
+    font: 500 12px var(--label);
+    letter-spacing: 0.05em;
+  }
+
+  .city__link:hover .city__tower,
+  .city__link:focus-visible .city__tower {
+    fill: var(--red);
+  }
+
+  .city__link:hover .city__sign,
+  .city__link:focus-visible .city__sign {
+    fill: var(--yellow);
+  }
+
+  @keyframes twinkle {
+    0%,
+    70% {
+      opacity: 1;
+    }
+    71%,
+    100% {
+      opacity: 0.2;
+    }
+  }
+</style>

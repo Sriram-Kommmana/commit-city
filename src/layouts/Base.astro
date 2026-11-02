@@ -1,0 +1,107 @@
+---
+import '../styles/global.css';
+import site from '../../content/site.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const home = Astro.url.pathname === '/' ? '' : '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#14110d" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="nav">
+      <a class="nav__brand" href={home || '#top'}>Commit City</a>
+      <nav aria-label="Main">
+        <a href={`${home}#about`}>About</a>
+        <a href={`${home}#skills`}>Skills</a>
+        <a href={`${home}#projects`}>Projects</a>
+        <a href={`${home}#contact`}>Contact</a>
+      </nav>
+      <a class="nav__play" href={`${home}#about`} data-play>▶ Play</a>
+    </header>
+    <slot />
+    <script>
+      import '../game/boot';
+    </script>
+  </body>
+</html>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 3vw, 28px);
+    height: var(--nav-h);
+    padding: 0 var(--gutter);
+    background: var(--ink);
+    border-bottom: 3px solid var(--yellow);
+    font: 500 1.3rem/1 var(--label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nav a {
+    text-decoration: none;
+    padding: 6px 0 2px;
+  }
+
+  .nav nav {
+    display: flex;
+    gap: clamp(10px, 2.6vw, 28px);
+    margin-left: auto;
+  }
+
+  .nav nav a:hover {
+    color: var(--yellow);
+  }
+
+  .nav__brand {
+    color: var(--yellow);
+    font: 400 1.3rem/1 var(--display);
+  }
+
+  .nav .nav__play {
+    padding: 7px 10px 3px;
+    background: var(--yellow);
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  @media (max-width: 560px) {
+    .nav__brand {
+      display: none;
+    }
+
+    .nav {
+      font-size: 1.15rem;
+    }
+
+    .nav nav {
+      margin-left: 0;
+      flex: 1;
+      justify-content: space-between;
+    }
+  }
+</style>

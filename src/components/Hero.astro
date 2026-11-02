@@ -1,0 +1,355 @@
+---
+import site from '../../content/site.json';
+import SkylineArt from './SkylineArt.astro';
+import Character from './Character.astro';
+import Auto from './Auto.astro';
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero__moon" aria-hidden="true"></div>
+  <div class="hero__city"><SkylineArt decorative /></div>
+
+  <div class="hero__copy">
+    <p class="hero__issue">Issue #01 · A playable comic</p>
+    <h1 id="hero-title" class="hero__title"><span>Commit</span> <span>City</span></h1>
+    <p class="hero__who">The portfolio of <strong>{site.name}</strong></p>
+    <div class="hero__cta">
+      <a class="play" href="#about" data-play>
+        <span class="play__tri" aria-hidden="true">▶</span>
+        <span class="play__txt">Play my story<small>3 minutes · works on your phone</small></span>
+      </a>
+      <a class="hero__read" href="#about">or just read the portfolio ↓</a>
+    </div>
+  </div>
+
+  <div class="hero__char">
+    <p class="bubble">{site.bubble}</p>
+    <Character />
+  </div>
+
+  <div class="hero__road" aria-hidden="true">
+    <div class="hero__auto"><Auto /></div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    min-height: calc(100svh - var(--nav-h));
+    padding: clamp(18px, 4vh, 44px) var(--gutter) 0;
+    overflow: clip;
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 76% 34%, #5c4a14 0, transparent 44%),
+      var(--night);
+  }
+
+  .hero__moon {
+    position: absolute;
+    z-index: -2;
+    top: 8%;
+    right: 3%;
+    width: min(50vw, 76vh);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow:
+      12px 0 0 var(--cyan),
+      -12px 0 0 var(--red);
+    mix-blend-mode: normal;
+  }
+
+  .hero__moon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-image: radial-gradient(circle, var(--yellow-deep) 34%, transparent 36%);
+    background-size: 12px 12px;
+    mask-image: linear-gradient(200deg, transparent 40%, #000);
+  }
+
+  .hero__city {
+    position: absolute;
+    z-index: -1;
+    inset: auto 0 clamp(64px, 11vh, 96px) 0;
+    height: min(46vh, 420px);
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18) 0 34%, #000 62%);
+  }
+
+  .hero__copy {
+    position: relative;
+    z-index: 2;
+    align-self: start;
+  }
+
+  .hero__issue {
+    display: inline-block;
+    padding: 3px 10px 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 700 clamp(1.05rem, 2.2vw, 1.35rem) / 1.2 var(--label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-1.2deg);
+  }
+
+  .hero__title {
+    margin-top: 10px;
+    color: var(--yellow);
+    font-size: clamp(5.4rem, min(15.5vw, 29vh), 15.5rem);
+    line-height: 0.92;
+    text-shadow:
+      5px 5px 0 var(--ink),
+      -3px 0 0 var(--red),
+      8px 2px 0 var(--cyan);
+    transform: skewY(-2.5deg);
+    transform-origin: left;
+    animation: slam 0.42s steps(5);
+  }
+
+  .hero__title span {
+    display: block;
+  }
+
+  .hero__who {
+    margin-top: 14px;
+    font: 500 clamp(1.3rem, 2.8vw, 1.9rem) / 1.1 var(--label);
+    letter-spacing: 0.03em;
+  }
+
+  .hero__who strong {
+    color: var(--yellow);
+    font-weight: 700;
+  }
+
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    margin-top: clamp(12px, 2.4vh, 24px);
+  }
+
+  .play {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 22px 8px 14px;
+    background: var(--yellow);
+    color: var(--ink);
+    border: 4px solid var(--ink);
+    outline: 3px solid var(--yellow);
+    font: 400 clamp(1.8rem, 4.4vw, 2.7rem) / 1 var(--display);
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 8px 8px 0 var(--red);
+    transform: rotate(-1.5deg);
+    transition:
+      transform 0.12s steps(2),
+      box-shadow 0.12s steps(2);
+    animation: nudge 3.2s steps(1) infinite;
+  }
+
+  .play:hover {
+    transform: rotate(0) translate(-3px, -3px);
+    box-shadow: 12px 12px 0 var(--red);
+    animation: none;
+  }
+
+  .play:active {
+    transform: translate(4px, 4px);
+    box-shadow: 3px 3px 0 var(--red);
+  }
+
+  .play__tri {
+    display: grid;
+    place-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    padding-left: 0.1em;
+    background: var(--ink);
+    color: var(--yellow);
+    font-size: 0.8em;
+    border-radius: 50%;
+  }
+
+  .play__txt small {
+    display: block;
+    margin-top: 2px;
+    font: 500 clamp(1.02rem, 2vw, 1.25rem) / 1 var(--label);
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .hero__read {
+    font: 500 1.3rem/1.2 var(--label);
+    letter-spacing: 0.02em;
+    text-underline-offset: 3px;
+  }
+
+  .hero__read:hover {
+    color: var(--yellow);
+  }
+
+  .hero__char {
+    position: relative;
+    z-index: 1;
+    align-self: end;
+    justify-self: center;
+    width: min(100%, 44vh);
+    margin-bottom: clamp(22px, 4vh, 42px);
+  }
+
+  .bubble {
+    position: absolute;
+    z-index: 2;
+    left: -30%;
+    top: 3%;
+    width: min(66%, 230px);
+    padding: 12px 16px;
+    background: var(--paper);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 50% 46% 48% 52% / 56% 52% 56% 50%;
+    font: 700 clamp(1rem, 1.9vw, 1.28rem) / 1.2 var(--hand);
+    text-align: center;
+    transform: rotate(-3deg);
+    animation: pop 0.3s 0.5s steps(3);
+  }
+
+  .bubble::after {
+    content: '';
+    position: absolute;
+    right: 14%;
+    bottom: -18px;
+    width: 26px;
+    height: 24px;
+    background: var(--paper);
+    border-right: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+
+  .hero__road {
+    position: absolute;
+    z-index: 3;
+    inset: auto 0 0 0;
+    height: clamp(64px, 11vh, 96px);
+    background:
+      repeating-linear-gradient(90deg, var(--yellow) 0 44px, transparent 44px 92px) 0 72% / 100% 4px no-repeat,
+      var(--ink);
+    border-top: 4px solid var(--yellow);
+  }
+
+  .hero__auto {
+    --spin: running;
+    position: absolute;
+    bottom: 28%;
+    left: 0;
+    width: clamp(112px, 15vw, 190px);
+    animation: drive 15s linear infinite;
+  }
+
+  @keyframes drive {
+    from {
+      transform: translateX(-30vw);
+    }
+    to {
+      transform: translateX(112vw);
+    }
+  }
+
+  /* Scale only, never opacity: the title must stay visible even if animations stall. */
+  @keyframes slam {
+    from {
+      scale: 1.1;
+    }
+    to {
+      scale: 1;
+    }
+  }
+
+  @keyframes pop {
+    from {
+      scale: 0.8;
+    }
+    to {
+      scale: 1;
+    }
+  }
+
+  @keyframes nudge {
+    0%,
+    88%,
+    100% {
+      translate: 0 0;
+    }
+    90% {
+      translate: -2px 0;
+    }
+    92% {
+      translate: 3px 0;
+    }
+    94% {
+      translate: -2px 0;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+    }
+
+    .hero__moon {
+      top: auto;
+      bottom: 13%;
+      right: -14%;
+      width: 76vw;
+      box-shadow:
+        7px 0 0 var(--cyan),
+        -7px 0 0 var(--red);
+    }
+
+    .hero__city {
+      height: 34vh;
+    }
+
+    .hero__title {
+      font-size: min(28vw, 15vh);
+      text-shadow:
+        4px 4px 0 var(--ink),
+        -2px 0 0 var(--red),
+        5px 1px 0 var(--cyan);
+    }
+
+    .hero__title span {
+      display: inline;
+    }
+
+    .hero__title span:first-child {
+      display: block;
+    }
+
+    .hero__char {
+      justify-self: end;
+      width: min(43vw, 25vh);
+      margin-top: 18px;
+      margin-bottom: 44px;
+    }
+
+    .bubble {
+      left: -92%;
+      top: 6%;
+      width: 88%;
+    }
+
+    .play {
+      box-shadow: 6px 6px 0 var(--red);
+    }
+  }
+</style>

@@ -1,0 +1,244 @@
+@import '@fontsource/anton/latin-400.css';
+@import '@fontsource/hind/latin-400.css';
+@import '@fontsource/hind/latin-600.css';
+@import '@fontsource/kalam/latin-700.css';
+@import '@fontsource/teko/latin-500.css';
+@import '@fontsource/teko/latin-700.css';
+
+:root {
+  --ink: #14110d;
+  --night: #1b1712;
+  --night-2: #2a241b;
+  --yellow: #ffc917;
+  --yellow-deep: #e8a800;
+  --paper: #f6eedb;
+  --paper-2: #eadfc4;
+  --red: #e5322d;
+  --cyan: #18b7c9;
+  --display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --label: 'Teko', 'Arial Narrow', sans-serif;
+  --hand: 'Kalam', 'Comic Sans MS', cursive;
+  --body: 'Hind', system-ui, sans-serif;
+  --gutter: clamp(16px, 4vw, 56px);
+  --border: 4px solid var(--ink);
+  --shadow: 7px 7px 0 var(--ink);
+  --nav-h: 52px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--paper);
+  font: 400 1.0625rem/1.6 var(--body);
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: fixed;
+  left: 12px;
+  top: -80px;
+  z-index: 100;
+  padding: 8px 14px;
+  background: var(--yellow);
+  color: var(--ink);
+  font: 700 1.2rem var(--label);
+}
+
+.skip:focus {
+  top: 8px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Comic print dots. --dot sets the colour. */
+.dots {
+  background-image: radial-gradient(circle, var(--dot, var(--ink)) 32%, transparent 34%);
+  background-size: 9px 9px;
+}
+
+/* Narration box, the yellow rectangle at the top of a comic panel. */
+.caption {
+  display: inline-block;
+  padding: 3px 12px 0;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  font: 700 clamp(1.15rem, 2.4vw, 1.5rem) / 1.2 var(--label);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+}
+
+.section-title {
+  margin-top: 16px;
+  font-size: clamp(3rem, 10vw, 7.5rem);
+}
+
+.todo {
+  display: inline;
+  padding: 0 4px;
+  background: repeating-linear-gradient(-45deg, #ffe16a 0 8px, #ffd23b 8px 16px);
+  color: var(--ink);
+  font-weight: 600;
+  outline: 2px dashed var(--red);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px 14px 3px;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 1.3rem/1 var(--label);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.12s steps(2),
+    box-shadow 0.12s steps(2);
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.btn--yellow {
+  background: var(--yellow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+}
+
+/* Shared art: used by the hero and by story mode */
+.hero-char {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(-3px 0 0 var(--red)) drop-shadow(5px 0 0 var(--cyan));
+}
+
+.hero-char__blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 5.5s steps(1) infinite;
+}
+
+.hero-char__phone {
+  animation: glow 2.4s steps(4) infinite alternate;
+}
+
+.hero-char .mood {
+  display: none;
+}
+
+.hero-char[data-mood='smirk'] .mood--smirk,
+.hero-char[data-mood='happy'] .mood--happy,
+.hero-char[data-mood='worried'] .mood--worried,
+.hero-char[data-mood='shocked'] .mood--shocked {
+  display: inline;
+}
+
+@keyframes blink {
+  0%,
+  96% {
+    scale: 1 1;
+  }
+  97%,
+  99% {
+    scale: 1 0.08;
+  }
+}
+
+@keyframes glow {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.auto {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.auto__wheel {
+  animation: spin 0.55s linear infinite;
+  animation-play-state: var(--spin, paused);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

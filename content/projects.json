@@ -1,0 +1,235 @@
+[
+  {
+    "slug": "ipl-auction",
+    "repoName": "ipl-auction-game",
+    "title": "IPL Auction Game",
+    "mission": "auction",
+    "district": "Cricket Ground",
+    "oneLiner": "A live cricket auction game: bid on 323 players with friends, or solo against 9 AI franchises driven by trained reinforcement learning bots.",
+    "stack": [
+      "React",
+      "Vite",
+      "Socket.IO",
+      "Express",
+      "MongoDB",
+      "Caddy",
+      "Reinforcement learning"
+    ],
+    "built": [
+      "A React front end and an Express and Socket.IO server for live bidding",
+      "Purse management, player stats, auction awards and rankings",
+      "Bot opponents, with A2C and OpenAI-ES experiments recorded in the repo",
+      "My own deployment scripts for Ubuntu, Caddy and systemd"
+    ],
+    "broke": [
+      "MongoDB 8 needed a compatibility workaround on the Ubuntu 24.04 kernel.",
+      "Wrong permissions on a temporary staging directory caused 403 errors after deploys."
+    ],
+    "why": "TODO_USER: why did you build this? Is cricket a real love, or was it just a fun build?",
+    "learned": "TODO_USER: the main thing this project taught you.",
+    "repo": "https://github.com/Sriram-Kommmana/ipl-auction-game",
+    "live": "TODO_USER: live game URL, or empty string if there is none"
+  },
+  {
+    "slug": "repomind-ai",
+    "repoName": "repoMindAI",
+    "title": "RepoMind AI",
+    "mission": "drift",
+    "district": "Tech Street",
+    "oneLiner": "Builds a temporal knowledge graph of a Git repository to detect architecture drift and reconstruct the decisions behind the code.",
+    "stack": [
+      "Python",
+      "Neo4j",
+      "Knowledge graphs",
+      "LLMs"
+    ],
+    "built": [
+      "Architecture rules checked against the real dependency graph, with a health score",
+      "Drift over time, rebuilding the architecture at any point in a repo's history",
+      "Reconstructed decision records, generated docs and an ask-the-repo chat that shows its queries",
+      "An evaluation suite: 150 of 150 seeded violations detected across Python, JavaScript and TypeScript fixtures"
+    ],
+    "broke": [
+      "TODO_USER: one true story of what broke in RepoMind."
+    ],
+    "why": "TODO_USER: why did you build this?",
+    "learned": "TODO_USER: the main thing this project taught you.",
+    "repo": "https://github.com/Sriram-Kommmana/repoMindAI",
+    "live": ""
+  },
+  {
+    "slug": "mimic-hunt",
+    "repoName": null,
+    "title": "Mimic Hunt",
+    "mission": "mimic",
+    "district": "The Mansion",
+    "oneLiner": "A 3D multiplayer prop hunt in the browser, where hiders disguise themselves as furniture in a low-poly mansion.",
+    "stack": [
+      "React",
+      "Three.js",
+      "React Three Fiber",
+      "Rapier",
+      "Colyseus"
+    ],
+    "built": [
+      "Private rooms for 2 to 10 players, joined with a code or invite link",
+      "A 60 × 72 m mansion with 11 connected areas, about 320 objects and 35 disguises",
+      "A server-authoritative game, where a Hunter's client never receives hiders it cannot see",
+      "Touch controls for phones: joystick, swipe-to-look and drag-to-aim"
+    ],
+    "broke": [
+      "A reconnect loop leak, a damage stat cap and mismatched models and hitboxes all needed fixing.",
+      "The game gave no readable error when the server was unreachable, until I added one."
+    ],
+    "why": "TODO_USER: why did you build this?",
+    "learned": "TODO_USER: the main thing this project taught you.",
+    "repo": "",
+    "live": ""
+  },
+  {
+    "slug": "clipper",
+    "repoName": "clipper",
+    "title": "Clipper",
+    "mission": "clipper",
+    "district": "Film Market",
+    "oneLiner": "A local AI video clipper that finds and scores short moments in long videos, with no paid API and no cloud.",
+    "stack": [
+      "Python",
+      "faster-whisper",
+      "Ollama",
+      "librosa",
+      "OpenCV",
+      "FFmpeg"
+    ],
+    "built": [
+      "A full pipeline: transcribe, analyse audio and scenes, find moments, score, select, review, export",
+      "A 0 to 100 score that combines model judgements with deterministic length and audio checks",
+      "A browser review screen to preview, approve, reject and edit clips",
+      "166 passing tests, as recorded in the development log"
+    ],
+    "broke": [
+      "My first real video, a 20-minute Hindi and English interview, came back as garbled transcript. Average word confidence was 58%.",
+      "Transcription took 51 minutes on CPU because a GPU DLL was missing. After the fix it took 3.6 minutes.",
+      "Normal speech sat above the excitement threshold, so talking counted as a highlight: 74 false events, then 0 after the fix."
+    ],
+    "why": "TODO_USER: why did you build this?",
+    "learned": "TODO_USER: the main thing this project taught you.",
+    "repo": "https://github.com/Sriram-Kommmana/clipper",
+    "live": ""
+  },
+  {
+    "slug": "solvefx",
+    "repoName": "solveFX",
+    "title": "SolveFX",
+    "mission": "verdict",
+    "district": "The Hostel",
+    "oneLiner": "A Chrome extension that turns LeetCode verdicts into cinematic moments, with a different sound and overlay for each result.",
+    "stack": [
+      "JavaScript",
+      "Chrome Extensions"
+    ],
+    "built": [
+      "Verdict detection on LeetCode submissions",
+      "A different overlay and sound for accepted, wrong answer, time limit, runtime, memory and compile results"
+    ],
+    "broke": [
+      "TODO_USER: one true story of what broke in SolveFX, or remove this line."
+    ],
+    "why": "TODO_USER: why did you build this?",
+    "learned": "TODO_USER: the main thing this project taught you.",
+    "repo": "https://github.com/Sriram-Kommmana/solveFX",
+    "live": ""
+  },
+  {
+    "slug": "image-captions-on-aws",
+    "repoName": "imageCaptionGenerator_usingAWS",
+    "title": "Image Captions on AWS",
+    "mission": null,
+    "district": null,
+    "oneLiner": "Upload a photo and get a caption, through a serverless pipeline on AWS.",
+    "stack": [
+      "Python",
+      "AWS Lambda",
+      "Amazon S3",
+      "Amazon Rekognition",
+      "Amazon Bedrock",
+      "DynamoDB"
+    ],
+    "built": [
+      "A Lambda function that reads labels from Rekognition and asks a Bedrock model for a caption",
+      "Image storage in S3 and captions saved to DynamoDB",
+      "A small Python front end for uploads"
+    ],
+    "broke": [],
+    "why": "",
+    "learned": "",
+    "repo": "https://github.com/Sriram-Kommmana/imageCaptionGenerator_usingAWS",
+    "live": ""
+  },
+  {
+    "slug": "career-pilot",
+    "repoName": "career_pilot",
+    "title": "CareerPilot",
+    "mission": null,
+    "district": null,
+    "oneLiner": "An agentic job-search platform with a transparent matching engine, and it never submits an application without your approval.",
+    "stack": [
+      "Python",
+      "Agents",
+      "State machines"
+    ],
+    "built": [
+      "Job discovery and deterministic scoring against your profile",
+      "Application tracking through an explicit state machine"
+    ],
+    "broke": [],
+    "why": "",
+    "learned": "",
+    "repo": "https://github.com/Sriram-Kommmana/career_pilot",
+    "live": ""
+  },
+  {
+    "slug": "daylyt",
+    "repoName": "daylyt",
+    "title": "Daylyt",
+    "mission": null,
+    "district": null,
+    "oneLiner": "An installable, offline-first tracker for workouts, food, sleep, habits and focus.",
+    "stack": [
+      "TypeScript",
+      "Offline-first"
+    ],
+    "built": [
+      "Tracking for workouts, food, water, sleep, steps, habits, tasks and focus",
+      "A weekly planner, streaks and statistics, with sync so data survives a new phone"
+    ],
+    "broke": [],
+    "why": "",
+    "learned": "",
+    "repo": "https://github.com/Sriram-Kommmana/daylyt",
+    "live": "https://sriram-kommmana.github.io/daylyt/"
+  },
+  {
+    "slug": "digital-twin-rl",
+    "repoName": "digital-twin-rl-manufacturing",
+    "title": "Digital Twin RL",
+    "mission": null,
+    "district": null,
+    "oneLiner": "A research platform that pairs a discrete-event simulation of a shop floor with reinforcement learning for scheduling and energy optimisation.",
+    "stack": [
+      "Python",
+      "Gymnasium",
+      "Reinforcement learning",
+      "Simulation"
+    ],
+    "built": [
+      "A discrete-event digital twin of a manufacturing shop floor",
+      "A Gymnasium-compatible environment for training scheduling agents"
+    ],
+    "broke": [],
+    "why": "",
+    "learned": "",
+    "repo": "https://github.com/Sriram-Kommmana/digital-twin-rl-manufacturing",
+    "live": ""
+  }
+]

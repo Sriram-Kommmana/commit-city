@@ -1,0 +1,36 @@
+<svg class="auto" viewBox="0 0 260 150" role="img" aria-label="A yellow and black auto-rickshaw">
+  <polygon class="auto__beam" points="232,76 420,44 420,128" fill="#ffc917" opacity="0.22"></polygon>
+  <!-- rear wheel arch and chassis -->
+  <path d="M26 108 L34 62 H204 L232 84 Q236 106 216 112 H30 Z" fill="#14110d" stroke="#ffc917" stroke-width="2.5"></path>
+  <!-- yellow body band -->
+  <path d="M33 72 H207 L225 87 V96 H30 Z" fill="#ffc917"></path>
+  <!-- canopy -->
+  <path d="M24 66 Q30 16 76 13 H158 Q196 13 212 54 L218 66 H204 Q190 30 156 29 H60 Q42 30 40 66 Z" fill="#ffc917" stroke="#14110d" stroke-width="3"></path>
+  <path d="M34 22 Q50 9 76 9 H158 Q184 9 200 26 L196 30 Q180 17 156 17 H76 Q54 17 40 28 Z" fill="#14110d"></path>
+  <!-- cabin -->
+  <path d="M42 66 Q44 34 62 33 H154 Q186 34 198 66 Z" fill="#2a241b"></path>
+  <!-- windscreen frame and handlebar -->
+  <path d="M146 33 L158 66" stroke="#ffc917" stroke-width="4"></path>
+  <path d="M176 66 L184 50 L196 50" stroke="#14110d" stroke-width="4" fill="none"></path>
+  <!-- bench -->
+  <rect x="50" y="52" width="58" height="14" fill="#e5322d" stroke="#14110d" stroke-width="2"></rect>
+  <!-- driver -->
+  <path d="M122 66 Q120 48 132 46 Q128 40 130 34 Q136 26 146 31 Q154 36 150 46 Q162 50 166 66 Z" fill="#14110d"></path>
+  <ellipse cx="148" cy="38" rx="2.6" ry="3.6" fill="#f6eedb"></ellipse>
+  <ellipse cx="153" cy="38" rx="2.2" ry="3.4" fill="#f6eedb"></ellipse>
+  <!-- painted slogan -->
+  <text x="124" y="91" text-anchor="middle" font-family="Teko, sans-serif" font-weight="700" font-size="17" letter-spacing="1.4" fill="#14110d">COMMIT OK PLEASE</text>
+  <!-- headlamp -->
+  <circle cx="230" cy="84" r="8" fill="#f6eedb" stroke="#14110d" stroke-width="3"></circle>
+  <!-- wheels -->
+  <g class="auto__wheel" style="transform-origin: 66px 118px">
+    <circle cx="66" cy="118" r="21" fill="#14110d" stroke="#ffc917" stroke-width="2.5"></circle>
+    <circle cx="66" cy="118" r="8" fill="#f6eedb"></circle>
+    <path d="M66 100 V136 M48 118 H84" stroke="#f6eedb" stroke-width="2"></path>
+  </g>
+  <g class="auto__wheel" style="transform-origin: 204px 118px">
+    <circle cx="204" cy="118" r="21" fill="#14110d" stroke="#ffc917" stroke-width="2.5"></circle>
+    <circle cx="204" cy="118" r="8" fill="#f6eedb"></circle>
+    <path d="M204 100 V136 M186 118 H222" stroke="#f6eedb" stroke-width="2"></path>
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+---
+// Renders a content string, and makes any TODO_USER placeholder impossible to miss.
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+
+{text.startsWith('TODO_USER') ? <span class="todo">{text}</span> : text}

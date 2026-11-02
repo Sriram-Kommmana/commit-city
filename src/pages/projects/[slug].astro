@@ -1,0 +1,166 @@
+---
+import Base from '../../layouts/Base.astro';
+import Txt from '../../components/Txt.astro';
+import projects from '../../../content/projects.json';
+import site from '../../../content/site.json';
+import { skyline } from '../../lib/skyline';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const commits = skyline.repos.find((r) => r.name === p.repoName)?.commits;
+const isUrl = (s: string) => s.startsWith('http');
+---
+
+<Base title={`${p.title}: case file | ${site.name}`} description={p.oneLiner}>
+  <main id="main" class="file">
+    <article class="sheet">
+      <p class="caption">Case file{p.district ? ` · ${p.district}` : ''}</p>
+      <h1>{p.title}</h1>
+      <p class="sheet__line">{p.oneLiner}</p>
+
+      <ul class="tags">
+        {p.stack.map((t) => <li>{t}</li>)}
+        {commits ? <li class="tags__count">{commits} commits</li> : null}
+      </ul>
+
+      <div class="sheet__links">
+        {p.repo ? <a class="btn btn--yellow" href={p.repo}>Source on GitHub</a> : <span class="sheet__private">Source not public yet</span>}
+        {isUrl(p.live) ? <a class="btn" href={p.live}>Open it live</a> : p.live ? <Txt text={p.live} /> : null}
+        {p.mission ? <a class="btn" href={`/#${p.slug}`} data-play={p.slug}>▶ Play mission</a> : null}
+      </div>
+
+      {p.why ? <section><h2>Why I built it</h2><p><Txt text={p.why} /></p></section> : null}
+
+      <section>
+        <h2>What I built</h2>
+        <ul>{p.built.map((b) => <li>{b}</li>)}</ul>
+      </section>
+
+      {
+        p.broke.length > 0 && (
+          <section class="broke">
+            <h2>Build failed: what broke</h2>
+            <ul>
+              {p.broke.map((b) => (
+                <li>
+                  <Txt text={b} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {p.learned ? <section><h2>What I learned</h2><p><Txt text={p.learned} /></p></section> : null}
+
+      <p class="sheet__back"><a href="/#projects">← Back to all projects</a></p>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .file {
+    padding: clamp(24px, 6vw, 72px) var(--gutter);
+    background-color: var(--night);
+    background-image: radial-gradient(circle, #2a241b 28%, transparent 30%);
+    background-size: 10px 10px;
+    min-height: 100vh;
+  }
+
+  .sheet {
+    width: min(100%, 880px);
+    margin-inline: auto;
+    padding: clamp(22px, 5vw, 52px);
+    background: var(--paper);
+    color: var(--ink);
+    border: var(--border);
+    box-shadow: 10px 10px 0 var(--yellow);
+  }
+
+  h1 {
+    margin-top: 16px;
+    font-size: clamp(3rem, 10vw, 6rem);
+  }
+
+  .sheet__line {
+    margin-top: 14px;
+    font-size: 1.2rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags li {
+    padding: 3px 8px 0;
+    background: var(--ink);
+    color: var(--paper);
+    font: 500 1.08rem/1.25 var(--label);
+  }
+
+  .tags .tags__count {
+    background: var(--yellow);
+    color: var(--ink);
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+  }
+
+  .sheet__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .sheet__private {
+    font: 700 1.25rem/1 var(--label);
+    color: #7a2a12;
+    text-transform: uppercase;
+  }
+
+  section {
+    margin-top: 32px;
+  }
+
+  h2 {
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+  }
+
+  section p,
+  section ul {
+    margin-top: 10px;
+  }
+
+  section ul {
+    padding-left: 20px;
+  }
+
+  section li + li {
+    margin-top: 6px;
+  }
+
+  .broke {
+    padding: 18px 20px;
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 6px 6px 0 var(--red);
+  }
+
+  .broke h2 {
+    color: var(--red);
+  }
+
+  .sheet__back {
+    margin-top: 34px;
+    font: 500 1.3rem/1 var(--label);
+  }
+</style>

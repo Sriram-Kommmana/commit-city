@@ -1,0 +1,33 @@
+{
+  "intro": [
+    {
+      "caption": "Midnight. Commit City.",
+      "mood": "smirk",
+      "line": "Every lit window out there is a commit I made. Some of them even worked.",
+      "scene": "city"
+    },
+    {
+      "caption": "Then the phone rings.",
+      "mood": "shocked",
+      "line": "Unknown caller? At this hour?",
+      "scene": "call",
+      "caller": "I hear you build things. Show me. Then we talk about a job."
+    },
+    {
+      "caption": "One auto. Five stops. The meter is running.",
+      "mood": "happy",
+      "line": "Fine. Get in. I'll show you what I've built, and what I broke.",
+      "scene": "auto"
+    }
+  ],
+  "mapIdle": "Pick a marker and the auto will take us there.",
+  "mapAfterThree": "That caller again. You can pick the call up on the phone whenever you like.",
+  "ending": {
+    "ring": "Incoming call",
+    "reveal": "Hold on. That number. It's yours.",
+    "caption": "The unknown caller was you, all along.",
+    "line": "You asked me to show you what I've built. So: do we have a job?",
+    "accept": "Accept mission"
+  },
+  "acceptedLine": "Great. Here's how to reach me."
+}

@@ -1,0 +1,174 @@
+{
+  "user": "Sriram-Kommmana",
+  "snapshotDate": "2026-11-02",
+  "repos": [
+    {
+      "name": "ddemowebsite",
+      "url": "https://github.com/Sriram-Kommmana/ddemowebsite",
+      "commits": 2,
+      "language": "Python",
+      "createdAt": "2023-11-16",
+      "slug": null
+    },
+    {
+      "name": "DSACCPP",
+      "url": "https://github.com/Sriram-Kommmana/DSACCPP",
+      "commits": 280,
+      "language": "C++",
+      "createdAt": "2024-02-18",
+      "slug": null
+    },
+    {
+      "name": "CodeSwipe",
+      "url": "https://github.com/Sriram-Kommmana/CodeSwipe",
+      "commits": 3,
+      "language": null,
+      "createdAt": "2024-12-19",
+      "slug": null
+    },
+    {
+      "name": "carpoolingWebApp",
+      "url": "https://github.com/Sriram-Kommmana/carpoolingWebApp",
+      "commits": 11,
+      "language": "TypeScript",
+      "createdAt": "2025-03-24",
+      "slug": null
+    },
+    {
+      "name": "videoStreamingBackend",
+      "url": "https://github.com/Sriram-Kommmana/videoStreamingBackend",
+      "commits": 11,
+      "language": "JavaScript",
+      "createdAt": "2025-03-24",
+      "slug": null
+    },
+    {
+      "name": "Protfolio",
+      "url": "https://github.com/Sriram-Kommmana/Protfolio",
+      "commits": 12,
+      "language": "TypeScript",
+      "createdAt": "2025-06-11",
+      "slug": null
+    },
+    {
+      "name": "courseWallah",
+      "url": "https://github.com/Sriram-Kommmana/courseWallah",
+      "commits": 2,
+      "language": "JavaScript",
+      "createdAt": "2025-07-04",
+      "slug": null
+    },
+    {
+      "name": "imageCaptionGenerator_usingAWS",
+      "url": "https://github.com/Sriram-Kommmana/imageCaptionGenerator_usingAWS",
+      "commits": 5,
+      "language": "Python",
+      "createdAt": "2025-09-20",
+      "slug": "image-captions-on-aws"
+    },
+    {
+      "name": "DAA",
+      "url": "https://github.com/Sriram-Kommmana/DAA",
+      "commits": 3,
+      "language": "C++",
+      "createdAt": "2025-10-23",
+      "slug": null
+    },
+    {
+      "name": "DL",
+      "url": "https://github.com/Sriram-Kommmana/DL",
+      "commits": 23,
+      "language": "Jupyter Notebook",
+      "createdAt": "2026-02-09",
+      "slug": null
+    },
+    {
+      "name": "rag_snlp",
+      "url": "https://github.com/Sriram-Kommmana/rag_snlp",
+      "commits": 1,
+      "language": "Python",
+      "createdAt": "2026-04-01",
+      "slug": null
+    },
+    {
+      "name": "airline-booking-system",
+      "url": "https://github.com/Sriram-Kommmana/airline-booking-system",
+      "commits": 16,
+      "language": "JavaScript",
+      "createdAt": "2026-05-14",
+      "slug": null
+    },
+    {
+      "name": "ipl-auction-game",
+      "url": "https://github.com/Sriram-Kommmana/ipl-auction-game",
+      "commits": 140,
+      "language": "HTML",
+      "createdAt": "2026-06-12",
+      "slug": "ipl-auction"
+    },
+    {
+      "name": "agenticAI",
+      "url": "https://github.com/Sriram-Kommmana/agenticAI",
+      "commits": 2,
+      "language": "Python",
+      "createdAt": "2026-06-13",
+      "slug": null
+    },
+    {
+      "name": "solveFX",
+      "url": "https://github.com/Sriram-Kommmana/solveFX",
+      "commits": 2,
+      "language": "JavaScript",
+      "createdAt": "2026-06-27",
+      "slug": "solvefx"
+    },
+    {
+      "name": "societyMaintenanceTracker",
+      "url": "https://github.com/Sriram-Kommmana/societyMaintenanceTracker",
+      "commits": 5,
+      "language": "JavaScript",
+      "createdAt": "2026-08-24",
+      "slug": null
+    },
+    {
+      "name": "repoMindAI",
+      "url": "https://github.com/Sriram-Kommmana/repoMindAI",
+      "commits": 19,
+      "language": "Python",
+      "createdAt": "2026-09-13",
+      "slug": "repomind-ai"
+    },
+    {
+      "name": "career_pilot",
+      "url": "https://github.com/Sriram-Kommmana/career_pilot",
+      "commits": 8,
+      "language": "Python",
+      "createdAt": "2026-10-12",
+      "slug": "career-pilot"
+    },
+    {
+      "name": "digital-twin-rl-manufacturing",
+      "url": "https://github.com/Sriram-Kommmana/digital-twin-rl-manufacturing",
+      "commits": 1,
+      "language": "Python",
+      "createdAt": "2026-10-16",
+      "slug": "digital-twin-rl"
+    },
+    {
+      "name": "clipper",
+      "url": "https://github.com/Sriram-Kommmana/clipper",
+      "commits": 5,
+      "language": "Python",
+      "createdAt": "2026-10-25",
+      "slug": "clipper"
+    },
+    {
+      "name": "daylyt",
+      "url": "https://github.com/Sriram-Kommmana/daylyt",
+      "commits": 3,
+      "language": "TypeScript",
+      "createdAt": "2026-10-30",
+      "slug": "daylyt"
+    }
+  ]
+}

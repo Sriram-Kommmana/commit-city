@@ -1,0 +1,20 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install 24
+        - nvm use 24
+        - npm ci
+    build:
+      commands:
+        # Set STRICT_CONTENT=1 in the Amplify console before the final deploy.
+        - if [ "$STRICT_CONTENT" = "1" ]; then npm run check:content; fi
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
