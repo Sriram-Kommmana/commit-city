@@ -1,33 +1,106 @@
 {
-  "order": ["solvefx", "ipl-auction", "repomind-ai", "clipper", "mimic-hunt"],
+  "order": [
+    "solvefx",
+    "ipl-auction",
+    "repomind-ai",
+    "clipper",
+    "mimic-hunt"
+  ],
   "stops": {
-    "solvefx": { "title": "Stop 1: The Hostel", "fare": 2, "at": 0.03, "say": "The hostel. 2 AM. This is where LeetCode verdicts started to need a soundtrack." },
-    "ipl-auction": { "title": "Stop 2: Cricket Ground", "fare": 140, "at": 0.23, "say": "The tallest thing I've shipped: 140 commits of auction chaos." },
-    "repomind-ai": { "title": "Stop 3: Tech Street", "fare": 19, "at": 0.43, "say": "Codebases rot slowly. This one catches the moment it starts." },
-    "clipper": { "title": "Stop 4: Film Market", "fare": 5, "at": 0.62, "say": "A video clipper that runs on my own laptop, once it stopped lying to me." },
-    "mimic-hunt": { "title": "Stop 5: The Mansion", "fare": 11, "at": 0.82, "say": "Careful in here. The furniture might be a person." }
+    "solvefx": {
+      "title": "Stop 1: The Hostel",
+      "fare": 2,
+      "at": 0.03,
+      "say": "The hostel. 2 AM. This is where LeetCode verdicts started to need a soundtrack."
+    },
+    "ipl-auction": {
+      "title": "Stop 2: Cricket Ground",
+      "fare": 140,
+      "at": 0.23,
+      "say": "The tallest thing I've shipped: 140 commits of auction chaos."
+    },
+    "repomind-ai": {
+      "title": "Stop 3: Tech Street",
+      "fare": 19,
+      "at": 0.43,
+      "say": "Codebases rot slowly. This one catches the moment it starts."
+    },
+    "clipper": {
+      "title": "Stop 4: Film Market",
+      "fare": 5,
+      "at": 0.62,
+      "say": "A video clipper that runs on my own laptop, once it stopped lying to me."
+    },
+    "mimic-hunt": {
+      "title": "Stop 5: The Mansion",
+      "fare": 11,
+      "at": 0.82,
+      "say": "Careful in here. The furniture might be a person."
+    }
   },
   "verdict": {
     "brief": "It's 2 AM, and it's Two Sum. Pick a solution and press Submit.",
     "solutions": [
-      { "label": "Two loops", "code": "for i in range(n):\n  for j in range(i + 1, n):\n    if a[i] + a[j] == t:\n      return [i, j]", "verdict": "tle" },
-      { "label": "Sort first", "code": "a.sort()\ni, j = 0, n - 1\nwhile a[i] + a[j] != t:\n  i, j = next(i, j)\nreturn [i, j]", "verdict": "wrong" },
-      { "label": "Hash map", "code": "seen = {}\nfor i, x in enumerate(a):\n  if t - x in seen:\n    return [seen[t - x], i]\n  seen[x] = i", "verdict": "accepted" }
+      {
+        "label": "Two loops",
+        "code": "for i in range(n):\n  for j in range(i + 1, n):\n    if a[i] + a[j] == t:\n      return [i, j]",
+        "verdict": "tle"
+      },
+      {
+        "label": "Sort first",
+        "code": "a.sort()\ni, j = 0, n - 1\nwhile a[i] + a[j] != t:\n  i, j = next(i, j)\nreturn [i, j]",
+        "verdict": "wrong"
+      },
+      {
+        "label": "Hash map",
+        "code": "seen = {}\nfor i, x in enumerate(a):\n  if t - x in seen:\n    return [seen[t - x], i]\n  seen[x] = i",
+        "verdict": "accepted"
+      }
     ],
     "results": {
-      "tle": { "title": "Time limit exceeded", "body": "SolveFX gives this one a fake system shutdown. Try another." },
-      "wrong": { "title": "Wrong answer", "body": "Sorting loses the original indexes. SolveFX has a special screen for moments like this. Try another." },
-      "accepted": { "title": "Accepted", "body": "Every verdict gets its own overlay and sound. That's the entire extension, and I'm very proud of it." }
+      "tle": {
+        "title": "Time limit exceeded",
+        "body": "SolveFX gives this one a fake system shutdown. Try another."
+      },
+      "wrong": {
+        "title": "Wrong answer",
+        "body": "Sorting loses the original indexes. SolveFX has a special screen for moments like this. Try another."
+      },
+      "accepted": {
+        "title": "Accepted",
+        "body": "Every verdict gets its own overlay and sound. That's the entire extension, and I'm very proud of it."
+      }
     }
   },
   "auction": {
     "brief": "You're bidding for me. Three rival franchises want me too, and you have 20 seconds.",
-    "lot": { "name": "Sriram Kommana", "role": "All-rounder (code)", "stats": [["Commits", "554"], ["Public repos", "21"], ["Longest build", "140"]] },
+    "lot": {
+      "name": "Kommana Sriram",
+      "role": "All-rounder (code)",
+      "stats": [
+        [
+          "Commits",
+          "554"
+        ],
+        [
+          "Public repos",
+          "21"
+        ],
+        [
+          "Longest build",
+          "140"
+        ]
+      ]
+    },
     "purse": 20,
     "start": 2,
     "step": 1,
     "seconds": 20,
-    "rivals": ["Null Pointers", "Merge Conflicts", "Segfault Strikers"],
+    "rivals": [
+      "Null Pointers",
+      "Merge Conflicts",
+      "Segfault Strikers"
+    ],
     "rivalLimit": 12,
     "won": "Sold to you! The real game has 323 players, and 9 AI franchises that bid much better than these three.",
     "lost": "Sold to the rivals. Don't worry, the real game lets you try again against 9 AI franchises."
@@ -35,11 +108,47 @@
   "drift": {
     "brief": "This is RepoMind's real output on its ShopWise demo repo. Drag through the history, then stop at the commit where the architecture first broke.",
     "points": [
-      { "date": "20 Mar", "commit": "Email a receipt after payment", "health": 100, "bad": [] },
-      { "date": "27 Mar", "commit": "Hotfix: sales report for finance", "health": 92.6, "bad": ["sales"], "note": "The sales report reads the order repository directly." },
-      { "date": "3 Apr", "commit": "Move the sales report into ReportService", "health": 100, "bad": [], "note": "Fixed a week later. Health is back to 100." },
-      { "date": "17 Apr", "commit": "Live stock level on the product page", "health": 93.7, "bad": ["products"], "note": "A router calls a repository again." },
-      { "date": "8 May", "commit": "Admin endpoint listing all users", "health": 89, "bad": ["products", "users"], "note": "Two violations are still in the code today." }
+      {
+        "date": "20 Mar",
+        "commit": "Email a receipt after payment",
+        "health": 100,
+        "bad": []
+      },
+      {
+        "date": "27 Mar",
+        "commit": "Hotfix: sales report for finance",
+        "health": 92.6,
+        "bad": [
+          "sales"
+        ],
+        "note": "The sales report reads the order repository directly."
+      },
+      {
+        "date": "3 Apr",
+        "commit": "Move the sales report into ReportService",
+        "health": 100,
+        "bad": [],
+        "note": "Fixed a week later. Health is back to 100."
+      },
+      {
+        "date": "17 Apr",
+        "commit": "Live stock level on the product page",
+        "health": 93.7,
+        "bad": [
+          "products"
+        ],
+        "note": "A router calls a repository again."
+      },
+      {
+        "date": "8 May",
+        "commit": "Admin endpoint listing all users",
+        "health": 89,
+        "bad": [
+          "products",
+          "users"
+        ],
+        "note": "Two violations are still in the code today."
+      }
     ],
     "answer": 1,
     "right": "That's it: a rushed hotfix, a skipped layer. RepoMind found the same commit from the graph.",
@@ -49,22 +158,143 @@
     "brief": "Clipper scored 8 moments in a real 20-minute interview. Pick the one you think scored highest.",
     "durationSec": 1243,
     "moments": [
-      { "start": 51, "end": 67, "score": 33, "title": "A Disturbing Realization" },
-      { "start": 134, "end": 156, "score": 40.9, "title": "A Miscommunication About Music" },
-      { "start": 480, "end": 503, "score": 53.5, "title": "A Clever Plan" },
-      { "start": 534, "end": 554, "score": 24.2, "title": "A Misunderstanding About Cricket" },
-      { "start": 659, "end": 689, "score": 40.7, "title": "The Diet and Nutrition" },
-      { "start": 896, "end": 941, "score": 40.4, "title": "The Training and Recovery" },
-      { "start": 1038, "end": 1062, "score": 38.5, "title": "Untitled (garbled)" },
-      { "start": 1198, "end": 1229, "score": 38.6, "title": "Untitled (garbled)" }
+      {
+        "start": 51,
+        "end": 67,
+        "score": 33,
+        "title": "A Disturbing Realization"
+      },
+      {
+        "start": 134,
+        "end": 156,
+        "score": 40.9,
+        "title": "A Miscommunication About Music"
+      },
+      {
+        "start": 480,
+        "end": 503,
+        "score": 53.5,
+        "title": "A Clever Plan"
+      },
+      {
+        "start": 534,
+        "end": 554,
+        "score": 24.2,
+        "title": "A Misunderstanding About Cricket"
+      },
+      {
+        "start": 659,
+        "end": 689,
+        "score": 40.7,
+        "title": "The Diet and Nutrition"
+      },
+      {
+        "start": 896,
+        "end": 941,
+        "score": 40.4,
+        "title": "The Training and Recovery"
+      },
+      {
+        "start": 1038,
+        "end": 1062,
+        "score": 38.5,
+        "title": "Untitled (garbled)"
+      },
+      {
+        "start": 1198,
+        "end": 1229,
+        "score": 38.6,
+        "title": "Untitled (garbled)"
+      }
     ],
     "reveal": "The model called a friendly cricket chat \"A Disturbing Realization\". The transcript was so garbled that the scores couldn't be trusted, so this run counts as a failure. Better transcription lifted word confidence from 58% to 78%. No one has yet judged the clips by watching them."
   },
   "mimic": {
     "brief": "I'm hiding in this room, disguised as furniture. You have 3 shots. Watch for something that blinks.",
     "shots": 3,
-    "misses": ["That's just a chair.", "A real plant. Sorry, plant.", "In the real game, shooting a decoy costs you double."],
+    "misses": [
+      "That's just a chair.",
+      "A real plant. Sorry, plant.",
+      "In the real game, shooting a decoy costs you double."
+    ],
     "found": "Found me! In the real game a whole mansion hides players like this, and the server never tells a Hunter where a hider is unless they could see them.",
     "lost": "Out of shots. I was the lamp all along. Hunters lose a lot of rounds like this one."
+  },
+  "challenges": {
+    "solvefx": {
+      "brief": "It's 2 AM and my Two Sum is on trial. Drive through all three test cases, in order, before the time limit.",
+      "seconds": 25,
+      "tests": [
+        [
+          "Test 1",
+          "[2, 7, 11, 15]  target 9"
+        ],
+        [
+          "Test 2",
+          "[3, 2, 4]  target 6"
+        ],
+        [
+          "Test 3",
+          "[3, 3]  target 6"
+        ]
+      ],
+      "goal": "Test {n} of 3",
+      "hint": "Follow the arrow. A wall is a wrong answer.",
+      "ok": "PASSED!",
+      "crash": "WRONG ANSWER!",
+      "pass": "ACCEPTED!",
+      "tle": "TIME LIMIT!",
+      "won": "Accepted in {time} seconds. SolveFX gives every verdict its own overlay and sound, so the whole hostel hears about it.",
+      "lost": "Time limit exceeded. SolveFX answers this verdict with a fake system shutdown."
+    },
+    "ipl-auction": {
+      "brief": "You're bidding for me against three rival franchises. Drive through the paddles to raise your bid. The hammer falls in 25 seconds.",
+      "seconds": 25,
+      "rivalLimit": 8,
+      "youLead": "You lead the bidding",
+      "theyLead": "{team} lead",
+      "bid": "BID!",
+      "outbid": "OUTBID!",
+      "sold": "SOLD!"
+    },
+    "repomind-ai": {
+      "brief": "A rushed hotfix just let the sales report skip a layer. That's architecture drift, and it's getting away. Catch it.",
+      "seconds": 30,
+      "label": "DRIFT",
+      "labelSmall": "sales report skips a layer",
+      "health": "Health 92.6",
+      "commit": "27 Mar · Hotfix: sales report for finance",
+      "speed": 22,
+      "fast": 27,
+      "slow": 12,
+      "caught": "CAUGHT IT!",
+      "away": "IT GOT AWAY!",
+      "won": "Caught on 27 Mar: the sales report read the order repository directly. RepoMind flags the same commit from its graph.",
+      "lost": "It got away. In the real demo repo the drift came back, and two violations are still in the code today."
+    },
+    "clipper": {
+      "brief": "Clipper scored moments in a real 20-minute interview. Three roads, three moments. Drive down the one you think scored highest.",
+      "picks": [
+        1,
+        2,
+        0
+      ],
+      "goal": "Pick a road",
+      "hint": "Each road is one moment Clipper found.",
+      "cut": "CUT!",
+      "won": "You matched the model.",
+      "missed": "You picked {score}. The model's top score was {best}.",
+      "reveal": "The twist: it called a friendly cricket chat “A Disturbing Realization”. The transcript was too garbled to trust, so this run counts as a failure."
+    },
+    "mimic-hunt": {
+      "brief": "The mansion's furniture is out on the street, and one piece of it is me. Ram the one that blinks. You have 3 shots.",
+      "shots": 3,
+      "goal": "Shots: {n}",
+      "hint": "Watch for a blink.",
+      "decoy": "DECOY!",
+      "found": "FOUND YOU!",
+      "out": "OUT OF SHOTS!",
+      "lost": "Out of shots. I was the {prop} all along. Hunters lose a lot of rounds like this one."
+    }
   }
 }

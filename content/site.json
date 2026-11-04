@@ -1,60 +1,217 @@
 {
-  "name": "Sriram Kommana",
+  "name": "Kommana Sriram",
   "shortName": "Sriram",
-  "title": "Commit City: a playable comic by Sriram Kommana",
-  "description": "The portfolio of Sriram Kommana, a student developer who builds multiplayer games, AI tools and developer tools. Read it, or ride through it as a 3-minute playable comic.",
+  "title": "Commit City: a playable comic by Kommana Sriram",
+  "description": "The portfolio of Kommana Sriram, a final-year computer science student who builds multiplayer games, AI tools and developer tools. Read it, or ride through it as a 3-minute playable comic.",
   "bubble": "I build things, break them, and keep the receipts.",
   "about": {
     "caption": "Who's driving?",
     "lead": "I'm Sriram. I build things people can play with, and tools that are honest about how they work.",
     "paragraphs": [
       "So far that has meant a live cricket auction game, a 3D multiplayer prop hunt, a tool that tracks how a codebase's architecture drifts over time, and a video clipper that runs entirely on my own laptop.",
-      "TODO_USER: your degree, year and college, in one or two sentences.",
-      "TODO_USER: your home city and college town, and what you do outside code.",
-      "TODO_USER: what you want to work on next."
+      "I'm in my fourth year of a B.Tech in Computer Science and Engineering, specialising in AI and machine learning, at VIT Chennai. I graduate in 2027.",
+      "I'm from Berhampur and study in Chennai. Outside code I'm into cricket, gaming, video editing and creative design, and I like taking random ideas and seeing whether I can turn them into something that actually works.",
+      "Next, I want to work on hard problems in AI and machine learning, agentic systems, back ends and distributed systems, and build products where AI is genuinely useful, not added for the sake of it. I also want to get better at system design and at building things that are ready for production."
     ]
   },
   "skills": [
-    { "group": "Languages", "items": [
-      { "name": "Python", "proof": "repomind-ai" },
-      { "name": "TypeScript", "proof": "daylyt" },
-      { "name": "JavaScript", "proof": "ipl-auction" }
-    ] },
-    { "group": "Front end and 3D", "items": [
-      { "name": "React", "proof": "ipl-auction" },
-      { "name": "Three.js", "proof": "mimic-hunt" },
-      { "name": "React Three Fiber", "proof": "mimic-hunt" },
-      { "name": "Chrome extensions", "proof": "solvefx" }
-    ] },
-    { "group": "Real-time and back end", "items": [
-      { "name": "Socket.IO", "proof": "ipl-auction" },
-      { "name": "Colyseus", "proof": "mimic-hunt" },
-      { "name": "Express", "proof": "ipl-auction" },
-      { "name": "MongoDB", "proof": "ipl-auction" },
-      { "name": "Neo4j", "proof": "repomind-ai" }
-    ] },
-    { "group": "AI and data", "items": [
-      { "name": "Local LLMs with Ollama", "proof": "clipper" },
-      { "name": "faster-whisper", "proof": "clipper" },
-      { "name": "Reinforcement learning", "proof": "digital-twin-rl" },
-      { "name": "Knowledge graphs", "proof": "repomind-ai" }
-    ] },
-    { "group": "Cloud and shipping", "items": [
-      { "name": "AWS Lambda", "proof": "image-captions-on-aws" },
-      { "name": "Amazon Bedrock", "proof": "image-captions-on-aws" },
-      { "name": "Amazon Rekognition", "proof": "image-captions-on-aws" },
-      { "name": "DynamoDB", "proof": "image-captions-on-aws" },
-      { "name": "Linux, Caddy and systemd", "proof": "ipl-auction" },
-      { "name": "FFmpeg", "proof": "clipper" }
-    ] }
+    {
+      "group": "Languages",
+      "items": [
+        {
+          "name": "Python",
+          "proof": "repomind-ai"
+        },
+        {
+          "name": "JavaScript",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "TypeScript",
+          "proof": "daylyt"
+        },
+        {
+          "name": "C++",
+          "repo": "DSACCPP"
+        },
+        {
+          "name": "Java"
+        },
+        {
+          "name": "HTML and CSS",
+          "proof": "solvefx"
+        }
+      ]
+    },
+    {
+      "group": "Front end and 3D",
+      "items": [
+        {
+          "name": "React",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "Vite",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "Three.js",
+          "proof": "mimic-hunt"
+        },
+        {
+          "name": "React Three Fiber",
+          "proof": "mimic-hunt"
+        },
+        {
+          "name": "Chrome extensions",
+          "proof": "solvefx"
+        }
+      ]
+    },
+    {
+      "group": "Back end and real-time",
+      "items": [
+        {
+          "name": "Node.js",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "Express",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "REST APIs",
+          "repo": "airline-booking-system"
+        },
+        {
+          "name": "Socket.IO",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "Colyseus",
+          "proof": "mimic-hunt"
+        }
+      ]
+    },
+    {
+      "group": "Databases",
+      "items": [
+        {
+          "name": "MongoDB",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "Redis",
+          "proof": "ipl-auction"
+        },
+        {
+          "name": "SQL (MySQL)",
+          "repo": "airline-booking-system"
+        },
+        {
+          "name": "Neo4j",
+          "proof": "repomind-ai"
+        }
+      ]
+    },
+    {
+      "group": "AI and data",
+      "items": [
+        {
+          "name": "Local LLMs with Ollama",
+          "proof": "clipper"
+        },
+        {
+          "name": "faster-whisper",
+          "proof": "clipper"
+        },
+        {
+          "name": "Reinforcement learning",
+          "proof": "digital-twin-rl"
+        },
+        {
+          "name": "Knowledge graphs",
+          "proof": "repomind-ai"
+        },
+        {
+          "name": "FFmpeg",
+          "proof": "clipper"
+        }
+      ]
+    },
+    {
+      "group": "Cloud and shipping",
+      "items": [
+        {
+          "name": "AWS Lambda",
+          "proof": "image-captions-on-aws"
+        },
+        {
+          "name": "Amazon S3",
+          "proof": "image-captions-on-aws"
+        },
+        {
+          "name": "Amazon Rekognition",
+          "proof": "image-captions-on-aws"
+        },
+        {
+          "name": "Amazon Bedrock",
+          "proof": "image-captions-on-aws"
+        },
+        {
+          "name": "DynamoDB",
+          "proof": "image-captions-on-aws"
+        },
+        {
+          "name": "EC2, IAM and VPC"
+        },
+        {
+          "name": "Linux and systemd",
+          "proof": "ipl-auction"
+        }
+      ]
+    },
+    {
+      "group": "Tools",
+      "items": [
+        {
+          "name": "Git and GitHub",
+          "repo": "__profile"
+        },
+        {
+          "name": "Postman"
+        },
+        {
+          "name": "VS Code"
+        }
+      ]
+    },
+    {
+      "group": "Core CS",
+      "items": [
+        {
+          "name": "Data structures and algorithms",
+          "repo": "DSACCPP"
+        },
+        {
+          "name": "Object-oriented programming"
+        },
+        {
+          "name": "DBMS"
+        },
+        {
+          "name": "Operating systems"
+        },
+        {
+          "name": "Computer networks"
+        }
+      ]
+    }
   ],
-  "failure": {
-    "title": "My favourite failure",
-    "body": "TODO_USER: one real failure you are happy to show publicly, in your own words."
-  },
   "contact": {
     "github": "https://github.com/Sriram-Kommmana",
-    "email": "TODO_USER: the public email you want shown",
-    "linkedin": "TODO_USER: your LinkedIn URL"
+    "email": "kommanasriram735@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/sriram-kommana-4bb29028b",
+    "lookingFor": "I'm looking for internships and full-time roles."
   }
 }

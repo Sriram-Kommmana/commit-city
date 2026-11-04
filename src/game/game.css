@@ -146,6 +146,34 @@ body:not(:has(.world)) .game {
   transform: rotate(-3deg);
 }
 
+/* The live city stands in for the painted backgrounds. */
+.game.is-live:has(.g-panel) {
+  background: none;
+}
+
+/* Dims everything outside the frame, so the panel reads as a window onto the city. */
+.is-live .g-panel__art {
+  background: none;
+  box-shadow: 9px 9px 0 var(--pink), 18px 18px 0 var(--ink), 0 0 0 200vmax rgb(14 6 34 / 0.68);
+}
+
+.is-live .g-panel .caption,
+.is-live .g-panel .g-next,
+.is-live .g-end__fare {
+  position: relative;
+  z-index: 1;
+}
+
+.is-live .g-hud {
+  position: relative;
+  z-index: 2;
+}
+
+.is-live .g-panel__moon,
+.is-live .g-panel__auto {
+  display: none;
+}
+
 /* Comic panels */
 .g-panel {
   display: flex;
@@ -194,8 +222,8 @@ body:not(:has(.world)) .game {
 .g-panel__char {
   position: absolute;
   right: 4%;
-  bottom: -30%;
-  width: min(44vw, 34vh, 300px);
+  bottom: -26%;
+  width: min(62vw, 48vh, 420px);
 }
 
 .g-bubble {
@@ -395,6 +423,287 @@ body:not(:has(.world)) .game {
 .g-map__progress {
   font: 500 1.3rem/1 var(--label);
   letter-spacing: 0.02em;
+}
+
+/* The drive: the city shows through, and the controls sit around the edge. */
+.game.is-driving {
+  background: none;
+}
+
+.game.is-driving .g-screen {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.g-drive {
+  position: relative;
+  height: 100%;
+}
+
+.g-drive > * {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.g-drive__next {
+  top: 0;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px 6px 8px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: translateX(-50%) skewX(-6deg);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.g-drive__next i {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  background: var(--ink);
+  color: var(--yellow);
+  border-radius: 50%;
+  font: normal 1.25rem/1 sans-serif;
+}
+
+.g-drive__next[hidden],
+.g-drive__next i[hidden] {
+  display: none;
+}
+
+.g-drive__next b {
+  display: block;
+  font: 400 1.6rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.g-drive__next small {
+  display: block;
+  font: 600 1rem/1.1 var(--label);
+}
+
+.g-drive__say {
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: min(30vw, 370px);
+  pointer-events: none;
+}
+
+.g-drive__say img {
+  flex: none;
+  width: 84px;
+  padding: 5px 3px 0;
+  background: radial-gradient(circle, #c4135f 30%, transparent 32%) 0 0 / 7px 7px, var(--pink);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.g-drive__say .g-bubble {
+  margin: 0;
+  width: auto;
+  padding: 10px 14px;
+  font-size: 1.02rem;
+}
+
+.g-drive__say.is-quiet .g-bubble {
+  display: none;
+}
+
+.g-drive__stops {
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 196px;
+}
+
+.g-drive__stops h2 {
+  align-self: flex-start;
+  margin: 0;
+  padding: 3px 9px 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  font: 600 1.05rem/1.1 var(--label);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.g-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 400 1.14rem/1 var(--display);
+  letter-spacing: 0.02em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.g-stop i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  font-style: normal;
+}
+
+.g-stop.is-done {
+  background: #14082f;
+  color: var(--paper);
+}
+
+.g-stop.is-done i {
+  background: #14082f;
+  color: #7dff5e;
+  border-color: #7dff5e;
+}
+
+.g-stop:hover,
+.g-stop:focus-visible {
+  background: var(--cyan);
+  color: var(--ink);
+  outline: none;
+}
+
+.g-radar {
+  left: 0;
+  bottom: 0;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  outline: 3px solid var(--yellow);
+  pointer-events: none;
+}
+
+.g-drive__hint {
+  left: 50%;
+  bottom: 0;
+  margin: 0;
+  padding: 6px 14px 4px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 1.2rem/1.1 var(--label);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.g-drive__hint b {
+  color: var(--yellow);
+  font-weight: 700;
+}
+
+.g-drive__hint[hidden] {
+  display: none;
+}
+
+/* Touch controls only appear on touch screens. */
+.g-pad {
+  display: none;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.g-pad div {
+  display: flex;
+  gap: 10px;
+}
+
+.g-pad button {
+  width: 72px;
+  height: 72px;
+  background: rgb(255 244 214 / 0.92);
+  color: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--ink);
+  font: 400 1.3rem/1 var(--display);
+  text-transform: uppercase;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.g-pad .g-pad__go {
+  background: var(--yellow);
+}
+
+.g-pad button.is-held {
+  background: var(--pink);
+  color: var(--paper);
+  translate: 2px 2px;
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+@media (pointer: coarse) {
+  .g-pad {
+    display: flex;
+  }
+
+  .g-drive__hint {
+    display: none;
+  }
+
+  .g-radar {
+    bottom: 92px;
+  }
+}
+
+.g-word {
+  position: fixed;
+  z-index: 220;
+  color: var(--yellow);
+  font: 400 clamp(2.6rem, 7vw, 5.6rem) / 1 var(--display);
+  letter-spacing: 0.02em;
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke;
+  text-shadow: 5px 5px 0 var(--pink), 9px 9px 0 var(--ink);
+  pointer-events: none;
+  animation: g-word 0.8s steps(8) forwards;
+}
+
+@keyframes g-word {
+  0% {
+    opacity: 0;
+    scale: 2.2;
+  }
+  18% {
+    opacity: 1;
+    scale: 1;
+  }
+  75% {
+    opacity: 1;
+    scale: 1.06;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.14;
+  }
 }
 
 /* Missions */
@@ -868,7 +1177,13 @@ body:not(:has(.world)) .game {
 
 .g-stamp p {
   max-width: 34em;
+  margin-top: 30px;
+  padding: 10px 16px 8px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 3px solid var(--yellow);
   font: 700 1.2rem/1.35 var(--hand);
+  rotate: 1deg;
 }
 
 /* Case card */
@@ -1143,6 +1458,78 @@ body:not(:has(.world)) .game {
     grid-column: 1 / -1;
   }
 
+  /* On a phone the stops become a strip of chips, with the arrow under them. */
+  .g-drive__stops {
+    left: 0;
+    width: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .g-drive__stops h2 {
+    display: none;
+  }
+
+  .g-stop {
+    flex: none;
+    padding: 2px 8px 2px 2px;
+    font-size: 0.98rem;
+  }
+
+  .g-stop i {
+    width: 25px;
+    height: 25px;
+  }
+
+  .g-drive__stops .btn {
+    flex: none;
+    padding: 2px 10px;
+    font-size: 1rem;
+  }
+
+  .g-drive__next {
+    top: 44px;
+    left: auto;
+    right: 0;
+    padding: 3px 10px 3px 4px;
+    transform: skewX(-6deg);
+  }
+
+  .g-drive__next i {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .g-drive__next b {
+    font-size: 1.1rem;
+  }
+
+  .g-drive__next small {
+    font-size: 0.85rem;
+  }
+
+  .g-drive__say {
+    top: 98px;
+    width: min(76vw, 300px);
+  }
+
+  .g-drive__say img {
+    width: 50px;
+  }
+
+  .g-drive__say .g-bubble {
+    padding: 6px 10px;
+    font-size: 0.86rem;
+  }
+
+  .g-radar {
+    width: 112px;
+    height: 112px;
+  }
+
   .g-panel__char {
     bottom: -18%;
   }
@@ -1165,5 +1552,188 @@ body:not(:has(.world)) .game {
 
   .g-meter span {
     grid-row: auto;
+  }
+}
+
+/* --- A stop's challenge, played at the wheel --- */
+.g-task {
+  top: 0;
+  right: 0;
+  display: grid;
+  gap: 2px;
+  width: 230px;
+  padding: 8px 12px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: rotate(1deg);
+}
+
+.g-task__title {
+  margin: 0;
+  font: 600 0.95rem/1.1 var(--label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.g-task b {
+  font: 400 2.3rem/1 var(--display);
+  text-transform: uppercase;
+}
+
+.g-task small {
+  min-height: 1.2em;
+  font: 600 1rem/1.15 var(--label);
+}
+
+.g-task__clock {
+  position: relative;
+  display: block;
+  height: 16px;
+  margin-top: 4px;
+  background: var(--ink);
+}
+
+.g-task__clock[hidden] {
+  display: none;
+}
+
+.g-task__clock span {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+}
+
+.g-task__clock::after {
+  content: attr(data-left);
+  position: absolute;
+  inset: 0 6px;
+  color: var(--paper);
+  font: 600 0.9rem/16px var(--label);
+  text-align: right;
+  mix-blend-mode: difference;
+}
+
+.g-task__clock.is-low span {
+  background: var(--pink);
+  animation: g-low 0.5s steps(1) infinite;
+}
+
+@keyframes g-low {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.g-task .g-skip {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.g-brief {
+  top: 50%;
+  left: 50%;
+  display: none;
+  width: min(92%, 520px);
+  padding: 16px 20px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 5px solid var(--ink);
+  box-shadow: 9px 9px 0 var(--pink), 16px 16px 0 var(--ink);
+  transform: translate(-50%, -50%) rotate(-1deg);
+}
+
+.g-brief h2 {
+  margin: 4px 0 10px;
+  font: 400 clamp(2rem, 5vw, 2.8rem) / 1 var(--display);
+  text-transform: uppercase;
+}
+
+.g-brief__say {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.g-brief__say img {
+  flex: none;
+  width: 76px;
+  padding: 5px 3px 0;
+  background: radial-gradient(circle, #c4135f 30%, transparent 32%) 0 0 / 7px 7px, var(--pink);
+  border: 3px solid var(--ink);
+}
+
+.g-brief__say .g-bubble {
+  margin: 0;
+  width: auto;
+  font-size: 1.08rem;
+}
+
+.g-brief__keys {
+  margin: 12px 0 0;
+  font: 500 1.05rem/1.2 var(--label);
+}
+
+.g-brief .g-next {
+  margin-top: 12px;
+}
+
+/* While the brief is up, it's the only thing on screen. */
+.g-drive--task.is-briefing > * {
+  display: none;
+}
+
+.g-drive--task.is-briefing > .g-brief {
+  display: block;
+}
+
+.g-drive--task.is-over > * {
+  display: none;
+}
+
+.g-word--long {
+  translate: -50% 0;
+  white-space: nowrap;
+  font-size: clamp(2rem, 6.4vw, 5rem);
+}
+
+@media (pointer: coarse) {
+  .g-brief__keys {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .g-task {
+    top: 44px;
+    width: 172px;
+    padding: 5px 9px 7px;
+  }
+
+  .g-task b {
+    font-size: 1.6rem;
+  }
+
+  .g-task small {
+    font-size: 0.85rem;
+  }
+
+  .g-drive--task .g-drive__next {
+    top: 0;
+    left: 0;
+    right: auto;
+  }
+
+  .g-brief {
+    padding: 12px 14px 14px;
+  }
+
+  .g-brief__say img {
+    width: 52px;
+  }
+
+  .g-brief__say .g-bubble {
+    font-size: 0.95rem;
   }
 }

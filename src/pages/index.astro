@@ -9,6 +9,8 @@ import projects from '../../content/projects.json';
 import { skyline, totalCommits, tallest } from '../lib/skyline';
 
 const titleOf = (slug: string) => projects.find((p) => p.slug === slug)?.title ?? slug;
+// A skill's proof is a project page, a public repo, or the GitHub profile itself.
+const repoOf = (name: string) => (name === '__profile' ? { url: site.contact.github, label: 'My GitHub' } : { url: skyline.repos.find((r) => r.name === name)?.url ?? site.contact.github, label: name });
 const featured = projects.filter((p) => p.mission);
 const more = projects.filter((p) => !p.mission);
 const commitsOf = (repo: string | null) => skyline.repos.find((r) => r.name === repo)?.commits;
@@ -37,10 +39,6 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
           <div><dt>Commits</dt><dd>{totalCommits}</dd></div>
           <div><dt>Tallest tower</dt><dd>{tallest.commits}</dd></div>
         </dl>
-        <div class="failure">
-          <h3>{site.failure.title}</h3>
-          <p><Txt text={site.failure.body} /></p>
-        </div>
       </div>
     </section>
 
@@ -48,7 +46,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
       <div class="panel panel--ink">
         <p class="caption">Tech superpowers</p>
         <h2 id="skills-title" class="section-title">Skills</h2>
-        <p class="skills__note">No percentage bars. Each skill links to a project that used it.</p>
+        <p class="skills__note">No percentage bars. Where there's public proof, the skill links to the project or repo that used it.</p>
         <div class="skills__grid">
           {
             site.skills.map((g) => (
@@ -58,7 +56,13 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
                   {g.items.map((s) => (
                     <li>
                       <span>{s.name}</span>
-                      <a href={`/projects/${s.proof}/`}>{titleOf(s.proof)}</a>
+                      {'proof' in s && s.proof ? (
+                        <a href={`/projects/${s.proof}/`}>{titleOf(s.proof)}</a>
+                      ) : 'repo' in s && s.repo ? (
+                        <a href={repoOf(s.repo).url} target="_blank" rel="noopener">
+                          {repoOf(s.repo).label} <span aria-hidden="true">↗</span>
+                        </a>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
@@ -86,7 +90,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
               <div class="card__body">
                 <p>{p.oneLiner}</p>
                 <ul class="tags">
-                  {p.stack.slice(0, 5).map((t) => (
+                  {p.stack.map((t) => (
                     <li>{t}</li>
                   ))}
                 </ul>
@@ -101,6 +105,20 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
                     Case file
                   </a>
                 </div>
+                {(p.live || p.repo) && (
+                  <div class="links">
+                    {p.live && (
+                      <a class="links__live" href={p.live} target="_blank" rel="noopener">
+                        Live site <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                    {p.repo && (
+                      <a class="links__repo" href={p.repo} target="_blank" rel="noopener">
+                        GitHub <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </li>
           ))
@@ -114,6 +132,20 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
               <li>
                 <a href={`/projects/${p.slug}/`}>{p.title}</a>
                 <span>{p.oneLiner}</span>
+                {(p.live || p.repo) && (
+                  <div class="links links--dark">
+                    {p.live && (
+                      <a class="links__live" href={p.live} target="_blank" rel="noopener">
+                        Live site <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                    {p.repo && (
+                      <a class="links__repo" href={p.repo} target="_blank" rel="noopener">
+                        GitHub <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
+                )}
               </li>
             ))
           }
@@ -151,6 +183,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
       <div class="panel panel--pink">
         <p class="caption">One new call</p>
         <h2 id="contact-title" class="section-title">Got a job for me?</h2>
+        <p class="contact__note">{contact.lookingFor}</p>
         <ul class="contact__links">
           <li><a class="btn btn--yellow" href={contact.github}>GitHub</a></li>
           <li>
@@ -176,7 +209,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
             }
           </li>
         </ul>
-        <p class="foot">Hosted on AWS Amplify. Built by {site.name} with an AI coding agent. Original art and sound.</p>
+        <p class="foot">Hosted on AWS Amplify. Built by {site.name} with an AI coding agent. The face illustration was made with Gemini. All other art and sound is original.</p>
       </div>
     </section>
   </main>
@@ -199,6 +232,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     sound.update((e as CustomEvent<number>).detail, w ? w.speed() : 0);
   });
   addEventListener('world:cut', () => sound.hit());
+  addEventListener('world:zip', () => sound.zip());
 
   // Click anywhere empty for a comic burst.
   const WORDS = ['COMMIT!', 'PUSH!', 'MERGE!', 'BOOM!', 'REBASE!', 'SHIP IT!', 'POW!', 'BLAME!'];
@@ -448,22 +482,6 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     font: 400 clamp(2rem, 4vw, 3rem) / 1.1 var(--display);
   }
 
-  .failure {
-    margin-top: 18px;
-    padding: 12px 16px;
-    background: var(--ink);
-    color: var(--paper);
-  }
-
-  .failure h3 {
-    color: var(--red);
-    font-size: 1.5rem;
-  }
-
-  .failure p {
-    margin-top: 6px;
-  }
-
   .skills__note {
     margin-top: 8px;
     font: 700 1.15rem/1.3 var(--hand);
@@ -487,19 +505,19 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     font-size: 1.3rem;
   }
 
-  .fare:nth-child(2) {
+  .fare:nth-child(3n + 2) {
     border-color: var(--cyan);
   }
 
-  .fare:nth-child(2) h3 {
+  .fare:nth-child(3n + 2) h3 {
     background: var(--cyan);
   }
 
-  .fare:nth-child(3) {
+  .fare:nth-child(3n) {
     border-color: var(--pink);
   }
 
-  .fare:nth-child(3) h3 {
+  .fare:nth-child(3n) h3 {
     background: var(--pink);
   }
 
@@ -642,6 +660,47 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     margin-top: 14px;
   }
 
+  /* Live and GitHub links, smaller than the main buttons so they don't compete with Play. */
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 5px 12px 2px;
+    border: 3px solid var(--ink);
+    font: 700 1.1rem/1 var(--label);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .links__live {
+    background: var(--pink);
+    color: var(--paper);
+  }
+
+  .links__repo {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .links a:hover,
+  .links a:focus-visible {
+    background: var(--cyan);
+    color: var(--ink);
+  }
+
+  .links--dark .links__repo {
+    border-color: var(--paper);
+  }
+
   .more-panel {
     width: min(100%, 980px);
     margin: 58svh auto 0;
@@ -666,7 +725,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     border-top: 3px solid var(--pink);
   }
 
-  .more a {
+  .more > li > a {
     display: block;
     color: var(--yellow);
     font: 700 1.5rem/1.1 var(--label);
@@ -709,6 +768,11 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
 
   .contact {
     min-height: 120svh;
+  }
+
+  .contact__note {
+    margin-top: 10px;
+    font: 700 clamp(1.15rem, 2.4vw, 1.5rem) / 1.3 var(--hand);
   }
 
   .contact__links {

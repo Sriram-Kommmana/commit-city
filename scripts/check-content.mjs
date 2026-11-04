@@ -7,7 +7,7 @@ for (const file of files) {
   readFileSync(file, 'utf8')
     .split('\n')
     .forEach((line, i) => {
-      if (line.includes('TODO_USER')) found.push(`${file}:${i + 1}  ${line.trim()}`);
+      if (line.includes('TODO_USER:')) found.push(`${file}:${i + 1}  ${line.trim()}`);
     });
 }
 

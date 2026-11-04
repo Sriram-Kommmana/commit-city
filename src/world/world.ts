@@ -1,4 +1,5 @@
 import {
+  AlwaysDepth,
   BackSide,
   BoxGeometry,
   BufferGeometry,
@@ -12,10 +13,12 @@ import {
   Group,
   InstancedBufferAttribute,
   InstancedMesh,
+  LessEqualDepth,
   LinearFilter,
   LineBasicMaterial,
   LineSegments,
   Mesh,
+  NoBlending,
   MeshBasicMaterial,
   Object3D,
   PerspectiveCamera,
@@ -32,7 +35,10 @@ import {
 import skyline from '../../content/skyline.json';
 import projects from '../../content/projects.json';
 import site from '../../content/site.json';
-import { drawSheet, POSE } from './rig';
+import { createChallenges } from './challenges';
+import { buildDistricts, buildMarkers, PLOTS } from './districts';
+import { createDrive, type Block, type Drive, type DriveFrame } from './drive';
+import { drawSharpSheet, drawSheet, gripOf, POSE, prepareRig, SHARP_COLS, SHARP_POSES, SHARP_ROWS, SHEET_COLS, SHEET_ROWS } from './rig';
 import { BUILDING_FRAG, BUILDING_VERT, COMIC_FRAG, COMIC_VERT, GROUND_FRAG, GROUND_VERT, SKY_FRAG, SKY_VERT } from './shaders';
 
 // Colours are authored for the comic look, so skip three.js colour conversion.
@@ -46,7 +52,7 @@ interface Key {
   fov: number;
 }
 
-interface Shot {
+export interface Shot {
   pos: Vector3;
   look: Vector3;
   roll: number;
@@ -62,14 +68,14 @@ const PATH: Key[] = [
   { p: 0.0, pos: [19, 236.5, 33], look: [10, 228, -130], roll: 0, fov: 46 },
   { p: 0.06, pos: [21, 238, 36], look: [14, 222, -130], roll: -0.04, fov: 46 },
   { p: 0.09, pos: [24, 243, 20], look: [20, 196, -70], roll: 0.04, fov: 54 },
-  { p: 0.13, pos: [21, 226, 8], look: [20, 120, -24], roll: 0.5, fov: 74 },
-  { p: 0.24, pos: [14, 118, -12], look: [2, 10, -60], roll: 2.2, fov: 88 },
-  { p: 0.36, pos: [-14, 58, -66], look: [-34, 18, -150], roll: 4.9, fov: 82 },
-  { p: 0.46, pos: [-38, 22, -120], look: [-40, 12, -230], roll: 6.283, fov: 70 },
-  { p: 0.56, pos: [-40, 8.5, -210], look: [-40, 6, -310], roll: 6.283, fov: 62 },
-  { p: 0.76, pos: [-40, 7.5, -470], look: [-40, 5.5, -570], roll: 6.283, fov: 64 },
-  { p: 0.86, pos: [-44, 74, -620], look: [-44, 60, -900], roll: 6.283, fov: 62 },
-  { p: 1.0, pos: [-34, 128, -770], look: [14, 92, -60], roll: 6.283, fov: 44 },
+  { p: 0.13, pos: [21, 226, 8], look: [20, 120, -24], roll: 0.1, fov: 74 },
+  { p: 0.24, pos: [14, 118, -12], look: [2, 10, -60], roll: -0.15, fov: 88 },
+  { p: 0.36, pos: [-14, 58, -66], look: [-34, 18, -150], roll: 0.12, fov: 82 },
+  { p: 0.46, pos: [-38, 22, -120], look: [-40, 12, -230], roll: 0, fov: 70 },
+  { p: 0.56, pos: [-40, 8.5, -210], look: [-40, 6, -310], roll: 0, fov: 62 },
+  { p: 0.76, pos: [-40, 7.5, -470], look: [-40, 5.5, -570], roll: 0, fov: 64 },
+  { p: 0.86, pos: [-44, 74, -620], look: [-44, 60, -900], roll: 0, fov: 62 },
+  { p: 1.0, pos: [-34, 128, -770], look: [14, 92, -60], roll: 0, fov: 44 },
 ];
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -77,6 +83,20 @@ const clamp01 = (t: number) => Math.min(Math.max(t, 0), 1);
 const range = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 const cat = (a: number, b: number, c: number, d: number, t: number) =>
   0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
+
+// The commit line: three swings that turn the fall into a controlled descent. Each one fires a line at a
+// building, swings across on it, then lets go. `side` is which way the swing pulls.
+const SWINGS = [
+  { from: 0.14, to: 0.225, side: 1 },
+  { from: 0.245, to: 0.33, side: -1 },
+  { from: 0.35, to: 0.43, side: 1 },
+];
+const FIRE = 0.15; // the part of each swing spent shooting the line out
+const LET_GO = 0.9;
+const swingAt = (p: number) => {
+  const i = SWINGS.findIndex((w) => p >= w.from && p <= w.to);
+  return i < 0 ? null : { i, side: SWINGS[i].side, t: (p - SWINGS[i].from) / (SWINGS[i].to - SWINGS[i].from) };
+};
 
 // On a phone the opening shot steps back and tilts up, so the character stands under the title.
 const PORTRAIT_OPEN = { pos: new Vector3(25, 239, 45), look: new Vector3(25, 279, -130) };
@@ -159,6 +179,8 @@ export interface World {
   playOpening: (onTitle: () => void, onDone: () => void) => void;
   skipOpening: () => void;
   speed: () => number;
+  /** Story mode's drivable city. Null when the world is a still image. */
+  drive: Drive | null;
 }
 
 export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: boolean; fixedQuality?: boolean } = {}): Promise<World> {
@@ -169,6 +191,33 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   const isPhone = matchMedia('(max-width: 760px)').matches;
   let pixelScale = Math.min(devicePixelRatio || 1, isPhone ? 1.25 : 1.5);
   let allowPanels = true;
+
+  // A phone screen is too narrow for the wide rooftop shot, so the camera turns to keep the character in view.
+  const shotAt = (p: number): Shot => {
+    const s = sample(p);
+    if (canvas.clientHeight > canvas.clientWidth) {
+      const open = 1 - smooth(Math.min(p / 0.05, 1));
+      s.pos.lerp(PORTRAIT_OPEN.pos, open);
+      s.look.lerp(PORTRAIT_OPEN.look, open);
+    }
+    // On the line, the fall becomes an arc: pulled up and across, then dropping again.
+    const sw = swingAt(p);
+    if (sw && sw.t > FIRE) {
+      const arc = Math.sin((Math.PI * (sw.t - FIRE)) / (1 - FIRE));
+      const across = new Vector3(s.look.z - s.pos.z, 0, s.pos.x - s.look.x).normalize().multiplyScalar(sw.side * arc * 4);
+      s.pos.y += arc * 7;
+      s.look.y += arc * 7;
+      s.pos.add(across);
+      s.look.add(across);
+      s.roll -= sw.side * arc * 0.12;
+    }
+    const k = isPhone ? 1 - range(p, 0.07, 0.1) : 0;
+    if (k > 0) {
+      const size = 2 * s.pos.distanceTo(LEDGE) * Math.tan((s.fov * Math.PI) / 360);
+      s.look.lerp(new Vector3(LEDGE.x, LEDGE.y + size * 0.38, LEDGE.z), k);
+    }
+    return s;
+  };
 
   const camera = new PerspectiveCamera(50, 1, 0.5, 2400);
   const scene = new Scene();
@@ -193,7 +242,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
 
   // --- City. Real repos become the gold towers; the rest of the city is scenery. ---
   const flight: Vector3[] = [];
-  for (let p = 0.03; p <= 0.8; p += 0.002) flight.push(sample(p).pos);
+  for (let p = 0.03; p <= 0.8; p += 0.002) flight.push(shotAt(p).pos);
   const clearance = (x: number, z: number, half: number, h: number) => {
     // Lowers any building that would sit in the camera's way.
     let limit = h;
@@ -222,6 +271,9 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     list.push({ x, z, w: size, d: size, h: Math.max(lim, 8), y0: 0, hero: 1 });
     if (lim > 26 && i > 0) signs.push({ x, y: Math.max(lim, 8), z, name: r.name, commits: r.commits, w: size });
   });
+  const plots = Object.values(PLOTS);
+  for (const plot of plots) plot.cells.forEach(([x, z]) => taken.add(`${x},${z}`));
+  const nearPlot = (x: number, z: number) => plots.some((plot) => Math.hypot(x - plot.x, z - plot.z) < plot.half + 44);
   const neonColors = ['#ff2e88', '#17c4d6', '#ffc917', '#a64dff', '#ff5a2e'];
   for (let ix = -20; ix <= 20; ix++) {
     for (let iz = -24; iz <= 12; iz++) {
@@ -237,6 +289,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
         const tall = rand();
         let h = (14 + Math.pow(tall, 2.4) * 120) * (1.15 - Math.min(dist, 1) * 0.55);
         h = clearance(x + ox, z, Math.max(w, d) / 2, h);
+        if (nearPlot(x, z)) h = Math.min(h, 12 + tall * 16);
         if (h < 3) continue;
         const bx = x + ox;
         list.push({ x: bx, z, w, d, h, y0: 0, hero: 0 });
@@ -498,7 +551,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   for (let i = 0; i < carCount; i++) {
     const avenue = i < carCount * 0.42;
     const lanes = avenue ? [-33, -47] : [-120, -80, 0, 40, 80];
-    const lane = lanes[Math.floor(rand() * lanes.length)] + (avenue ? 0 : rand() > 0.5 ? 7 : -7);
+    const lane = lanes[Math.floor(rand() * lanes.length)] + (avenue ? 0 : rand() > 0.5 ? 3.6 : -3.6);
     // On the avenue, the far lane comes towards the camera and the near lane is slower traffic.
     const towards = avenue ? lane > -40 : rand() > 0.5;
     traffic.push({ x: lane, z: -100 - rand() * 760, v: (towards ? 1 : -1) * (24 + rand() * 18), along: true });
@@ -518,17 +571,95 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   camera.add(streaks);
 
   // --- The character ---
-  const sheet = new CanvasTexture(drawSheet(isPhone ? 256 : 512));
-  sheet.generateMipmaps = false;
-  sheet.minFilter = LinearFilter;
-  sheet.magFilter = LinearFilter;
-  sheet.repeat.set(0.25, 0.25);
-  const heroMat = new MeshBasicMaterial({ map: sheet, alphaTest: 0.5, side: DoubleSide });
+  await prepareRig();
+  const spriteTexture = (c: HTMLCanvasElement, cols: number, rows: number) => {
+    const t = new CanvasTexture(c);
+    t.generateMipmaps = false;
+    t.minFilter = LinearFilter;
+    t.magFilter = LinearFilter;
+    t.repeat.set(1 / cols, 1 / rows);
+    return t;
+  };
+  const sheet = spriteTexture(drawSheet(isPhone ? 256 : 512), SHEET_COLS, SHEET_ROWS);
+  const sharpSheet = spriteTexture(drawSharpSheet(isPhone ? 420 : 800), SHARP_COLS, SHARP_ROWS);
+  // Upload now, or the first frame that needs each sheet would visibly hitch.
+  renderer.initTexture(sheet);
+  renderer.initTexture(sharpSheet);
+  // Half alpha, written straight through, tells the comic pass which pixels are the character.
+  const heroMat = new MeshBasicMaterial({ map: sheet, alphaTest: 0.25, opacity: 0.5, transparent: true, blending: NoBlending, side: DoubleSide });
   const hero = new Mesh(new PlaneGeometry(1, 1), heroMat);
   hero.renderOrder = 10;
   scene.add(hero);
+  let shownFrame = 0;
   const setFrame = (i: number) => {
-    sheet.offset.set((i % 4) * 0.25, 0.75 - Math.floor(i / 4) * 0.25);
+    shownFrame = i;
+    const sharp = SHARP_POSES.indexOf(i);
+    if (sharp >= 0) {
+      heroMat.map = sharpSheet;
+      sharpSheet.offset.set((sharp % SHARP_COLS) / SHARP_COLS, 1 - (Math.floor(sharp / SHARP_COLS) + 1) / SHARP_ROWS);
+    } else {
+      heroMat.map = sheet;
+      sheet.offset.set((i % SHEET_COLS) / SHEET_COLS, 1 - (Math.floor(i / SHEET_COLS) + 1) / SHEET_ROWS);
+    }
+  };
+
+  // --- The commit line: a yellow cable with a commit dot every few metres, like a git graph ---
+  // Each swing hooks onto a real building above and to one side of where the character will be.
+  const anchors = SWINGS.map((w) => {
+    const s = shotAt(w.from + (w.to - w.from) * 0.55);
+    const forward = s.look.clone().sub(s.pos).normalize();
+    const body = s.pos.clone().addScaledVector(forward, 11);
+    const across = new Vector3(s.look.z - s.pos.z, 0, s.pos.x - s.look.x).normalize();
+    const ahead = new Vector3(forward.x, 0, forward.z).normalize();
+    // Up, a little ahead and to the swing's side: with the camera upright, that is also the top of the screen.
+    const want = body.clone().add(new Vector3(0, 30, 0)).addScaledVector(ahead, 16).addScaledVector(across, w.side * 10);
+    let best: Vector3 | null = null;
+    // Only hook onto a building that is really up there. Otherwise the line runs off the top of the frame.
+    let bestDist = 14;
+    for (const b of list) {
+      if (b.y0 !== 0 || b.y0 + b.h < body.y + 12) continue;
+      // The nearest point on the building's walls.
+      const px = Math.min(Math.max(want.x, b.x - b.w / 2), b.x + b.w / 2);
+      const pz = Math.min(Math.max(want.z, b.z - b.d / 2), b.z + b.d / 2);
+      const d = Math.hypot(px - want.x, pz - want.z);
+      if (d < bestDist) {
+        bestDist = d;
+        best = new Vector3(px, Math.min(want.y, b.h - 2), pz);
+      }
+    }
+    return best ?? want;
+  });
+  const lineGeo = new CylinderGeometry(0.12, 0.12, 1, 6);
+  lineGeo.rotateX(Math.PI / 2);
+  const commitLine = new Mesh(lineGeo, flat('#ffc917'));
+  const COMMIT_DOTS = 9;
+  const commitDots = new InstancedMesh(new SphereGeometry(0.34, 8, 6), flat('#17e4ff'), COMMIT_DOTS);
+  commitLine.frustumCulled = commitDots.frustumCulled = false;
+  commitLine.visible = commitDots.visible = false;
+  scene.add(commitLine, commitDots);
+  let lineTo: { anchor: Vector3; reach: number } | null = null;
+  const grip = new Vector3();
+  const lineEnd = new Vector3();
+  // Called after every camera change, because the character is a billboard and its hand moves with the view.
+  const updateLine = () => {
+    const at = lineTo && gripOf(shownFrame);
+    commitLine.visible = commitDots.visible = !!at;
+    if (!at || !lineTo) return;
+    hero.updateMatrixWorld();
+    hero.localToWorld(grip.set(at[0] - 0.5, 0.5 - at[1], 0));
+    lineEnd.copy(grip).lerp(lineTo.anchor, lineTo.reach);
+    commitLine.position.copy(grip).add(lineEnd).multiplyScalar(0.5);
+    commitLine.lookAt(lineEnd);
+    commitLine.scale.set(1, 1, Math.max(grip.distanceTo(lineEnd), 0.01));
+    for (let i = 0; i < COMMIT_DOTS; i++) {
+      const t = (i + 1) / (COMMIT_DOTS + 1);
+      dummy.position.copy(grip).lerp(lineTo.anchor, t);
+      dummy.scale.setScalar(t <= lineTo.reach ? 1 : 0);
+      dummy.rotation.set(0, 0, 0);
+      dummy.updateMatrix();
+      commitDots.setMatrixAt(i, dummy.matrix);
+    }
+    commitDots.instanceMatrix.needsUpdate = true;
   };
 
   // --- Comic pass ---
@@ -590,14 +721,20 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   const vanPos = new Vector3();
   let tick = 0;
 
+  const SIT_END = 0.012;
+  const RISE_END = 0.022;
   const frameFor = (p: number) => {
+    const sw = p > 0.135 ? swingAt(p) : null;
+    if (sw && sw.t < LET_GO) return sw.t < 0.55 ? POSE.swingA : POSE.swingB;
+    if (p < SIT_END) return Math.floor(tick / 8) % 2 ? POSE.sitB : POSE.sitA;
+    if (p < RISE_END) return POSE.rise;
     if (p < 0.035) return Math.floor(tick / 8) % 2 ? POSE.standWind : POSE.stand;
     if (p < 0.06) return POSE.glance;
     if (p < 0.075) return POSE.crouch;
     if (p < 0.09) return POSE.push;
     if (p < 0.135) return POSE.spread;
-    if (p < 0.26) return POSE.dive;
-    if (p < 0.4) return POSE.tumbleA + Math.floor(p * 110) % 3;
+    if (p < 0.145) return POSE.dive;
+    if (p < 0.43) return POSE.spread;
     if (p < 0.475) return POSE.flail;
     if (p < 0.525) return POSE.land;
     if (p > 0.6 && p < 0.65) return POSE.surfBack;
@@ -631,11 +768,13 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     camera.getWorldDirection(forward);
     right.crossVectors(forward, camera.up).normalize();
     up.crossVectors(right, forward);
-    const scale = 15.5;
+    const scale = isPhone ? 11 : 15.5;
     if (p < 0.085) {
       charPos.copy(LEDGE);
-      charPos.y += 5.4 + range(p, 0.07, 0.085) * 7;
-      hero.scale.setScalar(scale);
+      // Sitting puts the hips on the ledge. Standing puts the feet there.
+      charPos.y += 0.5 + range(p, SIT_END, RISE_END) * (scale * 0.35 - 0.5) + range(p, 0.07, 0.085) * 7;
+      // Bigger while sitting: the first thing a visitor sees is the face.
+      hero.scale.setScalar(scale + (1 - range(p, SIT_END, RISE_END)) * (isPhone ? 8 : 6));
     } else {
       const twos = Math.floor(tick / 2);
       const wide = canvas.clientWidth > 760 ? 3.1 : 0;
@@ -648,9 +787,20 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
       charPos.lerp(new Vector3(autoPos.x + 0.2, roofY, autoPos.z), land);
       hero.scale.setScalar(6.2 + land * 0.9);
     }
-    hero.visible = p < 0.9;
-    heroMat.depthTest = p < 0.085 || p > 0.46;
+    // In story mode's opening panels the character is in the foreground, so not on the auto too.
+    hero.visible = p < 0.9 && !cruise;
+    // When drawn over the scenery the character still writes depth, so the comic pass inks it properly.
+    heroMat.depthFunc = (p > RISE_END && p < 0.085) || p > 0.46 ? LessEqualDepth : AlwaysDepth;
   };
+
+  // --- Story mode's drive through the same city ---
+  buildDistricts(scene, signTexture);
+  const markers = buildMarkers(scene);
+  const blocks: Block[] = list.filter((b) => b.y0 === 0 && b.h > 3).map((b) => ({ x: b.x, z: b.z, w: b.w, d: b.d, top: b.h }));
+  for (const plot of plots) blocks.push({ x: plot.x, z: plot.z, w: plot.half * 2, d: plot.half * 2, top: 30 });
+  const challenges = createChallenges(scene, signTexture);
+  const drive = createDrive({ auto, van, lights: [lightA, lightB], blocks, traffic, markers, challenges }) as Drive & { update: (dt: number, tick: number) => DriveFrame };
+  let heroLean = 0;
 
   // --- Comic panels. Each beat splits the screen and shows the moment from several cameras. ---
   type View = { lines: Line[]; center?: [number, number]; shot?: (s: Shot) => Shot; frame?: number };
@@ -671,7 +821,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
           lines: [edge(0.66, 1, 0.46, 0, 1, 0.5), edge(0, 0.58, 1, 0.48, 1, 1)],
           center: [0.8, 0.76],
           frame: POSE.face,
-          shot: () => ({ pos: charPos.clone().add(v3(-1.4, 0.3, 7.4)), look: charPos.clone().add(v3(0, 0.5, 0)), roll: -0.16, fov: 40 }),
+          shot: () => ({ pos: charPos.clone().add(v3(-1.4, 0.3, 12.5)), look: charPos.clone().add(v3(0, 0.7, 0)), roll: -0.16, fov: 40 }),
         },
         {
           lines: [edge(0.66, 1, 0.46, 0, 1, 0.5), edge(0, 0.58, 1, 0.48, 1, 0)],
@@ -694,7 +844,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
       ],
     },
     {
-      // The landing: impact, wheels, and the auto coming straight at us.
+      // The landing: impact, a closer look at the rider, and the auto coming straight at us.
       from: 0.5,
       to: 0.548,
       views: [
@@ -702,12 +852,12 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
         {
           lines: [edge(0.38, 1, 0.28, 0, 1, 0.5), edge(0.72, 1, 0.62, 0, 0, 0.5)],
           center: [0.5, 0.5],
-          shot: () => ({ pos: autoPos.clone().add(v3(3.4, 0.6, 3)), look: autoPos.clone().add(v3(0, 1.6, -2)), roll: -0.2, fov: 58 }),
+          shot: () => ({ pos: autoPos.clone().add(v3(3, 9.4, 7.5)), look: autoPos.clone().add(v3(0, 8.4, 0)), roll: -0.2, fov: 50 }),
         },
         {
           lines: [edge(0.72, 1, 0.62, 0, 1, 0.5)],
           center: [0.84, 0.5],
-          shot: () => ({ pos: autoPos.clone().add(v3(0.6, 2.6, -12)), look: autoPos.clone().add(v3(0, 3.6, 0)), roll: 0.1, fov: 46 }),
+          shot: () => ({ pos: autoPos.clone().add(v3(0.6, 3, -17)), look: autoPos.clone().add(v3(0, 5.2, 0)), roll: 0.1, fov: 46 }),
         },
       ],
     },
@@ -739,6 +889,18 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     },
   ];
 
+  // Arriving at a stop: the place, the character's reaction, and the view up from the street.
+  const ARRIVAL: View[] = [
+    { lines: [edge(0.66, 1, 0.46, 0, 0, 0.5)], center: [0.3, 0.5], shot: () => drive.shotAtPlot() },
+    {
+      lines: [edge(0.66, 1, 0.46, 0, 1, 0.5), edge(0, 0.58, 1, 0.48, 1, 1)],
+      center: [0.8, 0.76],
+      frame: POSE.face,
+      shot: () => ({ pos: charPos.clone().add(v3(-1.4, 0.3, 12.5)), look: charPos.clone().add(v3(0, 0.7, 0)), roll: -0.16, fov: 40 }),
+    },
+    { lines: [edge(0.66, 1, 0.46, 0, 1, 0.5), edge(0, 0.58, 1, 0.48, 1, 0)], center: [0.76, 0.24], shot: () => drive.shotStreet() },
+  ];
+
   // --- Opening shots: a quick cut sequence that plays once, on load ---
   let openStart = -1;
   let openTitle: (() => void) | null = null;
@@ -749,23 +911,23 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     if (t < 1.0) {
       // Street level, looking straight up the gold tower.
       const k = t / 1.0;
-      return { cut: 0, frame: POSE.stand, s: { pos: v3(-6 + k * 5, 3 + k * 16, -46 + k * 10), look: v3(20, 150 + k * 110, 16), roll: 0.28 - k * 0.1, fov: 82 } };
+      return { cut: 0, frame: POSE.sitA, s: { pos: v3(-6 + k * 5, 3 + k * 16, -46 + k * 10), look: v3(20, 150 + k * 110, 16), roll: 0.28 - k * 0.1, fov: 82 } };
     }
     if (t < 1.7) {
-      // His sneakers on the edge, with the whole city far below.
+      // The first look at the character, up on the edge with the whole city behind.
       const k = (t - 1.0) / 0.7;
-      return { cut: 1, frame: POSE.stand, s: { pos: v3(LEDGE.x - 5.4, LEDGE.y + 2.2 + k * 0.6, LEDGE.z + 7), look: v3(LEDGE.x + 3, LEDGE.y - 4, LEDGE.z - 40), roll: -0.1, fov: 42 } };
+      return { cut: 1, frame: POSE.sitA, s: { pos: v3(LEDGE.x - 2 - k * 1.5, LEDGE.y + 6.5, LEDGE.z + 19 - k * 2.5), look: v3(LEDGE.x + 1.2, LEDGE.y + 5.2, LEDGE.z), roll: -0.1, fov: 42 } };
     }
     // Whip back to the hero shot.
     const k = smooth(clamp01((t - 1.7) / 1.3));
-    const end = sample(0);
+    const end = shotAt(0);
     const s = {
       pos: v3(LEDGE.x + 16, LEDGE.y + 30, LEDGE.z + 62).lerp(end.pos, k),
       look: v3(LEDGE.x, LEDGE.y + 2, LEDGE.z).lerp(end.look, k),
       roll: 0.34 * (1 - k),
       fov: 70 + (end.fov - 70) * k,
     };
-    return { cut: 2, frame: POSE.stand, s };
+    return { cut: 2, frame: POSE.sitA, s };
   };
 
   // --- Frame ---
@@ -778,6 +940,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   let flash = 0;
   let lastFlash = -9999;
   let lastBeat = -1;
+  let lastFired = -1;
   let speedNow = 0;
   const pointer = new Vector2();
   addEventListener('pointermove', (e) => pointer.set(e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5), { passive: true });
@@ -792,6 +955,8 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     camUniform.value.copy(camera.position);
     sky.position.copy(camera.position);
     hero.quaternion.copy(camera.quaternion);
+    if (heroLean) hero.rotateZ(heroLean);
+    markers.face(camera.quaternion);
   };
 
   const pass = (lines: Line[] | null) => {
@@ -854,15 +1019,53 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
     streaks.instanceMatrix.needsUpdate = true;
   };
 
+  const splitScreen = (views: View[], s: Shot, frame: number) => {
+    // Paper shows through in the gutters between panels.
+    renderer.setRenderTarget(null);
+    renderer.clear();
+    for (const view of views) {
+      const shot = view.shot ? view.shot(s) : s;
+      const [cu, cv] = view.center ?? [0.5, 0.5];
+      const W = canvas.clientWidth;
+      const H = canvas.clientHeight;
+      camera.setViewOffset(W, H, (0.5 - cu) * W, (cv - 0.5) * H, W, H);
+      aim(shot);
+      setFrame(view.frame ?? frame);
+      updateLine();
+      pass(view.lines);
+    }
+    camera.clearViewOffset();
+  };
+
+  const drawDrive = (now: number, dt: number) => {
+    updateWorld(now, dt);
+    const f = drive.update(dt, tick);
+    speedNow = f.speed;
+    updateStreaks(f.speed, dt);
+    heroLean = f.lean;
+    lineTo = null;
+    charPos.copy(f.heroAt);
+    hero.position.copy(charPos);
+    hero.visible = true;
+    hero.scale.setScalar(f.heroScale);
+    heroMat.depthFunc = LessEqualDepth;
+    ramp.visible = false;
+    comic.uniforms.uSiren.value = 0;
+    comic.uniforms.uTick.value = tick;
+    comic.uniforms.uSpeed.value = f.speed;
+    comic.uniforms.uFlash.value = f.flash;
+    aim(f.shot);
+    setFrame(f.frame);
+    if (f.arriving && allowPanels) splitScreen(ARRIVAL, f.shot, f.frame);
+    else pass(null);
+  };
+
   const draw = (p: number, speed: number, now: number, dt: number) => {
+    heroLean = 0;
+    ramp.visible = true;
     updateWorld(now, dt);
     updateStreaks(speed, dt);
-    let s = sample(p);
-    if (canvas.clientHeight > canvas.clientWidth) {
-      const open = 1 - smooth(Math.min(p / 0.05, 1));
-      s.pos.lerp(PORTRAIT_OPEN.pos, open);
-      s.look.lerp(PORTRAIT_OPEN.look, open);
-    }
+    let s = shotAt(p);
 
     // The opening overrides the scroll position while it plays.
     let inOpening = false;
@@ -899,9 +1102,16 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
 
     aim(s);
     place(p, s, now);
-    const frame = inOpening ? POSE.stand : frameFor(p);
+    const frame = inOpening ? POSE.sitA : frameFor(p);
     setFrame(frame);
     hero.position.copy(charPos);
+    const sw = inOpening ? null : swingAt(p);
+    lineTo = sw && sw.t < LET_GO ? { anchor: anchors[sw.i], reach: Math.min(sw.t / FIRE, 1) } : null;
+    // A zip each time a line fires.
+    const firing = sw && sw.t < FIRE ? sw.i : -1;
+    if (firing >= 0 && firing !== lastFired) window.dispatchEvent(new Event('world:zip'));
+    lastFired = firing >= 0 ? firing : sw ? lastFired : -1;
+    updateLine();
 
     // Sirens wash the screen during the chase.
     comic.uniforms.uSiren.value = range(p, 0.56, 0.6) * (1 - range(p, 0.76, 0.8));
@@ -925,20 +1135,7 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
       pass(null);
       return;
     }
-    // Paper shows through in the gutters between panels.
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    for (const view of BEATS[beatIndex].views) {
-      const shot = view.shot ? view.shot(s) : s;
-      const [cu, cv] = view.center ?? [0.5, 0.5];
-      const W = canvas.clientWidth;
-      const H = canvas.clientHeight;
-      camera.setViewOffset(W, H, (0.5 - cu) * W, (cv - 0.5) * H, W, H);
-      aim(shot);
-      setFrame(view.frame ?? frame);
-      pass(view.lines);
-    }
-    camera.clearViewOffset();
+    splitScreen(BEATS[beatIndex].views, s, frame);
   };
 
   let tickAt = 0;
@@ -960,7 +1157,8 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
       tick++;
       tickAt = now;
     }
-    draw(current, speedNow, now, dt);
+    if (drive.isOn()) drawDrive(now, dt);
+    else draw(current, speedNow, now, dt);
     // If this device can't keep up, draw fewer pixels and drop the extra cameras rather than stutter.
     slowFrames = dt > 42 ? slowFrames + 1 : Math.max(slowFrames - 1, 0);
     if (slowFrames > 40 && !opts.fixedQuality) {
@@ -1008,5 +1206,6 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
       openDone = null;
     },
     speed: () => speedNow,
+    drive: opts.still ? null : drive,
   };
 }

@@ -131,14 +131,14 @@ varying vec3 vWorld;
 uniform vec3 uCam;
 void main() {
   vec2 p = vWorld.xz;
-  vec2 g = abs(mod(p + 20.0, 40.0) - 20.0); // distance from the block centre
-  float road = step(13.5, max(g.x, g.y));
+  vec2 g = abs(mod(p, 40.0) - 20.0); // distance from the block centre
+  float road = step(12.5, max(g.x, g.y));
   vec3 c = mix(vec3(0.1, 0.05, 0.22), vec3(0.06, 0.04, 0.13), road);
   // Dashes down the middle of each road.
   float dx = step(19.6, g.x) * step(0.5, fract(p.y / 9.0));
   float dz = step(19.6, g.y) * step(0.5, fract(p.x / 9.0));
   c = mix(c, vec3(1.0, 0.79, 0.09), max(dx, dz) * road);
-  float edge = step(13.5, max(g.x, g.y)) - step(14.2, max(g.x, g.y));
+  float edge = step(12.5, max(g.x, g.y)) - step(13.0, max(g.x, g.y));
   c = mix(c, vec3(0.86, 0.14, 0.5), edge);
   float d = length(vWorld - uCam);
   float fog = 1.0 - exp(-d * 0.0019);
@@ -230,7 +230,9 @@ void main() {
   vec3 shadowInk = base * vec3(0.5, 0.36, 0.68);
   // The sky gets lighter dots, so the print texture doesn't fight the drawing.
   float skyMask = step(0.88, d);
-  col = mix(base, shadowInk, dots * mix(0.8, 0.26, skyMask));
+  // The character keeps a light screen too, or the dots would read as marks on the face.
+  float heroMask = step(texture2D(tColor, uv).a, 0.75);
+  col = mix(base, shadowInk, dots * mix(mix(0.8, 0.26, skyMask), 0.2, heroMask));
 
   // Light dots across bright areas, in a second colour.
   vec2 frag2 = mat2(cos(1.1), -sin(1.1), sin(1.1), cos(1.1)) * (vUv * uRes);
@@ -240,7 +242,7 @@ void main() {
 
   // Hatching in the deepest shadow.
   float hatch = step(0.62, fract((vUv.x * uRes.x + vUv.y * uRes.y) / (5.0 * uPx)));
-  col = mix(col, col * 0.58, hatch * smoothstep(0.14, 0.05, l));
+  col = mix(col, col * 0.58, hatch * smoothstep(0.14, 0.05, l) * (1.0 - heroMask));
 
   col = mix(col, vec3(0.035, 0.02, 0.07), clamp(ink, 0.0, 1.0));
 

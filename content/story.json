@@ -21,6 +21,8 @@
     }
   ],
   "mapIdle": "Pick a marker and the auto will take us there.",
+  "driveIdle": "You drive. Follow the columns of light, or pick a stop and I'll take us there.",
+  "driveNext": "Back on the road. The next stop is on the radar.",
   "mapAfterThree": "That caller again. You can pick the call up on the phone whenever you like.",
   "ending": {
     "ring": "Incoming call",
@@ -45,9 +47,15 @@
     },
     {
       "from": 0.14,
-      "to": 0.3,
+      "to": 0.235,
       "who": "SRIRAM",
       "line": "Every big build starts like this: a leap, and no idea where the floor is."
+    },
+    {
+      "from": 0.245,
+      "to": 0.33,
+      "who": "SRIRAM",
+      "line": "Good thing I built a commit line. Every swing is one more commit."
     },
     {
       "from": 0.34,

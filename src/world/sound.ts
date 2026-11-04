@@ -156,6 +156,22 @@ export function createSound() {
       sirenGain.gain.setTargetAtTime(chase ? 0.035 : 0, t, 0.2);
       if (chase) sirenOsc.frequency.setValueAtTime(Math.floor(t * 2.4) % 2 ? 660 : 880, t);
     },
+    /** The commit line firing: a quick rising zip. */
+    zip() {
+      if (!ctx || !on) return;
+      const t = ctx.currentTime;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(320, t);
+      o.frequency.exponentialRampToValueAtTime(1800, t + 0.12);
+      g.gain.setValueAtTime(0.16, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      o.connect(g).connect(master);
+      o.start(t);
+      o.stop(t + 0.2);
+      burst(t, 0.12, 0.25, 'highpass', 3000);
+    },
     /** A hit for cuts and impacts. */
     hit() {
       if (!ctx || !on) return;

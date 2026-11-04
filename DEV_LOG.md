@@ -44,3 +44,59 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   panel. Fix: each panel's camera now shifts its view so the subject sits inside that panel.
 - **Bug: stars pinched into a spiral overhead.** Their grid used an angle that bunches up at the zenith. Fix: a
   projection with no pole.
+- **Character redraw from photos.** The first character was invented: spiky hair, yellow hoodie, no glasses. I sent 40
+  photos of myself as reference and it was redrawn: wavy swept hair, dark rectangular glasses, thin mustache, grey
+  blazer, blue neckband earphones and backpack. New poses come from the photos: sitting on the ledge with a knee up,
+  laughing over the shoulder, hands in pockets, peace signs and holding the lapels. The photos stay out of the repo.
+- **Bug: the first redraw looked nothing like me.** Proportions set by eye gave a giant tower of hair and glasses that
+  covered the face. Fix: laid a grid over a three-quarter photo and traced the hairline, jaw, ear and glasses as numbers.
+- **Bug: holes at the elbows and knees.** The parts of each limb were filled as one path with opposite windings, which
+  cancelled out where they overlapped. Fix: each part is now filled on its own.
+- **Bug: print dots looked like marks on the face.** The comic pass treats every mid-tone the same. Fix: the character is
+  drawn with half alpha, which tells the pass to use a much lighter screen on those pixels.
+- **Bug: the character was off screen on phones.** The wide rooftop shot left the ledge outside a narrow screen. Fix: on
+  phones the camera turns toward the ledge until the jump.
+- **Face change.** The hand-coded face still read as a cartoon, so the character now uses the face from a comic
+  illustration of me, cut out into `src/art/face.webp`. The body is still drawn in code, and shocked and worried
+  expressions are drawn on top of the picture. If the picture fails to load, a drawn head takes over.
+- **Bug: the cut-out ate part of the glasses and hair.** Keying out the sky from the outside also removed the far lens,
+  which shows sky through it. Fix: a protected area the key can't enter.
+- **Bug: stripes across the cut-out.** The image library returned three channels where the code expected one. Fix: pull
+  out a single channel explicitly.
+- **Sharper big shots.** At normal sheet size the face was too soft when the character filled the screen. The poses that
+  fill the screen now have their own higher-resolution sheet.
+- **Body redraw to match the face.** The illustrated head looked pasted onto a flat cartoon, so the body was redrawn in
+  the same comic-book style: limbs shaped like cloth with folds at the bends, black shadow spots, print dots where shadow
+  meets light, thick-and-thin outlines, real hands with fingers, oxfords, and a fuller blazer and backpack. The light stays
+  in one place in the scene, so the shadows move correctly as the character tumbles.
+- **Bug: earphones on the forehead.** In falling poses the wires streamed up and were drawn over the face. Fix: the wires
+  are drawn behind the head, and only the neckband in front of it.
+- **Story mode's map became the real city.** The flat drawn map was the weakest screen left. Now the auto is driven through
+  the same 3D city as the portfolio, with arrow keys, WASD or touch buttons, to five landmark buildings. Picking a stop
+  makes it drive itself, using a route search over the road grid. The drawn map stays as the fallback when there's no WebGL
+  or the visitor asks for reduced motion.
+- **Bug: the painted roads were in the wrong place.** The ground shader drew roads half a block away from the real ones,
+  under the buildings. It never showed from the air. It was obvious the moment a camera got down to street level.
+- **Bug: skipped stops trapped the auto.** A stop that was skipped wasn't marked done, so it fired again as soon as the auto
+  tried to leave it. Stops now have to be left once before they can trigger, and the auto ignores other stops while it's
+  driving itself to one.
+- **Bug: stuck in a wall.** A car could push the auto into a building, and every move after that counted as a collision, so
+  it could never move again. Pushes now check for walls first, the auto steps out if it ever ends up inside one, and it
+  swings round to slide along walls.
+
+- **Removed the earphones.** The blue neckband earphones from my college photos read as a strange blue line across the
+  collar at the size the character is drawn, so they're gone from every pose.
+- **The fall made no sense, so now I swing.** Just dropping off the tallest tower and landing on an auto by luck
+  was illogical. Now the character fires a commit line (a yellow cable with commit dots, from a gadget on the wrist)
+  three times on the way down, hooks onto the city and swings across before letting go above the auto. I kept it my
+  own gadget rather than a superhero web, so it stays original. The camera no longer barrel-rolls during the fall,
+  because that fought the idea of a controlled swing and made "up" impossible to read.
+- **The stops became driving challenges.** Driving the auto was the fun part, and every stop then stopped the game for a
+  quiz panel. Now each stop is played at the wheel, in the city: three Two Sum test cases to drive through before the time
+  limit at the hostel (a wall is a wrong answer), bid paddles to grab before the hammer falls at the cricket ground, an
+  architecture-drift bug to chase down on tech street, a fork in the road with one Clipper moment down each way at the
+  film market, and furniture on the street outside the mansion, where the piece that blinks is me. The quiz panels stay
+  as the fallback without WebGL.
+- **Balancing the chase.** The drift bug turned corners at full speed while the auto had to brake, so it always got away.
+  It now glitches in place for a moment at every junction and slows down when it's far ahead.
+- **"Play my story" became "Hop in".** The button now says what you actually do.

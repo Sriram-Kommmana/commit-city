@@ -1,7 +1,10 @@
 import { gsap } from 'gsap';
 import './game.css';
-import characterSvg from '../art/character.svg?raw';
+import { drawFigure } from '../world/rig';
 import autoSvg from '../art/auto.svg?raw';
+import faceUrl from '../art/face.webp?url';
+import type { Drive, DriveKey } from '../world/drive';
+import type { ChallengeUI, Hud } from '../world/challenges';
 import story from '../../content/story.json';
 import data from '../../content/missions.json';
 import projects from '../../content/projects.json';
@@ -32,6 +35,82 @@ const LABELS: Record<string, [number, number, string]> = {
   'mimic-hunt': [240, 264, 'The Mansion'],
 };
 
+type Car = { x: number; z: number; heading: number };
+type RadarPin = { x: number; z: number; label: string; color: string; fg?: string };
+
+// A round radar centred on the auto, which always points up. Pins past the edge sit on the rim.
+function drawRadar(g: CanvasRenderingContext2D, car: Car, plots: { px: number; pz: number; half: number; done: boolean }[], pins: RadarPin[]) {
+  const R = g.canvas.width / 2;
+  const scale = R / 150;
+  g.clearRect(0, 0, R * 2, R * 2);
+  g.save();
+  g.beginPath();
+  g.arc(R, R, R - 2, 0, Math.PI * 2);
+  g.clip();
+  g.fillStyle = '#14082f';
+  g.fillRect(0, 0, R * 2, R * 2);
+  g.translate(R, R);
+  g.rotate(car.heading);
+  // Roads along multiples of 40.
+  g.strokeStyle = '#4a2a90';
+  g.lineWidth = 15 * scale;
+  for (let i = -5; i <= 5; i++) {
+    const rx = (Math.round(car.x / 40) + i) * 40 - car.x;
+    const rz = (Math.round(car.z / 40) + i) * 40 - car.z;
+    g.beginPath();
+    g.moveTo(rx * scale, -R * 2);
+    g.lineTo(rx * scale, R * 2);
+    g.moveTo(-R * 2, rz * scale);
+    g.lineTo(R * 2, rz * scale);
+    g.stroke();
+  }
+  for (const m of plots) {
+    g.fillStyle = m.done ? '#1f6e4a' : '#d3126f';
+    g.fillRect((m.px - m.half - car.x) * scale, (m.pz - m.half - car.z) * scale, m.half * 2 * scale, m.half * 2 * scale);
+  }
+  g.restore();
+  const c = Math.cos(car.heading);
+  const s = Math.sin(car.heading);
+  for (const p of pins) {
+    const dx = p.x - car.x;
+    const dz = p.z - car.z;
+    let sx = (dx * c - dz * s) * scale;
+    let sy = (dx * s + dz * c) * scale;
+    const len = Math.hypot(sx, sy);
+    const room = R - 26;
+    if (len > room) {
+      sx *= room / len;
+      sy *= room / len;
+    }
+    g.fillStyle = p.color;
+    g.strokeStyle = '#07040e';
+    g.lineWidth = 5;
+    g.beginPath();
+    g.arc(R + sx, R + sy, 22, 0, Math.PI * 2);
+    g.fill();
+    g.stroke();
+    g.fillStyle = p.fg ?? '#07040e';
+    g.font = '30px Anton, Impact, sans-serif';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillText(p.label, R + sx, R + sy + 2);
+  }
+  g.fillStyle = '#fff4d6';
+  g.strokeStyle = '#07040e';
+  g.lineWidth = 5;
+  g.beginPath();
+  g.moveTo(R, R - 20);
+  g.lineTo(R + 14, R + 15);
+  g.lineTo(R, R + 7);
+  g.lineTo(R - 14, R + 15);
+  g.closePath();
+  g.fill();
+  g.stroke();
+}
+
+// The drivable city, when the 3D world is running. Otherwise story mode uses the drawn map.
+const cityDrive = () => (window as unknown as { __world?: { drive: Drive | null } }).__world?.drive ?? null;
+
 export function startGame(startAt?: string) {
   if (document.querySelector('.game')) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -51,6 +130,8 @@ export function startGame(startAt?: string) {
     </div>
     <div class="g-screen" tabindex="-1"></div>
     <div class="g-banner" aria-hidden="true"><i></i><b></b></div>`;
+  // With the 3D city running, the story panels are windows onto it instead of paintings.
+  root.classList.toggle('is-live', !!cityDrive());
   document.body.append(root);
   document.documentElement.classList.add('game-open');
 
@@ -85,7 +166,12 @@ export function startGame(startAt?: string) {
     settle(screen);
   };
 
-  const character = (mood: string) => characterSvg.replace('data-mood="smirk"', `data-mood="${mood}"`);
+  // The story panels use the same drawing as the 3D world, cached as one image per mood.
+  const figures = new Map<string, string>();
+  const character = (mood: string) => {
+    if (!figures.has(mood)) figures.set(mood, drawFigure(mood, 640).toDataURL());
+    return `<img class="hero-char" src="${figures.get(mood)}" alt="" />`;
+  };
 
   const addFare = (n: number) => {
     const from = receipt.fare;
@@ -126,8 +212,274 @@ export function startGame(startAt?: string) {
     screen.querySelector<HTMLElement>('[data-next]')!.focus();
   };
 
+  // --- The drive: the same city as the portfolio, with the player at the wheel ---
+  // The next stop to suggest. One the player just skipped goes to the back of the queue.
+  const skipped = new Set<string>();
+  const nextStop = () => data.order.find((s) => !done.has(s) && !skipped.has(s)) ?? data.order.find((s) => !done.has(s));
+  const stopStates = () => {
+    const next = nextStop();
+    return data.order.map((slug) => ({ slug, done: done.has(slug), next: slug === next }));
+  };
+  const placeName = (slug: string) => LABELS[slug][2];
+  const driveHooks = {
+    arrive: (slug: string) => {
+      carAt = stops[slug].at;
+      intoMission(slug);
+    },
+    word: (text: string) => pop(text),
+  };
+
+  const driveScreen = (drive: Drive, line?: string) => {
+    const say = line ?? (done.size >= 3 ? story.mapAfterThree : done.size ? story.driveNext : story.driveIdle);
+    unread.hidden = done.size < 3;
+    root.classList.add('is-driving');
+    mount(`
+      <div class="g-drive">
+        <div class="g-drive__next" data-next-wrap><i data-arrow aria-hidden="true">▲</i><p><b data-next-name></b><small data-next-dist></small></p></div>
+        <div class="g-drive__say"><img src="${faceUrl}" alt="" /><p class="g-bubble g-bubble--static" aria-live="polite" data-say>${esc(say)}</p></div>
+        <nav class="g-drive__stops" aria-label="Stops. Pick one and the auto drives there.">
+          <h2>${done.size} of ${data.order.length} stops</h2>
+          ${data.order
+            .map((s, i) => `<button class="g-stop ${done.has(s) ? 'is-done' : ''}" data-stop="${s}" aria-label="${esc(stops[s].title)}: ${esc(projectOf(s).title)}${done.has(s) ? ', done' : ''}"><i>${done.has(s) ? '✓' : i + 1}</i><span>${esc(placeName(s))}</span></button>`)
+            .join('')}
+          ${done.size >= 3 ? '<button class="btn btn--yellow" data-answer>📞 Answer the call</button>' : ''}
+        </nav>
+        <canvas class="g-radar" width="320" height="320" aria-hidden="true"></canvas>
+        <p class="g-drive__hint" data-hint><b>Arrow keys or WASD</b> to drive. Or pick a stop.</p>
+        ${PAD}
+      </div>`);
+
+    const sayEl = screen.querySelector<HTMLElement>('[data-say]')!;
+    const hint = screen.querySelector<HTMLElement>('[data-hint]')!;
+    const arrow = screen.querySelector<HTMLElement>('[data-arrow]')!;
+    const nextName = screen.querySelector<HTMLElement>('[data-next-name]')!;
+    const nextDist = screen.querySelector<HTMLElement>('[data-next-dist]')!;
+    const radar = screen.querySelector<HTMLCanvasElement>('.g-radar')!;
+    const g = radar.getContext('2d')!;
+    const stopsNav = screen.querySelector<HTMLElement>('.g-drive__stops')!;
+
+    // The bubble clears itself after a while, so it isn't in the way of the road.
+    const sayBox = sayEl.parentElement!;
+    let quietTimer = 0;
+    const speak = (text: string) => {
+      sayEl.textContent = text;
+      sayBox.classList.remove('is-quiet');
+      clearTimeout(quietTimer);
+      quietTimer = window.setTimeout(() => sayBox.classList.add('is-quiet'), 8000);
+    };
+    speak(say);
+
+    if (drive.isOn()) drive.resume(stopStates());
+    else drive.start(stopStates(), driveHooks);
+
+    stopsNav.addEventListener('click', (e) => {
+      const pick = (e.target as Element).closest<HTMLElement>('[data-stop]');
+      if (pick) {
+        drive.goTo(pick.dataset.stop!);
+        speak(stops[pick.dataset.stop!].say);
+      }
+    });
+    screen.querySelector<HTMLElement>('[data-answer]')?.addEventListener('click', ending);
+
+    const unwire = wheel(drive, hint);
+
+    // The radar and the arrow, at 12 frames a second like everything else that's drawn.
+    const paintRadar = () => {
+      const car = drive.state();
+      drawRadar(g, car, drive.marks.map((m) => ({ ...m, done: done.has(m.slug) })), drive.marks.map((m) => {
+        const isDone = done.has(m.slug);
+        return { x: m.x, z: m.z, label: isDone ? '✓' : String(data.order.indexOf(m.slug) + 1), color: isDone ? '#14082f' : '#ffc917', fg: isDone ? '#7dff5e' : '#07040e' };
+      }));
+
+      const nextSlug = nextStop();
+      if (!nextSlug) {
+        nextName.textContent = 'Answer the call';
+        nextDist.textContent = '';
+        arrow.hidden = true;
+        return;
+      }
+      const m = drive.marks.find((x) => x.slug === nextSlug)!;
+      pointAt(arrow, car, m.x, m.z);
+      nextName.textContent = placeName(nextSlug);
+      nextDist.textContent = `${Math.round(Math.hypot(m.x - car.x, m.z - car.z))} m${car.auto ? ' · auto driving' : ''}`;
+    };
+    paintRadar();
+    const radarTimer = window.setInterval(paintRadar, 83);
+
+    cleanup = () => {
+      clearInterval(radarTimer);
+      clearTimeout(quietTimer);
+      unwire();
+      root.classList.remove('is-driving');
+    };
+  };
+
+  // Touch controls. Pointer events, so one thumb can steer while the other holds Go.
+  const PAD = `<div class="g-pad" data-pad>
+      <div><button data-key="left" aria-label="Steer left">◀</button><button data-key="right" aria-label="Steer right">▶</button></div>
+      <div><button data-key="down" aria-label="Brake">Brake</button><button data-key="up" class="g-pad__go" aria-label="Accelerate">Go</button></div>
+    </div>`;
+  const wheel = (drive: Drive, hint: HTMLElement) => {
+    const pad = screen.querySelector<HTMLElement>('[data-pad]')!;
+    const hold = (e: PointerEvent, on: boolean) => {
+      const key = (e.target as Element).closest<HTMLElement>('[data-key]');
+      if (!key) return;
+      e.preventDefault();
+      if (on) key.setPointerCapture(e.pointerId);
+      key.classList.toggle('is-held', on);
+      drive.press(key.dataset.key as DriveKey, on);
+      hint.hidden = true;
+    };
+    pad.addEventListener('pointerdown', (e) => hold(e, true));
+    pad.addEventListener('pointerup', (e) => hold(e, false));
+    pad.addEventListener('pointercancel', (e) => hold(e, false));
+    pad.addEventListener('contextmenu', (e) => e.preventDefault());
+    const hideHint = (e: KeyboardEvent) => {
+      if (/^(Arrow|Key[WASD]$)/.test(e.code)) hint.hidden = true;
+    };
+    addEventListener('keydown', hideHint);
+    return () => removeEventListener('keydown', hideHint);
+  };
+
+  const pointAt = (arrow: HTMLElement, car: Car, x: number, z: number) => {
+    const turn = car.heading - Math.atan2(car.x - x, car.z - z);
+    arrow.style.rotate = `${Math.round((turn * 180) / Math.PI)}deg`;
+  };
+
+  // --- A stop's challenge, played at the wheel in the city itself ---
+  const challenge = (slug: string, drive: Drive) => {
+    const c = (data.challenges as Record<string, { brief: string }>)[slug];
+    const p = projectOf(slug);
+    let hudEls: { big: HTMLElement; small: HTMLElement; clock: HTMLElement; clockWrap: HTMLElement } | null = null;
+    let shown = '';
+    let over = false;
+    const ui: ChallengeUI = {
+      hud: (h: Hud) => {
+        if (!hudEls) return;
+        const key = `${h.big}|${h.small ?? ''}|${h.clock === undefined ? '' : Math.ceil(h.clock)}`;
+        if (h.clock !== undefined) hudEls.clock.style.width = `${(h.clock / (h.of ?? 1)) * 100}%`;
+        if (key === shown) return;
+        shown = key;
+        hudEls.big.textContent = h.big;
+        hudEls.small.textContent = h.small ?? '';
+        hudEls.clockWrap.hidden = h.clock === undefined;
+        hudEls.clockWrap.dataset.left = h.clock === undefined ? '' : `${Math.ceil(h.clock)}s`;
+        hudEls.clockWrap.classList.toggle('is-low', h.clock !== undefined && h.clock < 6);
+      },
+      word: (text: string) => pop(text),
+      end: (result) => {
+        if (over) return;
+        over = true;
+        drive.endChallenge();
+        screen.querySelector('.g-drive')?.classList.add('is-over');
+        later(700, () => stamp(slug, result));
+      },
+    };
+    if (!drive.challenge(slug, ui)) return false;
+    root.classList.add('is-driving');
+    mount(`
+      <div class="g-drive g-drive--task is-briefing">
+        <div class="g-drive__next"><i data-arrow aria-hidden="true">▲</i><p><b data-next-name></b><small data-next-dist></small></p></div>
+        <div class="g-task" aria-live="polite">
+          <p class="g-task__title">${esc(stops[slug].title)}</p>
+          <b data-big></b>
+          <small data-small></small>
+          <i class="g-task__clock" data-clock-wrap hidden><span data-clock></span></i>
+          <button class="g-skip" data-skip>Skip this stop →</button>
+        </div>
+        <canvas class="g-radar" width="320" height="320" aria-hidden="true"></canvas>
+        <p class="g-drive__hint" data-hint><b>Arrow keys or WASD</b> to drive.</p>
+        ${PAD}
+        <section class="g-brief" aria-labelledby="g-brief-title">
+          <p class="caption">${esc(stops[slug].title)}</p>
+          <h2 id="g-brief-title">${esc(p.title)}</h2>
+          <div class="g-brief__say"><img src="${faceUrl}" alt="" /><p class="g-bubble g-bubble--static">${esc(c.brief)}</p></div>
+          <p class="g-brief__keys">Drive with the <b>arrow keys</b> or <b>WASD</b>.</p>
+          <div class="g-next"><button class="btn btn--yellow" data-start>Start →</button><button class="g-skip" data-skip>Skip this stop</button></div>
+        </section>
+      </div>`);
+    const wrap = screen.querySelector<HTMLElement>('.g-drive')!;
+    const $ = (sel: string) => screen.querySelector<HTMLElement>(sel)!;
+    hudEls = { big: $('[data-big]'), small: $('[data-small]'), clock: $('[data-clock]'), clockWrap: $('[data-clock-wrap]') };
+    const arrow = $('[data-arrow]');
+    const nextName = $('[data-next-name]');
+    const nextDist = $('[data-next-dist]');
+    const nextBox = arrow.parentElement!;
+    const radar = screen.querySelector<HTMLCanvasElement>('.g-radar')!;
+    const g = radar.getContext('2d')!;
+    const unwire = wheel(drive, $('[data-hint]'));
+
+    const go = () => {
+      if (!wrap.classList.contains('is-briefing')) return;
+      wrap.classList.remove('is-briefing');
+      removeEventListener('keydown', keyStart);
+      drive.play();
+      pop('GO!');
+      screen.focus({ preventScroll: true });
+    };
+    // Any driving key also starts it, so a keyboard player never has to reach for the mouse.
+    const keyStart = (e: KeyboardEvent) => {
+      if (/^(Arrow|Key[WASD]$)/.test(e.code)) go();
+    };
+    addEventListener('keydown', keyStart);
+    $('[data-start]').onclick = go;
+    $('[data-start]').focus();
+    screen.querySelectorAll<HTMLElement>('[data-skip]').forEach((btn) => {
+      btn.onclick = () => {
+        over = true;
+        skipped.add(slug);
+        drive.endChallenge();
+        card(slug, null);
+      };
+    });
+
+    const paint = () => {
+      const car = drive.state();
+      drawRadar(g, car, [], drive.challengePins());
+      const t = drive.challengeTarget();
+      arrow.hidden = !t;
+      nextBox.hidden = !t;
+      if (t) {
+        pointAt(arrow, car, t.x, t.z);
+        nextName.textContent = t.label;
+        nextDist.textContent = `${Math.round(Math.hypot(t.x - car.x, t.z - car.z))} m`;
+      } else {
+        nextName.textContent = hudEls!.big.textContent;
+        nextDist.textContent = '';
+      }
+    };
+    paint();
+    const timer = window.setInterval(paint, 83);
+    cleanup = () => {
+      clearInterval(timer);
+      unwire();
+      removeEventListener('keydown', keyStart);
+      root.classList.remove('is-driving');
+    };
+    return true;
+  };
+
+  // Comic sound effects, in big ink letters over the action.
+  const pop = (text: string) => {
+    const el = document.createElement('b');
+    el.className = 'g-word';
+    el.textContent = text;
+    el.setAttribute('aria-hidden', 'true');
+    el.style.left = text.length > 8 ? '50%' : `${28 + Math.random() * 44}%`;
+    if (text.length > 8) el.classList.add('g-word--long');
+    el.style.top = `${26 + Math.random() * 22}%`;
+    el.style.rotate = `${-9 + Math.random() * 18}deg`;
+    root.append(el);
+    later(800, () => el.remove());
+  };
+
   // --- Map ---
   const map = (line?: string) => {
+    const drive = cityDrive();
+    if (drive) {
+      driveScreen(drive, line);
+      return;
+    }
     const next = data.order.find((s) => !done.has(s));
     const say = line ?? (done.size >= 3 ? story.mapAfterThree : story.mapIdle);
     unread.hidden = done.size < 3;
@@ -189,10 +541,10 @@ export function startGame(startAt?: string) {
       })
       .join('');
 
-    let driving = false;
-    const drive = (slug: string) => {
-      if (driving) return;
-      driving = true;
+    let rolling = false;
+    const roll = (slug: string) => {
+      if (rolling) return;
+      rolling = true;
       const say = screen.querySelector<HTMLElement>('[data-say]')!;
       say.textContent = stops[slug].say;
       const target = stops[slug].at;
@@ -210,7 +562,7 @@ export function startGame(startAt?: string) {
     };
     const pick = (e: Event) => {
       const pin = (e.target as Element).closest<SVGGElement>('[data-stop]');
-      if (pin) drive(pin.dataset.stop!);
+      if (pin) roll(pin.dataset.stop!);
     };
     group.addEventListener('click', pick);
     group.addEventListener('keydown', (e) => {
@@ -244,10 +596,17 @@ export function startGame(startAt?: string) {
   // --- Mission ---
   const intoMission = (slug: string) => {
     current = slug;
+    const drive = cityDrive();
+    if (drive) {
+      if (!drive.isOn()) drive.start(stopStates(), driveHooks);
+      drive.park(slug);
+    }
     showBanner(stops[slug].title, () => mission(slug));
   };
 
   const mission = (slug: string) => {
+    const drive = cityDrive();
+    if (drive && challenge(slug, drive)) return;
     const p = projectOf(slug);
     mount(`
       <section class="g-mission">
@@ -255,7 +614,10 @@ export function startGame(startAt?: string) {
           <button class="g-skip" data-skip>Skip mission →</button></header>
         <div class="g-mission__stage" data-stage></div>
       </section>`);
-    screen.querySelector<HTMLElement>('[data-skip]')!.onclick = () => card(slug, null);
+    screen.querySelector<HTMLElement>('[data-skip]')!.onclick = () => {
+      skipped.add(slug);
+      card(slug, null);
+    };
     let finished = false;
     cleanup = missions[slug](screen.querySelector<HTMLElement>('[data-stage]')!, (result) => {
       if (finished) return;
@@ -273,7 +635,7 @@ export function startGame(startAt?: string) {
     gsap.fromTo(el.querySelector('b'), { scale: 2.6, rotate: -14 }, { scale: 1, rotate: -5, duration: 0.3, ease: 'steps(6)' });
     if (!done.has(slug)) addFare(stops[slug].fare);
     done.add(slug);
-    later(result.headline ? 3200 : 1700, () => {
+    later(result.headline ? Math.max(3200, result.headline.length * 42) : 1700, () => {
       el.remove();
       card(slug, result);
     });
@@ -281,6 +643,7 @@ export function startGame(startAt?: string) {
 
   // --- Case-study card ---
   const card = (slug: string, result: Result | null) => {
+    cityDrive()?.clearChallenge();
     const p = projectOf(slug);
     const allDone = data.order.every((s) => done.has(s));
     mount(`
@@ -290,7 +653,7 @@ export function startGame(startAt?: string) {
         <p>${esc(p.oneLiner)}</p>
         <div class="g-card__cols">
           <section><h3>What I built</h3><ul>${p.built.slice(0, 3).map((b) => `<li>${esc(b)}</li>`).join('')}</ul></section>
-          <section class="g-card__broke"><h3>What broke</h3><ul>${p.broke.map((b) => `<li>${txt(b)}</li>`).join('')}</ul></section>
+          ${p.broke.length ? `<section class="g-card__broke"><h3>What broke</h3><ul>${p.broke.map((b) => `<li>${txt(b)}</li>`).join('')}</ul></section>` : ''}
         </div>
         <p class="g-card__learned"><b>What I learned:</b> ${txt(p.learned)}</p>
         <p class="g-card__stack">${p.stack.map(esc).join(' · ')}</p>
@@ -306,6 +669,7 @@ export function startGame(startAt?: string) {
   // --- Ending: the caller was the visitor all along ---
   const ending = () => {
     const e = story.ending;
+    cityDrive()?.park();
     mount(`
       <article class="g-panel g-end">
         <p class="caption">${esc(e.ring)}</p>
@@ -322,7 +686,7 @@ export function startGame(startAt?: string) {
           <p class="caption">${esc(e.caption)}</p>
           <div class="g-panel__art">
             <div class="g-call g-call--you"><b>You</b><span aria-hidden="true">🫵</span></div>
-            <div class="g-panel__char">${character('happy')}</div>
+            <div class="g-panel__char">${character('proud')}</div>
             <p class="g-bubble">${esc(e.line)}</p>
           </div>
           <p class="g-end__fare">Fare so far: <b>₹${receipt.fare}</b>, ${done.size} of ${data.order.length} stops. That's ₹1 per commit.</p>
@@ -360,6 +724,7 @@ export function startGame(startAt?: string) {
   function exit() {
     alive = false;
     cleanup?.();
+    cityDrive()?.stop();
     gsap.killTweensOf('*');
     root.remove();
     document.removeEventListener('keydown', onKey);

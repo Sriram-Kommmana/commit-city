@@ -12,23 +12,23 @@
       "Socket.IO",
       "Express",
       "MongoDB",
-      "Caddy",
+      "Redis",
       "Reinforcement learning"
     ],
     "built": [
       "A React front end and an Express and Socket.IO server for live bidding",
       "Purse management, player stats, auction awards and rankings",
       "Bot opponents, with A2C and OpenAI-ES experiments recorded in the repo",
-      "My own deployment scripts for Ubuntu, Caddy and systemd"
+      "My own deployment scripts for Ubuntu and systemd"
     ],
     "broke": [
       "MongoDB 8 needed a compatibility workaround on the Ubuntu 24.04 kernel.",
       "Wrong permissions on a temporary staging directory caused 403 errors after deploys."
     ],
-    "why": "TODO_USER: why did you build this? Is cricket a real love, or was it just a fun build?",
-    "learned": "TODO_USER: the main thing this project taught you.",
+    "why": "My friends and I used to run IPL auctions by hand: writing out player lists, calling players one by one, running the bidding and tracking everyone's budget. It was fun, but a hassle. I also wanted to build something people could actually play, not another CRUD app. So I built a site that runs the whole auction, and it grew into a full IPL mega auction with realistic bidding, team strategy and multiplayer. And yes, I genuinely love cricket.",
+    "learned": "A real-time multiplayer app is much harder than it looks. I learned Socket.IO and Redis, room management, keeping state in sync between players, handling disconnects and reconnects, and auction logic that behaves the same for everyone. Most of all, I learned how to turn a simple real-world idea into a full product.",
     "repo": "https://github.com/Sriram-Kommmana/ipl-auction-game",
-    "live": "TODO_USER: live game URL, or empty string if there is none"
+    "live": "https://cricketauction.site/"
   },
   {
     "slug": "repomind-ai",
@@ -49,11 +49,9 @@
       "Reconstructed decision records, generated docs and an ask-the-repo chat that shows its queries",
       "An evaluation suite: 150 of 150 seeded violations detected across Python, JavaScript and TypeScript fixtures"
     ],
-    "broke": [
-      "TODO_USER: one true story of what broke in RepoMind."
-    ],
-    "why": "TODO_USER: why did you build this?",
-    "learned": "TODO_USER: the main thing this project taught you.",
+    "broke": [],
+    "why": "Understanding a large codebase that someone else built is hard. As a repository grows, its architecture, the reasons behind its decisions and the way its parts depend on each other all get harder to see. I wanted to find out whether an AI system could go beyond answering questions about the code and actually rebuild the architectural understanding of a project.",
+    "learned": "An agentic AI system is very different from connecting an LLM to a few tools. You have to think about how agents communicate, how information is retrieved and kept, how decisions are checked, and how the whole workflow copes with wrong outputs. It made me appreciate how much architecture matters in AI applications.",
     "repo": "https://github.com/Sriram-Kommmana/repoMindAI",
     "live": ""
   },
@@ -69,7 +67,8 @@
       "Three.js",
       "React Three Fiber",
       "Rapier",
-      "Colyseus"
+      "Colyseus",
+      "TypeScript"
     ],
     "built": [
       "Private rooms for 2 to 10 players, joined with a code or invite link",
@@ -78,11 +77,12 @@
       "Touch controls for phones: joystick, swipe-to-look and drag-to-aim"
     ],
     "broke": [
+      "In the first playtests one side won almost every round. I fixed it with game design, not just code: radar sweeps that show only which room a hider is in, decoys that hiders can leave behind, bigger penalties for Hunters who shoot random furniture, and a smaller map.",
       "A reconnect loop leak, a damage stat cap and mismatched models and hitboxes all needed fixing.",
       "The game gave no readable error when the server was unreachable, until I added one."
     ],
-    "why": "TODO_USER: why did you build this?",
-    "learned": "TODO_USER: the main thing this project taught you.",
+    "why": "I wanted a real multiplayer game that my friends and I could play together, not a single-player demo. We play it over the same Wi-Fi, on laptops and phones.",
+    "learned": "Making a multiplayer game work is only half the job. Making it fair is the other half. Fair for both teams meant watching people play and asking why the game stopped being fun for one side. Fair against cheating meant making the server the single source of truth: it checks every move, shot and disguise, and never tells a Hunter's browser where a hider is unless that Hunter can see them.",
     "repo": "",
     "live": ""
   },
@@ -112,8 +112,8 @@
       "Transcription took 51 minutes on CPU because a GPU DLL was missing. After the fix it took 3.6 minutes.",
       "Normal speech sat above the excitement threshold, so talking counted as a highlight: 74 false events, then 0 after the fix."
     ],
-    "why": "TODO_USER: why did you build this?",
-    "learned": "TODO_USER: the main thing this project taught you.",
+    "why": "Short videos are everywhere, but cutting them from long ones means watching hours of footage, finding the good moments and editing every clip. With Shorts and Reels so popular, I wanted to see how much of that AI could take over.",
+    "learned": "An AI product is much more than the model. The real work is the reliable system around it: FFmpeg and FFprobe, transcription, highlight detection, GPU and CPU tuning, different video formats, word-highlighted captions, and pipelines that resume and cache their work. Good AI output depends as much on the input and the engineering around it as on the model.",
     "repo": "https://github.com/Sriram-Kommmana/clipper",
     "live": ""
   },
@@ -132,11 +132,9 @@
       "Verdict detection on LeetCode submissions",
       "A different overlay and sound for accepted, wrong answer, time limit, runtime, memory and compile results"
     ],
-    "broke": [
-      "TODO_USER: one true story of what broke in SolveFX, or remove this line."
-    ],
-    "why": "TODO_USER: why did you build this?",
-    "learned": "TODO_USER: the main thing this project taught you.",
+    "broke": [],
+    "why": "Solving LeetCode problems is hard enough, so I wanted to make it a little more fun, and make an Accepted feel more satisfying. It was also a chance to try browser extensions and to work inside a website someone else built.",
+    "learned": "Chrome extension development, JavaScript, and DOM work inside an existing site instead of building everything from scratch. It also taught me that even small ideas become interesting projects when you pay attention to the user experience.",
     "repo": "https://github.com/Sriram-Kommmana/solveFX",
     "live": ""
   },

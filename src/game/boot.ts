@@ -7,6 +7,7 @@ document.addEventListener('click', async (event) => {
   event.preventDefault();
   try {
     const { startGame } = await import('./game');
+    await (await import('../world/rig')).prepareRig();
     startGame(link.dataset.play || undefined);
   } catch (error) {
     console.error('Story mode could not load', error);
