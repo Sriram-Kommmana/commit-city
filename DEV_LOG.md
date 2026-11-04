@@ -113,3 +113,6 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   a Lambda function behind an HTTP API, with notes in DynamoDB, all created from one CloudFormation template. Because
   notes go live instantly, the function refuses links, masks swearing, allows one note per visitor every 30 seconds,
   and catches bots with a hidden field. The Email button now also copies my address, for people with no mail app.
+- **Sound on by default, and no wind.** Sound starts with the visitor's first click, tap or key press, since browsers
+  block it before that; until then the button says "Click for sound". The wind during the fall was irritating, so it's
+  gone. What's left: the siren in the chase, the commit line's zip, and hits.

@@ -1,12 +1,10 @@
 // Sound effects, synthesised live with no audio files. On by default: browsers only allow audio after the visitor
 // first clicks, taps or presses a key, so it starts then. The button turns it off.
-// There is no background music: wind, a siren, the commit line's zip and hits react to the journey.
+// There is no background music or wind: a siren, the commit line's zip and hits react to the journey.
 
 export function createSound() {
   let ctx: AudioContext | null = null;
   let master: GainNode;
-  let wind: GainNode;
-  let windFilter: BiquadFilterNode;
   let sirenGain: GainNode;
   let sirenOsc: OscillatorNode;
   let noise: AudioBuffer;
@@ -50,19 +48,6 @@ export function createSound() {
     const data = noise.getChannelData(0);
     for (let i = 0; i < size; i++) data[i] = Math.random() * 2 - 1;
 
-    // Wind for the fall, as filtered noise that opens up with speed.
-    const src = ctx.createBufferSource();
-    src.buffer = noise;
-    src.loop = true;
-    windFilter = ctx.createBiquadFilter();
-    windFilter.type = 'bandpass';
-    windFilter.frequency.value = 500;
-    windFilter.Q.value = 0.7;
-    wind = ctx.createGain();
-    wind.gain.value = 0;
-    src.connect(windFilter).connect(wind).connect(master);
-    src.start();
-
     // A two-tone siren for the chase, quiet and off-key enough to stay out of the way.
     sirenOsc = ctx.createOscillator();
     sirenOsc.type = 'square';
@@ -99,13 +84,10 @@ export function createSound() {
     toggle() {
       return this.set(!on);
     },
-    /** Called as the journey moves, with its position and speed. */
-    update(p: number, speed: number) {
+    /** Called as the journey moves, with its position. */
+    update(p: number) {
       if (!ctx || !on) return;
       const t = ctx.currentTime;
-      const falling = p > 0.08 && p < 0.5 ? 1 : 0.25;
-      wind.gain.setTargetAtTime(Math.min(speed * 0.9 * falling, 0.5), t, 0.08);
-      windFilter.frequency.setTargetAtTime(400 + speed * 2200, t, 0.1);
       const chase = p > 0.57 && p < 0.77;
       sirenGain.gain.setTargetAtTime(chase ? 0.035 : 0, t, 0.2);
       if (chase) sirenOsc.frequency.setValueAtTime(Math.floor(t * 2.4) % 2 ? 660 : 880, t);

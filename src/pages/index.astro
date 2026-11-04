@@ -277,10 +277,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
       localStorage.setItem('sound', sound.on ? 'on' : 'off');
     } catch {}
   });
-  addEventListener('world:progress', (e) => {
-    const w = (window as unknown as { __world?: { speed: () => number } }).__world;
-    sound.update((e as CustomEvent<number>).detail, w ? w.speed() : 0);
-  });
+  addEventListener('world:progress', (e) => sound.update((e as CustomEvent<number>).detail));
   addEventListener('world:cut', () => sound.hit());
   addEventListener('world:zip', () => sound.zip());
 
