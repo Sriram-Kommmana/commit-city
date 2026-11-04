@@ -527,10 +527,10 @@ export async function startWorld(canvas: HTMLCanvasElement, opts: { still?: bool
   part(van, wheelGeo, ink, 1.6, 0.62, -2);
   const lightA = part(van, new BoxGeometry(1.4, 0.5, 0.8), flat('#ff2030'), -0.8, 4.1, 0.2);
   const lightB = part(van, new BoxGeometry(1.4, 0.5, 0.8), flat('#2060ff'), 0.8, 4.1, 0.2);
-  const vanRear = new Mesh(new PlaneGeometry(3.3, 2.1), new MeshBasicMaterial({ map: signTexture('DEADLINE', 'Nov 6, 11:59 PM', '#f03a2e', '#fff4d6') }));
+  const vanRear = new Mesh(new PlaneGeometry(3.3, 2.1), new MeshBasicMaterial({ map: signTexture('DEADLINE', '', '#f03a2e', '#fff4d6') }));
   vanRear.position.set(0, 2.5, 3.32);
   van.add(vanRear);
-  const vanFront = new Mesh(new PlaneGeometry(3.3, 2.1), new MeshBasicMaterial({ map: signTexture('DEADLINE', 'Nov 6, 11:59 PM', '#f03a2e', '#fff4d6') }));
+  const vanFront = new Mesh(new PlaneGeometry(3.3, 2.1), new MeshBasicMaterial({ map: signTexture('DEADLINE', '', '#f03a2e', '#fff4d6') }));
   vanFront.position.set(0, 2.5, -3.32);
   vanFront.rotation.y = Math.PI;
   van.add(vanFront);
