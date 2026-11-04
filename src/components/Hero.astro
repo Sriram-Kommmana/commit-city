@@ -154,12 +154,16 @@ import site from '../../content/site.json';
 
   .hero__tag {
     margin-top: -0.2em;
+    margin-bottom: 0.18em;
     margin-left: min(13vw, 150px);
     color: var(--pink);
-    font: 400 clamp(2.3rem, 5.4vw, 4.2rem) / 1 var(--tag);
+    font: 400 clamp(2.6rem, 7.2vw, 6.6rem) / 1 var(--tag);
+    /* A thick ink outline and a drop shadow, so the name stands off the pink sky. */
+    -webkit-text-stroke: 0.11em var(--ink);
+    paint-order: stroke fill;
     text-shadow:
-      3px 3px 0 var(--ink),
-      -2px -1px 0 var(--ink);
+      0.07em 0.07em 0 var(--ink),
+      0.12em 0.12em 0 var(--yellow);
     transform: rotate(-6deg);
     position: relative;
     white-space: nowrap;
