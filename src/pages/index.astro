@@ -24,7 +24,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
   <canvas class="world" data-world aria-hidden="true"></canvas>
   <Hud />
   <div class="bars" aria-hidden="true"></div>
-  <button class="sound" type="button" data-sound aria-pressed="true">🔊 Sound on</button>
+  <button class="sound is-waiting" type="button" data-sound aria-pressed="true">🔊 Click for sound</button>
 
   <main id="main">
     <Hero />
@@ -235,26 +235,46 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     else fallback();
   });
 
-  // Sound is on by default and starts with the visitor's first click, tap or key press. Turning it off is remembered.
+  // Sound is on by default, but browsers only allow it after the visitor's first click, tap or key press (scrolling
+  // doesn't count). Until then the button asks for one, and that first press starts the sound instead of muting it.
+  // Turning it off is remembered.
   const sound = createSound();
   const button = document.querySelector<HTMLButtonElement>('[data-sound]');
-  const label = (on: boolean) => {
+  const ask = matchMedia('(pointer: coarse)').matches ? 'Tap for sound' : 'Click for sound';
+  let woke = false;
+  let wokeByButton = false;
+  const label = () => {
     if (!button) return;
-    button.textContent = on ? '🔊 Sound on' : '🔇 Sound off';
-    button.setAttribute('aria-pressed', String(on));
+    const waiting = sound.on && !woke;
+    button.textContent = !sound.on ? '🔇 Sound off' : waiting ? `🔊 ${ask}` : '🔊 Sound on';
+    button.setAttribute('aria-pressed', String(sound.on));
+    button.classList.toggle('is-waiting', waiting);
   };
   try {
     if (localStorage.getItem('sound') === 'off') sound.set(false);
   } catch {}
-  label(sound.on);
+  label();
+  const wake = (e: Event) => {
+    if (woke || !sound.on) return;
+    sound.wake();
+    woke = true;
+    wokeByButton = !!button && button.contains(e.target as Node);
+    label();
+  };
   for (const type of ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click']) {
-    addEventListener(type, () => sound.wake(), { capture: true, passive: true });
+    addEventListener(type, wake, { capture: true, passive: true });
   }
   button?.addEventListener('click', () => {
-    const on = sound.toggle();
-    label(on);
+    // This press is the one that just started the sound, so leave it on.
+    if (wokeByButton) {
+      wokeByButton = false;
+      return;
+    }
+    sound.toggle();
+    woke = true;
+    label();
     try {
-      localStorage.setItem('sound', on ? 'on' : 'off');
+      localStorage.setItem('sound', sound.on ? 'on' : 'off');
     } catch {}
   });
   addEventListener('world:progress', (e) => {
@@ -335,6 +355,23 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     font: 500 1.05rem/1 var(--label);
     letter-spacing: 0.03em;
     cursor: pointer;
+  }
+
+  /* Waiting for the first click: a gentle nudge. */
+  .sound.is-waiting {
+    animation: nudge 1.6s steps(2) infinite;
+  }
+
+  @keyframes nudge {
+    50% {
+      transform: rotate(-3deg) scale(1.06);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sound.is-waiting {
+      animation: none;
+    }
   }
 
   .sound[aria-pressed='true'] {

@@ -80,7 +80,8 @@ export function createSound() {
   const wake = () => {
     if (!on) return;
     if (!ctx) start();
-    else if (ctx.state === 'suspended') ctx.resume();
+    // Safari can create the context suspended even inside a click, so resume it either way.
+    if (ctx!.state === 'suspended') ctx!.resume();
   };
 
   return {
