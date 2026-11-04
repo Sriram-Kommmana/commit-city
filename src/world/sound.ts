@@ -1,4 +1,5 @@
-// Sound effects, synthesised live with no audio files. Off until the visitor asks for it.
+// Sound effects, synthesised live with no audio files. On by default: browsers only allow audio after the visitor
+// first clicks, taps or presses a key, so it starts then. The button turns it off.
 // There is no background music: wind, a siren, the commit line's zip and hits react to the journey.
 
 export function createSound() {
@@ -9,7 +10,7 @@ export function createSound() {
   let sirenGain: GainNode;
   let sirenOsc: OscillatorNode;
   let noise: AudioBuffer;
-  let on = false;
+  let on = true;
 
   const kick = (t: number) => {
     const o = ctx!.createOscillator();
@@ -76,16 +77,26 @@ export function createSound() {
 
   };
 
+  const wake = () => {
+    if (!on) return;
+    if (!ctx) start();
+    else if (ctx.state === 'suspended') ctx.resume();
+  };
+
   return {
-    toggle() {
-      on = !on;
-      if (on) {
-        if (!ctx) start();
-        else ctx.resume();
-      } else {
-        ctx?.suspend();
-      }
+    get on() {
       return on;
+    },
+    /** Starts the sound if it's on. Call from a click, tap or key press, the only times a browser allows it. */
+    wake,
+    set(value: boolean) {
+      on = value;
+      if (on) wake();
+      else ctx?.suspend();
+      return on;
+    },
+    toggle() {
+      return this.set(!on);
     },
     /** Called as the journey moves, with its position and speed. */
     update(p: number, speed: number) {

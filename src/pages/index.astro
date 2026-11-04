@@ -24,7 +24,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
   <canvas class="world" data-world aria-hidden="true"></canvas>
   <Hud />
   <div class="bars" aria-hidden="true"></div>
-  <button class="sound" type="button" data-sound aria-pressed="false">🔇 Sound off</button>
+  <button class="sound" type="button" data-sound aria-pressed="true">🔊 Sound on</button>
 
   <main id="main">
     <Hero />
@@ -235,13 +235,27 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
     else fallback();
   });
 
-  // Sound stays off until asked for, then reacts to the fall.
+  // Sound is on by default and starts with the visitor's first click, tap or key press. Turning it off is remembered.
   const sound = createSound();
   const button = document.querySelector<HTMLButtonElement>('[data-sound]');
-  button?.addEventListener('click', () => {
-    const on = sound.toggle();
+  const label = (on: boolean) => {
+    if (!button) return;
     button.textContent = on ? '🔊 Sound on' : '🔇 Sound off';
     button.setAttribute('aria-pressed', String(on));
+  };
+  try {
+    if (localStorage.getItem('sound') === 'off') sound.set(false);
+  } catch {}
+  label(sound.on);
+  for (const type of ['pointerdown', 'pointerup', 'touchend', 'keydown', 'click']) {
+    addEventListener(type, () => sound.wake(), { capture: true, passive: true });
+  }
+  button?.addEventListener('click', () => {
+    const on = sound.toggle();
+    label(on);
+    try {
+      localStorage.setItem('sound', on ? 'on' : 'off');
+    } catch {}
   });
   addEventListener('world:progress', (e) => {
     const w = (window as unknown as { __world?: { speed: () => number } }).__world;
