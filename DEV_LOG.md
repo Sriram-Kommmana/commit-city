@@ -100,3 +100,10 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
 - **Balancing the chase.** The drift bug turned corners at full speed while the auto had to brake, so it always got away.
   It now glitches in place for a moment at every junction and slows down when it's far ahead.
 - **"Play my story" became "Hop in".** The button now says what you actually do.
+- **The driving challenges weren't fun either, so every stop became its own game.** Driving through gates said nothing
+  about the projects. Now each stop is a different arcade game with a surprise, a joke and a payoff, built from the real
+  project: the hostel goes dark and SolveFX's verdicts hunt you (each hit shows SolveFX's real overlay), you're the
+  auctioneer while bots with my IPL game's real personalities bid money they don't have, the ShopWise codebase is a
+  building that bugs keep drilling shortcuts through (RepoMind's drift), you direct a trailer from Clipper's real scored
+  moments while the audio, captions and GPU fail like they really did, and the mansion's furniture moves when you're
+  not looking. The teams and players in the auction are made up, so nothing belongs to a real league.

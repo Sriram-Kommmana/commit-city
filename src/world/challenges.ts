@@ -14,15 +14,12 @@ import {
   RingGeometry,
   type Scene,
   SphereGeometry,
-  Sprite,
-  SpriteMaterial,
   type Texture,
 } from 'three';
 import data from '../../content/missions.json';
-import { PLOTS } from './districts';
 
-// Each stop of story mode is played at the wheel, in the city itself: gates to drive through,
-// paddles to grab, a bug to chase, a road to choose, furniture to ram.
+// The mansion stop is played at the wheel, in the city itself: furniture on the street, and one piece of it is me.
+// (The other four stops are 2D arcade games, in src/game/games.)
 
 type SignPaint = (text: string, small: string, bg: string, fg: string, w?: number, h?: number) => CanvasTexture;
 
@@ -44,6 +41,7 @@ export interface Hud {
 
 export interface ChallengeUI {
   hud: (h: Hud) => void;
+  say: (text: string) => void;
   word: (text: string) => void;
   end: (result: { passed: boolean; headline?: string }) => void;
 }
@@ -77,7 +75,6 @@ const PAPER = '#fff4d6';
 const RED = '#e5322d';
 
 const fill = (s: string, vars: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''));
-const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const near = (car: Car, x: number, z: number, r: number) => Math.hypot(car.x - x, car.z - z) < r;
 
 function paint(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void) {
@@ -88,7 +85,7 @@ function paint(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void
   return new CanvasTexture(c);
 }
 
-export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
+export function createChallenges(scene: Scene, _sign: SignPaint): Challenges {
   // The same striped light as the stop markers, shorter.
   const beamTex = paint(64, 128, (g) => {
     const fade = g.createLinearGradient(0, 0, 0, 128);
@@ -125,7 +122,7 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
           if (o instanceof Mesh) {
             o.geometry.dispose();
             (o.material as Material).dispose();
-          } else if (o instanceof Sprite) (o.material as Material).dispose();
+          }
         });
         for (const t of textures) t.dispose();
       },
@@ -152,343 +149,6 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
         beamMat.color.set(c);
         ringMat.color.set(c);
       },
-    };
-  };
-
-  // An arch over the road with its sign on the crossbar, like a finish line. `along` is the way traffic goes through.
-  const arch = (parent: Group, x: number, z: number, along: 'x' | 'z', color: string, map: Texture, r = 6) => {
-    const gt = gate(parent, x, z, color, r, 9);
-    const frame = new Group();
-    if (along === 'x') frame.rotation.y = Math.PI / 2;
-    gt.g.add(frame);
-    const postMat = new MeshBasicMaterial({ color });
-    const ink = new MeshBasicMaterial({ color: INK });
-    for (const side of [-1, 1]) {
-      const post = new Mesh(new BoxGeometry(1.1, 11, 1.1), postMat);
-      post.position.set(side * (r + 1.2), 5.5, 0);
-      const foot = new Mesh(new BoxGeometry(2, 1, 2), ink);
-      foot.position.set(side * (r + 1.2), 0.5, 0);
-      frame.add(post, foot);
-    }
-    const width = r * 2 + 4.6;
-    const bar = new Mesh(new BoxGeometry(width, 1.2, 1.2), ink);
-    bar.position.y = 11;
-    frame.add(bar);
-    const img = map.image as HTMLCanvasElement;
-    const tall = (width * img.height) / img.width;
-    const signMat = new MeshBasicMaterial({ map });
-    for (const turn of [0, Math.PI]) {
-      const s = new Mesh(new PlaneGeometry(width, tall), signMat);
-      s.position.y = 11.6 + tall / 2;
-      s.rotation.y = turn;
-      s.translateZ(0.7);
-      frame.add(s);
-    }
-    return {
-      ...gt,
-      tint: (c: string) => {
-        gt.tint(c);
-        postMat.color.set(c);
-      },
-      sign: (next: Texture) => {
-        signMat.map = next;
-        signMat.needsUpdate = true;
-      },
-    };
-  };
-
-  // A sign that always faces the camera.
-  const board = (parent: Group, map: Texture, w: number, y: number) => {
-    const s = new Sprite(new SpriteMaterial({ map }));
-    const img = map.image as HTMLCanvasElement;
-    s.scale.set(w, (w * img.height) / img.width, 1);
-    s.position.y = y;
-    parent.add(s);
-    return s;
-  };
-
-  // --- Stop 1, the hostel: three test cases against the clock ---
-  const hostel = (ui: ChallengeUI): ChallengeRun => {
-    const c = data.challenges.solvefx;
-    const st = stage();
-    // Up the road, left past the hostel's back, and left again down the mansion's side.
-    const SPOTS: [number, number][] = [
-      [-80, -305],
-      [-100, -320],
-      [-120, -278],
-    ];
-    const AXES = ['z', 'x', 'z'] as const;
-    const signs = SPOTS.map((_, i) => [YELLOW, PINK].map((bg) => st.own(sign(c.tests[i][0], c.tests[i][1], bg, INK, 512, 170))));
-    const gates = SPOTS.map(([x, z], i) => arch(st.root, x, z, AXES[i], i === 0 ? YELLOW : PINK, signs[i][i === 0 ? 0 : 1]));
-    let next = 0;
-    let time = 0;
-    let lastCrash = -9;
-    return {
-      from: { x: -80, z: -258, heading: 0 },
-      target: () => (next < SPOTS.length ? { x: SPOTS[next][0], z: SPOTS[next][1], label: c.tests[next][0], color: YELLOW } : null),
-      pins: () => SPOTS.map(([x, z], i) => ({ x, z, label: String(i + 1), color: i < next ? GREEN : i === next ? YELLOW : PINK })),
-      update: (dt, tick, car, live) => {
-        const step = Math.floor(tick / 2);
-        gates.forEach((gt, i) => {
-          gt.beam.rotation.y = step * 0.14;
-          gt.g.visible = i >= next;
-        });
-        if (!live || st.ended()) return;
-        time += dt;
-        const left = Math.max(c.seconds - time, 0);
-        if (near(car, SPOTS[next][0], SPOTS[next][1], 6.5)) {
-          next++;
-          if (next === SPOTS.length) {
-            st.finish(() => {
-              ui.word(c.pass);
-              ui.end({ passed: true, headline: fill(c.won, { time: time.toFixed(1) }) });
-            });
-            return;
-          }
-          gates[next].tint(YELLOW);
-          gates[next].sign(signs[next][0]);
-          ui.word(c.ok);
-        }
-        if (left <= 0) {
-          st.finish(() => {
-            ui.word(c.tle);
-            ui.end({ passed: false, headline: c.lost });
-          });
-        }
-        ui.hud({ big: fill(c.goal, { n: next + 1 }), small: c.tests[next][1], clock: left, of: c.seconds });
-      },
-      crash: () => {
-        if (time - lastCrash < 1.2) return;
-        lastCrash = time;
-        ui.word(c.crash);
-      },
-      dispose: st.dispose,
-    };
-  };
-
-  // --- Stop 2, the cricket ground: a bidding war, one paddle at a time ---
-  const auction = (ui: ChallengeUI): ChallengeRun => {
-    const c = data.challenges['ipl-auction'];
-    const a = data.auction;
-    const st = stage();
-    // The roads round the ground.
-    const LOOP: [number, number][] = [];
-    for (const z of [-280, -260, -240, -220, -200]) LOOP.push([80, z], [160, z]);
-    for (const x of [100, 120, 140]) LOOP.push([x, -280], [x, -200]);
-    const paddle = st.own(
-      paint(256, 320, (g) => {
-        g.fillStyle = INK;
-        g.fillRect(108, 210, 40, 104);
-        g.beginPath();
-        g.arc(128, 112, 102, 0, Math.PI * 2);
-        g.fillStyle = YELLOW;
-        g.fill();
-        g.lineWidth = 14;
-        g.strokeStyle = INK;
-        g.stroke();
-        g.fillStyle = INK;
-        g.textAlign = 'center';
-        g.textBaseline = 'middle';
-        g.font = '92px Anton, Impact, sans-serif';
-        g.fillText('+₹1', 128, 98);
-        g.font = '44px Teko, sans-serif';
-        g.fillText('CRORE', 128, 168);
-      }),
-    );
-    const pad = gate(st.root, 80, -280, GREEN, 5, 15);
-    const sprite = board(pad.g, paddle, 9, 12);
-    let spot: [number, number] = [80, -280];
-    let bid = a.start;
-    let leader = a.rivals[0];
-    let rivalIn = 2;
-    let time = 0;
-    // The next paddle goes somewhere ahead, far enough to need driving to.
-    const respawn = (car: Car) => {
-      const fx = -Math.sin(car.heading);
-      const fz = -Math.cos(car.heading);
-      const options = LOOP.filter(([x, z]) => {
-        const d = Math.hypot(x - car.x, z - car.z);
-        return d > 24 && d < 62 && (x !== spot[0] || z !== spot[1]);
-      })
-        .map((p) => ({ p, ahead: ((p[0] - car.x) * fx + (p[1] - car.z) * fz) / Math.hypot(p[0] - car.x, p[1] - car.z) }))
-        .sort((m, n) => n.ahead - m.ahead);
-      spot = options[Math.floor(Math.random() * Math.min(3, options.length))]?.p ?? LOOP[(LOOP.indexOf(spot) + 5) % LOOP.length];
-      pad.g.position.set(spot[0], 0, spot[1]);
-    };
-    return {
-      from: { x: 80, z: -238, heading: 0 },
-      target: () => ({ x: spot[0], z: spot[1], label: 'Next paddle', color: GREEN }),
-      pins: () => [{ x: spot[0], z: spot[1], label: '₹', color: GREEN }],
-      update: (dt, tick, car, live) => {
-        const step = Math.floor(tick / 2);
-        pad.beam.rotation.y = step * 0.14;
-        sprite.position.y = 12 + (step % 2) * 0.5;
-        if (!live || st.ended()) return;
-        time += dt;
-        const left = Math.max(c.seconds - time, 0);
-        if (near(car, spot[0], spot[1], 6.5)) {
-          if (bid + a.step <= a.purse) {
-            bid += a.step;
-            leader = 'you';
-            rivalIn = 1.3 + Math.random() * 0.9;
-            ui.word(c.bid);
-          }
-          respawn(car);
-        }
-        // Rivals answer every bid until they reach their limit, so a quick driver always wins.
-        if (leader === 'you' && bid < c.rivalLimit) {
-          rivalIn -= dt;
-          if (rivalIn <= 0) {
-            bid += a.step;
-            leader = a.rivals[bid % a.rivals.length];
-            ui.word(c.outbid);
-          }
-        }
-        if (left <= 0) {
-          st.finish(() => {
-            ui.word(c.sold);
-            ui.end({ passed: true, headline: leader === 'you' ? a.won : a.lost });
-          });
-        }
-        ui.hud({ big: `₹${bid} Cr`, small: leader === 'you' ? c.youLead : fill(c.theyLead, { team: leader }), clock: left, of: c.seconds });
-      },
-      dispose: st.dispose,
-    };
-  };
-
-  // --- Stop 3, tech street: chase the drift down before it gets away ---
-  const drift = (ui: ChallengeUI): ChallengeRun => {
-    const c = data.challenges['repomind-ai'];
-    const st = stage();
-    const B = { x0: 0, x1: 160, z0: -480, z1: -320 };
-    const plots = Object.values(PLOTS);
-    const closed = (x: number, z: number) => plots.some((p) => Math.abs(x - p.x) < p.half && Math.abs(z - p.z) < p.half);
-    const bug = new Group();
-    st.root.add(bug);
-    const body = new Mesh(new BoxGeometry(4.6, 4.6, 4.6), new MeshBasicMaterial({ color: RED }));
-    body.position.y = 4.2;
-    const core = new Mesh(new BoxGeometry(2.2, 2.2, 2.2), new MeshBasicMaterial({ color: YELLOW }));
-    core.position.y = 4.2;
-    bug.add(body, core);
-    const halo = gate(bug, 0, 0, RED, 4.6, 18);
-    board(halo.g, st.own(sign(c.label, c.labelSmall, RED, PAPER, 512, 170)), 10, 13);
-    // Starts just up the street, already on the run.
-    let from: [number, number] = [80, -400];
-    let to: [number, number] = [80, -440];
-    let t = 0.3;
-    let time = 0;
-    let stall = 0;
-    // At each junction it takes the road that gets it furthest from the auto, more or less.
-    const choose = (car: Car) => {
-      const options = [
-        [40, 0],
-        [-40, 0],
-        [0, 40],
-        [0, -40],
-      ]
-        .map(([dx, dz]) => [to[0] + dx, to[1] + dz] as [number, number])
-        .filter(([nx, nz]) => nx >= B.x0 && nx <= B.x1 && nz >= B.z0 && nz <= B.z1 && !closed((nx + to[0]) / 2, (nz + to[1]) / 2));
-      const fresh = options.filter(([nx, nz]) => nx !== from[0] || nz !== from[1]);
-      const pool = fresh.length ? fresh : options;
-      let best = pool[0];
-      let score = -1;
-      for (const p of pool) {
-        const s = Math.hypot(p[0] - car.x, p[1] - car.z) + Math.random() * 30;
-        if (s > score) {
-          score = s;
-          best = p;
-        }
-      }
-      from = to;
-      to = best;
-    };
-    const where = () => ({ x: from[0] + (to[0] - from[0]) * t, z: from[1] + (to[1] - from[1]) * t });
-    return {
-      from: { x: 80, z: -378, heading: 0 },
-      target: () => ({ ...where(), label: c.label, color: RED }),
-      pins: () => [{ ...where(), label: '!', color: RED }],
-      update: (dt, tick, car, live) => {
-        const step = Math.floor(tick / 2);
-        // A glitch, on twos.
-        body.rotation.set(step * 0.7, step * 1.1, 0);
-        body.scale.setScalar(stall > 0 ? 1 + (step % 2) * 0.35 : step % 3 === 0 ? 1.2 : 1);
-        core.rotation.set(-step * 0.9, step * 0.5, 0);
-        halo.beam.rotation.y = step * 0.2;
-        if (live && !st.ended()) {
-          time += dt;
-          const here = where();
-          const dist = Math.hypot(here.x - car.x, here.z - car.z);
-          // It glitches in place for a moment at every junction, which is the player's chance to close in.
-          const v = stall > 0 ? 0 : dist < 30 ? c.fast : dist > 70 ? c.slow : c.speed;
-          stall = Math.max(stall - dt, 0);
-          t += (v * dt) / 40;
-          if (t >= 1) {
-            t = 0;
-            stall = 0.45;
-            choose(car);
-          }
-          if (dist < 7) {
-            st.finish(() => {
-              ui.word(c.caught);
-              ui.end({ passed: true, headline: c.won });
-            });
-          } else if (time >= c.seconds) {
-            st.finish(() => {
-              ui.word(c.away);
-              ui.end({ passed: false, headline: c.lost });
-            });
-          }
-          ui.hud({ big: c.health, small: c.commit, clock: Math.max(c.seconds - time, 0), of: c.seconds });
-        }
-        const at = where();
-        bug.position.set(at.x, st.ended() ? 0 : Math.abs(Math.sin(step * 0.9)) * 0.6, at.z);
-        bug.visible = !(st.ended() && near(car, at.x, at.z, 7));
-      },
-      dispose: st.dispose,
-    };
-  };
-
-  // --- Stop 4, the film market: a fork in the road, one moment down each way ---
-  const film = (ui: ChallengeUI): ChallengeRun => {
-    const c = data.challenges.clipper;
-    const m = data.clipper;
-    const st = stage();
-    const ROADS: [number, number][] = [
-      [-112, -440],
-      [-80, -476],
-      [-48, -440],
-    ];
-    const picks = c.picks.map((i) => m.moments[i]);
-    const best = Math.max(...picks.map((p) => p.score));
-    const AXES = ['x', 'z', 'x'] as const;
-    const gates = ROADS.map(([x, z], i) => arch(st.root, x, z, AXES[i], PINK, st.own(sign(picks[i].title, `${mmss(picks[i].start)} into the interview`, PINK, PAPER, 640, 200)), 7));
-    let picked = -1;
-    return {
-      from: { x: -80, z: -416, heading: 0 },
-      target: () => null,
-      pins: () => ROADS.map(([x, z], i) => ({ x, z, label: String(i + 1), color: picked < 0 ? PINK : picks[i].score === best ? YELLOW : PINK })),
-      update: (_dt, tick, car, live) => {
-        for (const g of gates) g.beam.rotation.y = Math.floor(tick / 2) * 0.14;
-        if (!live || picked >= 0) return;
-        const i = ROADS.findIndex(([x, z]) => near(car, x, z, 7));
-        if (i < 0) {
-          ui.hud({ big: c.goal, small: c.hint });
-          return;
-        }
-        picked = i;
-        // Every road shows its score.
-        gates.forEach((g, j) => {
-          const top = picks[j].score === best;
-          g.tint(j === i ? CYAN : top ? YELLOW : PINK);
-          g.sign(st.own(sign(`Score ${picks[j].score}`, picks[j].title, top ? YELLOW : PINK, top ? INK : PAPER, 640, 200)));
-        });
-        const score = picks[i].score === best ? c.won : fill(c.missed, { score: picks[i].score, best });
-        st.finish(() => {
-          ui.word(c.cut);
-          ui.end({ passed: false, headline: `${score} ${c.reveal}` });
-        });
-      },
-      dispose: st.dispose,
     };
   };
 
@@ -588,14 +248,14 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
         }
       }),
     );
-    // The mimic is a different piece each time, though never one right next to the start.
-    const mimic = 2 + Math.floor(Math.random() * (SPOTS.length - 2));
     const eyeMat = new MeshBasicMaterial({ map: eyes, transparent: true, alphaTest: 0.5, side: DoubleSide });
-    const props = SPOTS.map(([kind, x, z], i) => {
+    type Prop = { kind: string; g: Group; look: Group | null; home: [number, number]; hit: boolean; vx: number; vy: number; vz: number; spin: number; gone: number; blink: number };
+    const props: Prop[] = [];
+    const makeProp = (kind: string, x: number, z: number, withEyes: boolean, turn: number) => {
       const g = new Group();
       const mid = PROPS[kind](g);
       let look: Group | null = null;
-      if (i === mimic) {
+      if (withEyes) {
         // Eyes on every side, just proud of the surface, so walls still hide them.
         const box = new Box3().setFromObject(g);
         look = new Group();
@@ -614,16 +274,37 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
         g.add(look);
       }
       g.position.set(x, 0, z);
-      g.rotation.y = (i * 1.7) % (Math.PI * 2);
+      g.rotation.y = turn;
       g.scale.setScalar(1.5);
       st.root.add(g);
-      return { kind, g, look, home: [x, z] as [number, number], hit: false, vx: 0, vy: 0, vz: 0, spin: 0, gone: 0 };
-    });
+      const p: Prop = { kind, g, look, home: [x, z], hit: false, vx: 0, vy: 0, vz: 0, spin: 0, gone: 0, blink: 0 };
+      props.push(p);
+      return p;
+    };
+    // The mimic is a different piece each time, though never one right next to the start.
+    const mimic = 2 + Math.floor(Math.random() * (SPOTS.length - 2));
+    SPOTS.forEach(([kind, x, z], i) => makeProp(kind, x, z, i === mimic, (i * 1.7) % (Math.PI * 2)));
+    const me = props[mimic];
+
+    // The radar: a ring of light somewhere round the mimic, like the real game's room sweeps.
+    const sweep = gate(st.root, 0, 0, CYAN, 17, 5);
+    sweep.g.visible = false;
+    let sweepAt = 4;
+    let sweepOff = 0;
+    const confetti: { mesh: Mesh; vx: number; vy: number; vz: number }[] = [];
+
     let shots = c.shots;
     let note = c.hint;
     let time = 0;
-    let shuffleAt = 3;
-    const fly = (p: (typeof props)[number], car: Car, up: number, out: number) => {
+    let fidgetAt = 2.5;
+    let decoyed = false;
+    const said = new Set<string>();
+    const sayOnce = (key: string, text: string) => {
+      if (said.has(key)) return;
+      said.add(key);
+      ui.say(text);
+    };
+    const fly = (p: Prop, car: Car, up: number, out: number) => {
       const dx = p.g.position.x - car.x;
       const dz = p.g.position.z - car.z;
       const len = Math.hypot(dx, dz) || 1;
@@ -632,17 +313,27 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
       p.vy = up;
       p.spin = out ? 7 : 0;
     };
+    // Out of sight means behind the auto, or far away.
+    const unseen = (p: Prop, car: Car) => {
+      const dx = p.g.position.x - car.x;
+      const dz = p.g.position.z - car.z;
+      const d = Math.hypot(dx, dz) || 1;
+      return d > 70 || (dx * -Math.sin(car.heading) + dz * -Math.cos(car.heading)) / d < -0.15;
+    };
+    const free = (p: Prop) => !p.hit && !p.vy && !p.gone;
+
     return {
       from: { x: -120, z: -318, heading: 0 },
       target: () => null,
       pins: () => props.filter((p) => !p.hit).map((p) => ({ x: p.g.position.x, z: p.g.position.z, label: '?', color: PAPER })),
       update: (dt, tick, car, live) => {
         const step = Math.floor(tick / 2);
-        const me = props[mimic];
-        // The tell: a blink every couple of seconds, only when the auto is close enough to see it.
-        if (me.look) {
-          const blink = (tick % 30) < 4;
-          me.look.visible = st.ended() ? true : blink && near(car, me.g.position.x, me.g.position.z, 75);
+        // The tell: a blink every couple of seconds, when the auto is close enough to see it.
+        for (const p of props) {
+          if (!p.look) continue;
+          p.blink = Math.max(p.blink - dt, 0);
+          const blink = p === me ? tick % 30 < 4 : p.blink > 0;
+          p.look.visible = st.ended() && p === me ? true : blink && near(car, p.g.position.x, p.g.position.z, 75);
         }
         // Thrown furniture tumbles away and drops out of sight.
         for (const p of props) {
@@ -659,17 +350,71 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
           }
         }
         for (const p of props) if (p.gone) p.g.visible = step % 2 === 0 && (p.gone += dt) < 1.6;
+        for (let i = confetti.length - 1; i >= 0; i--) {
+          const f = confetti[i];
+          f.mesh.position.x += f.vx * dt;
+          f.mesh.position.y += f.vy * dt;
+          f.mesh.position.z += f.vz * dt;
+          f.vy -= 30 * dt;
+          f.mesh.rotation.x += dt * 9;
+          if (f.mesh.position.y < 0) f.mesh.visible = false;
+        }
+        sweep.beam.rotation.y = step * 0.2;
         if (!live || st.ended()) return;
         time += dt;
-        // When nobody's close, it shuffles a little. Another tell, for the patient.
-        if (time > shuffleAt) {
-          shuffleAt = time + 2.5 + Math.random() * 2;
-          if (!near(car, me.g.position.x, me.g.position.z, 22)) {
-            me.g.position.x = me.home[0] + (Math.random() - 0.5) * 2.4;
-            me.g.position.z = me.home[1] + (Math.random() - 0.5) * 2.4;
-            me.g.rotation.y += (Math.random() - 0.5) * 1.2;
+
+        // Trust nothing: when you're not looking, the furniture moves.
+        if (time > fidgetAt) {
+          fidgetAt = time + 2 + Math.random() * 1.5;
+          const hidden = props.filter((p) => free(p) && unseen(p, car));
+          if (hidden.length >= 2 && Math.random() < 0.5) {
+            // Two pieces swap places.
+            const [a, b] = hidden.sort(() => Math.random() - 0.5);
+            const ax = a.g.position.x;
+            const az = a.g.position.z;
+            a.g.position.x = b.g.position.x;
+            a.g.position.z = b.g.position.z;
+            b.g.position.x = ax;
+            b.g.position.z = az;
+            a.home = [a.g.position.x, a.g.position.z];
+            b.home = [b.g.position.x, b.g.position.z];
+            sayOnce('swap', c.lines.swap);
+          } else if (hidden.length) {
+            const p = hidden[Math.floor(Math.random() * hidden.length)];
+            p.g.position.x = p.home[0] + (Math.random() - 0.5) * 4;
+            p.g.position.z = p.home[1] + (Math.random() - 0.5) * 4;
+            p.g.rotation.y += (Math.random() - 0.5) * 2;
+            if (near(car, p.g.position.x, p.g.position.z, 50)) sayOnce('moved', c.lines.moved);
           }
         }
+
+        // The radar sweep.
+        if (time > sweepAt) {
+          sweepAt = time + 8;
+          sweepOff = time + 2.6;
+          const a = Math.random() * Math.PI * 2;
+          sweep.g.position.set(me.g.position.x + Math.cos(a) * 8, 0, me.g.position.z + Math.sin(a) * 8);
+          sweep.g.visible = true;
+          ui.word(c.radar);
+          sayOnce('radar', c.lines.radar);
+        }
+        if (sweep.g.visible && time > sweepOff) sweep.g.visible = false;
+
+        // Get close and it leaves a decoy behind, then slips away a little.
+        if (!decoyed && near(car, me.g.position.x, me.g.position.z, 24)) {
+          decoyed = true;
+          const side = Math.random() < 0.5 ? -1 : 1;
+          const alongX = Math.abs(me.home[1] - Math.round(me.home[1] / 40) * 40) < 8;
+          const dx = alongX ? side * 13 : 0;
+          const dz = alongX ? 0 : side * 13;
+          const copy = makeProp(me.kind, me.g.position.x + dx, me.g.position.z + dz, true, me.g.rotation.y);
+          copy.blink = 0.7;
+          me.g.position.x -= dx * 0.25;
+          me.g.position.z -= dz * 0.25;
+          ui.word(c.decoyWord);
+          ui.say(fill(c.lines.decoy, { prop: me.kind }));
+        }
+
         if (Math.abs(car.speed) > 2) {
           for (const p of props) {
             if (p.hit || !near(car, p.g.position.x, p.g.position.z, 5.4)) continue;
@@ -677,6 +422,16 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
             shots -= 1;
             if (p === me) {
               fly(p, car, 16, 0);
+              // Confetti, because finding me deserves it.
+              const colors = [YELLOW, PINK, CYAN, GREEN];
+              for (let i = 0; i < 40; i++) {
+                const bit = new Mesh(new BoxGeometry(0.5, 0.5, 0.2), new MeshBasicMaterial({ color: colors[i % 4] }));
+                bit.position.set(p.g.position.x, 4, p.g.position.z);
+                st.root.add(bit);
+                const a = Math.random() * Math.PI * 2;
+                confetti.push({ mesh: bit, vx: Math.cos(a) * (6 + Math.random() * 10), vy: 12 + Math.random() * 14, vz: Math.sin(a) * (6 + Math.random() * 10) });
+              }
+              ui.say(c.lines.found);
               st.finish(() => {
                 ui.word(c.found);
                 ui.end({ passed: true, headline: m.found });
@@ -686,6 +441,7 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
             fly(p, car, 17, 16);
             note = m.misses[(c.shots - shots - 1) % m.misses.length];
             ui.word(c.decoy);
+            if (shots === 1) ui.say(c.lines.paranoid);
             window.dispatchEvent(new Event('world:cut'));
             if (shots === 0) {
               st.finish(() => {
@@ -703,10 +459,6 @@ export function createChallenges(scene: Scene, sign: SignPaint): Challenges {
   };
 
   const ALL: Record<string, (ui: ChallengeUI) => ChallengeRun> = {
-    solvefx: hostel,
-    'ipl-auction': auction,
-    'repomind-ai': drift,
-    clipper: film,
     'mimic-hunt': hunt,
   };
   return (slug, ui) => ALL[slug]?.(ui) ?? null;

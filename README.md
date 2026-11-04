@@ -4,7 +4,9 @@ A portfolio you can read in 30 seconds or ride through in 3 minutes. It's my ent
 
 - **The portfolio:** About, Skills and Projects are plain HTML on the first page, and every project has its own page.
 - **The creative feature:** press **Hop in** and drive an auto-rickshaw through the city to five of my real projects.
-  Each stop is a short driving challenge built from that project, while a mystery caller keeps phoning.
+  Each stop is a different, slightly ridiculous game about that project: survive the LeetCode verdicts at 2 AM, run
+  an auction where the AI franchises lose their minds, keep a collapsing codebase standing, direct a trailer while the
+  video software breaks, and hunt for me among furniture that moves when you are not looking.
 - **The skyline is real:** each building is one of my public repos, and each lit window is one commit.
 
 ## How it's built

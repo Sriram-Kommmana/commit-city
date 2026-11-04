@@ -1737,3 +1737,292 @@ body:not(:has(.world)) .game {
     font-size: 0.95rem;
   }
 }
+
+/* --- Arcade stops: a 2D game in a comic panel over the city --- */
+.g-screen:has(.g-arcade) {
+  overflow: hidden;
+}
+
+.g-arcade {
+  position: relative;
+  height: 100%;
+}
+
+.g-arcade__frame {
+  position: absolute;
+  inset: 0 0 64px;
+  overflow: hidden;
+  background: #14082f;
+  border: 5px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--pink), 15px 15px 0 var(--ink);
+}
+
+.g-arcade__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.g-arcade.is-briefing .g-arcade__frame {
+  inset: 0;
+  background: rgb(20 8 47 / 0.55);
+}
+
+.g-arcade .g-brief {
+  display: none;
+  position: absolute;
+  z-index: 3;
+}
+
+.g-arcade.is-briefing .g-brief {
+  display: block;
+}
+
+.g-arcade.is-briefing .g-arcade__skip,
+.g-arcade.is-briefing .g-arcade__say {
+  display: none;
+}
+
+.g-brief__how {
+  margin: 12px 0 0;
+  font: 500 1.08rem/1.3 var(--label);
+}
+
+.g-arcade__skip {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 6px;
+  padding: 2px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+}
+
+.g-arcade__say {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  max-width: calc(100% - 150px);
+  pointer-events: none;
+  transition: opacity 0.2s steps(2);
+}
+
+.g-arcade__say.is-quiet {
+  opacity: 0;
+}
+
+.g-arcade__say img {
+  flex: none;
+  width: 52px;
+  padding: 4px 2px 0;
+  background: radial-gradient(circle, #c4135f 30%, transparent 32%) 0 0 / 7px 7px, var(--pink);
+  border: 3px solid var(--ink);
+}
+
+.g-arcade__say .g-bubble {
+  margin: 0 0 4px;
+  padding: 6px 12px;
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+/* What interrupts a game: SolveFX's own screens, and newspaper results. */
+.g-arcade__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  text-align: center;
+  animation: g-cover 0.18s steps(3);
+}
+
+.g-arcade__cover[hidden] {
+  display: none;
+}
+
+@keyframes g-cover {
+  from {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
+
+.sfx-failed {
+  background: rgb(120 10 20 / 0.9);
+}
+
+.sfx-passed {
+  background: rgb(14 90 46 / 0.92);
+}
+
+.sfx-black {
+  background: #000;
+}
+
+.sfx-blue {
+  background: #0b3cc9;
+}
+
+.sfx-dim {
+  background: rgb(7 4 14 / 0.86);
+}
+
+.sfx-title b {
+  display: block;
+  color: var(--paper);
+  font: 400 clamp(3rem, 11vw, 7rem) / 1 var(--poster);
+  text-transform: uppercase;
+  text-shadow: 6px 6px 0 var(--ink);
+}
+
+.sfx-title small {
+  display: block;
+  margin-top: 10px;
+  font: 600 clamp(1.2rem, 3vw, 1.8rem) / 1.2 var(--label);
+  letter-spacing: 0.06em;
+}
+
+.sfx-shutdown {
+  color: #d8d8d8;
+  font: 400 clamp(1.3rem, 3.4vw, 2.2rem) / 1.3 ui-monospace, Consolas, monospace;
+}
+
+.sfx-crash {
+  margin: 0;
+  color: #fff;
+  font: 400 clamp(0.9rem, 2.2vw, 1.3rem) / 1.35 ui-monospace, Consolas, monospace;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.sfx-dialog {
+  width: min(90%, 420px);
+  background: #d8d2c4;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  text-align: left;
+}
+
+.sfx-dialog b {
+  display: block;
+  padding: 6px 10px;
+  background: #1f3fa0;
+  color: #fff;
+  font: 600 1.2rem/1.2 var(--label);
+}
+
+.sfx-dialog p {
+  margin: 14px;
+  font: 500 1.1rem/1.3 var(--body);
+}
+
+.sfx-dialog span {
+  display: block;
+  width: 80px;
+  margin: 0 14px 14px auto;
+  padding: 3px;
+  border: 2px solid var(--ink);
+  text-align: center;
+}
+
+.sfx-paper,
+.sfx-trailer {
+  width: min(94%, 620px);
+  padding: 16px 22px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 5px solid var(--ink);
+  box-shadow: 9px 9px 0 var(--yellow);
+  transform: rotate(-1.5deg);
+}
+
+.sfx-paper small,
+.sfx-trailer small {
+  display: block;
+  padding-bottom: 6px;
+  border-bottom: 3px double var(--ink);
+  font: 600 1rem/1.1 var(--label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sfx-paper > b,
+.sfx-trailer > b {
+  display: block;
+  margin: 10px 0 6px;
+  font: 400 clamp(1.8rem, 5vw, 2.8rem) / 1.02 var(--display);
+  text-transform: uppercase;
+}
+
+.sfx-paper p,
+.sfx-trailer p {
+  margin: 8px 0 0;
+  font: 600 1.1rem/1.3 var(--hand);
+}
+
+.sfx-paper ul,
+.sfx-trailer ol {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.sfx-paper li,
+.sfx-trailer li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 2px dashed rgb(7 4 14 / 0.25);
+  font: 500 1.08rem/1.25 var(--body);
+}
+
+.sfx-paper li i,
+.sfx-trailer li i {
+  margin-left: auto;
+  font: 600 1.1rem/1 var(--label);
+  font-style: normal;
+}
+
+.sfx-trailer li span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  background: var(--ink);
+  color: var(--yellow);
+  font: 400 1rem/1 var(--display);
+}
+
+.sfx-trailer > b {
+  color: var(--pink);
+}
+
+.sfx-trailer em {
+  font-style: normal;
+  opacity: 0.7;
+}
+
+@media (max-width: 760px) {
+  .g-arcade__say img {
+    width: 44px;
+  }
+
+  .g-arcade__say .g-bubble {
+    font-size: 0.9rem;
+  }
+}
+
+.g-drive--task .g-drive__say.is-quiet {
+  display: none;
+}

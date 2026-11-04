@@ -38,125 +38,7 @@
       "say": "Careful in here. The furniture might be a person."
     }
   },
-  "verdict": {
-    "brief": "It's 2 AM, and it's Two Sum. Pick a solution and press Submit.",
-    "solutions": [
-      {
-        "label": "Two loops",
-        "code": "for i in range(n):\n  for j in range(i + 1, n):\n    if a[i] + a[j] == t:\n      return [i, j]",
-        "verdict": "tle"
-      },
-      {
-        "label": "Sort first",
-        "code": "a.sort()\ni, j = 0, n - 1\nwhile a[i] + a[j] != t:\n  i, j = next(i, j)\nreturn [i, j]",
-        "verdict": "wrong"
-      },
-      {
-        "label": "Hash map",
-        "code": "seen = {}\nfor i, x in enumerate(a):\n  if t - x in seen:\n    return [seen[t - x], i]\n  seen[x] = i",
-        "verdict": "accepted"
-      }
-    ],
-    "results": {
-      "tle": {
-        "title": "Time limit exceeded",
-        "body": "SolveFX gives this one a fake system shutdown. Try another."
-      },
-      "wrong": {
-        "title": "Wrong answer",
-        "body": "Sorting loses the original indexes. SolveFX has a special screen for moments like this. Try another."
-      },
-      "accepted": {
-        "title": "Accepted",
-        "body": "Every verdict gets its own overlay and sound. That's the entire extension, and I'm very proud of it."
-      }
-    }
-  },
-  "auction": {
-    "brief": "You're bidding for me. Three rival franchises want me too, and you have 20 seconds.",
-    "lot": {
-      "name": "Kommana Sriram",
-      "role": "All-rounder (code)",
-      "stats": [
-        [
-          "Commits",
-          "554"
-        ],
-        [
-          "Public repos",
-          "21"
-        ],
-        [
-          "Longest build",
-          "140"
-        ]
-      ]
-    },
-    "purse": 20,
-    "start": 2,
-    "step": 1,
-    "seconds": 20,
-    "rivals": [
-      "Null Pointers",
-      "Merge Conflicts",
-      "Segfault Strikers"
-    ],
-    "rivalLimit": 12,
-    "won": "Sold to you! The real game has 323 players, and 9 AI franchises that bid much better than these three.",
-    "lost": "Sold to the rivals. Don't worry, the real game lets you try again against 9 AI franchises."
-  },
-  "drift": {
-    "brief": "This is RepoMind's real output on its ShopWise demo repo. Drag through the history, then stop at the commit where the architecture first broke.",
-    "points": [
-      {
-        "date": "20 Mar",
-        "commit": "Email a receipt after payment",
-        "health": 100,
-        "bad": []
-      },
-      {
-        "date": "27 Mar",
-        "commit": "Hotfix: sales report for finance",
-        "health": 92.6,
-        "bad": [
-          "sales"
-        ],
-        "note": "The sales report reads the order repository directly."
-      },
-      {
-        "date": "3 Apr",
-        "commit": "Move the sales report into ReportService",
-        "health": 100,
-        "bad": [],
-        "note": "Fixed a week later. Health is back to 100."
-      },
-      {
-        "date": "17 Apr",
-        "commit": "Live stock level on the product page",
-        "health": 93.7,
-        "bad": [
-          "products"
-        ],
-        "note": "A router calls a repository again."
-      },
-      {
-        "date": "8 May",
-        "commit": "Admin endpoint listing all users",
-        "health": 89,
-        "bad": [
-          "products",
-          "users"
-        ],
-        "note": "Two violations are still in the code today."
-      }
-    ],
-    "answer": 1,
-    "right": "That's it: a rushed hotfix, a skipped layer. RepoMind found the same commit from the graph.",
-    "wrong": "Not that one. Look for the first drop from 100."
-  },
   "clipper": {
-    "brief": "Clipper scored 8 moments in a real 20-minute interview. Pick the one you think scored highest.",
-    "durationSec": 1243,
     "moments": [
       {
         "start": 51,
@@ -206,8 +88,7 @@
         "score": 38.6,
         "title": "Untitled (garbled)"
       }
-    ],
-    "reveal": "The model called a friendly cricket chat \"A Disturbing Realization\". The transcript was so garbled that the scores couldn't be trusted, so this run counts as a failure. Better transcription lifted word confidence from 58% to 78%. No one has yet judged the clips by watching them."
+    ]
   },
   "mimic": {
     "brief": "I'm hiding in this room, disguised as furniture. You have 3 shots. Watch for something that blinks.",
@@ -221,80 +102,249 @@
     "lost": "Out of shots. I was the lamp all along. Hunters lose a lot of rounds like this one."
   },
   "challenges": {
-    "solvefx": {
-      "brief": "It's 2 AM and my Two Sum is on trial. Drive through all three test cases, in order, before the time limit.",
-      "seconds": 25,
-      "tests": [
-        [
-          "Test 1",
-          "[2, 7, 11, 15]  target 9"
-        ],
-        [
-          "Test 2",
-          "[3, 2, 4]  target 6"
-        ],
-        [
-          "Test 3",
-          "[3, 3]  target 6"
-        ]
-      ],
-      "goal": "Test {n} of 3",
-      "hint": "Follow the arrow. A wall is a wrong answer.",
-      "ok": "PASSED!",
-      "crash": "WRONG ANSWER!",
-      "pass": "ACCEPTED!",
-      "tle": "TIME LIMIT!",
-      "won": "Accepted in {time} seconds. SolveFX gives every verdict its own overlay and sound, so the whole hostel hears about it.",
-      "lost": "Time limit exceeded. SolveFX answers this verdict with a fake system shutdown."
-    },
-    "ipl-auction": {
-      "brief": "You're bidding for me against three rival franchises. Drive through the paddles to raise your bid. The hammer falls in 25 seconds.",
-      "seconds": 25,
-      "rivalLimit": 8,
-      "youLead": "You lead the bidding",
-      "theyLead": "{team} lead",
-      "bid": "BID!",
-      "outbid": "OUTBID!",
-      "sold": "SOLD!"
-    },
-    "repomind-ai": {
-      "brief": "A rushed hotfix just let the sales report skip a layer. That's architecture drift, and it's getting away. Catch it.",
-      "seconds": 30,
-      "label": "DRIFT",
-      "labelSmall": "sales report skips a layer",
-      "health": "Health 92.6",
-      "commit": "27 Mar · Hotfix: sales report for finance",
-      "speed": 22,
-      "fast": 27,
-      "slow": 12,
-      "caught": "CAUGHT IT!",
-      "away": "IT GOT AWAY!",
-      "won": "Caught on 27 Mar: the sales report read the order repository directly. RepoMind flags the same commit from its graph.",
-      "lost": "It got away. In the real demo repo the drift came back, and two violations are still in the code today."
-    },
-    "clipper": {
-      "brief": "Clipper scored moments in a real 20-minute interview. Three roads, three moments. Drive down the one you think scored highest.",
-      "picks": [
-        1,
-        2,
-        0
-      ],
-      "goal": "Pick a road",
-      "hint": "Each road is one moment Clipper found.",
-      "cut": "CUT!",
-      "won": "You matched the model.",
-      "missed": "You picked {score}. The model's top score was {best}.",
-      "reveal": "The twist: it called a friendly cricket chat “A Disturbing Realization”. The transcript was too garbled to trust, so this run counts as a failure."
-    },
     "mimic-hunt": {
-      "brief": "The mansion's furniture is out on the street, and one piece of it is me. Ram the one that blinks. You have 3 shots.",
+      "brief": "Welcome to the mansion. Everything looks normal, except the furniture is alive. It moves when you're not looking. One piece is me. Watch for a blink, use the radar, and ram the right one. You have 3 shots.",
       "shots": 3,
       "goal": "Shots: {n}",
-      "hint": "Watch for a blink.",
+      "hint": "Watch for a blink. Trust nothing.",
       "decoy": "DECOY!",
       "found": "FOUND YOU!",
       "out": "OUT OF SHOTS!",
-      "lost": "Out of shots. I was the {prop} all along. Hunters lose a lot of rounds like this one."
+      "lost": "Out of shots. I was the {prop} all along. Hunters lose a lot of rounds like this one.",
+      "radar": "RADAR SWEEP!",
+      "decoyWord": "DECOY DEPLOYED!",
+      "lines": {
+        "moved": "Wait... was that chair always there?",
+        "swap": "Did those two just swap places?!",
+        "radar": "Radar says it's somewhere in that ring. Somewhere.",
+        "decoy": "Two {prop}s?! There were never two {prop}s.",
+        "paranoid": "I'm apologising to furniture now.",
+        "found": "Okay, okay. You found me."
+      }
+    }
+  },
+  "arcade": {
+    "solvefx": {
+      "brief": "2 AM. One more LeetCode problem, then sleep. Then the hostel lights go out, and every verdict I've ever got comes looking for me.",
+      "how": "Move with the arrow keys or WASD. Grab 5 ACCEPTED tokens. Each one is a shield that debugs anything you touch. Then beat the boss.",
+      "howTouch": "Hold your finger where you want to go. Grab 5 ACCEPTED tokens. Each one is a shield. Then beat the boss.",
+      "hud": "Collect 5 ACCEPTED",
+      "hudBoss": "Grab a shield, then ram the clock",
+      "lines": {
+        "dark": "...who turned off the lights?",
+        "wa": "Oh no. Not you again.",
+        "tle": "Why is the clock running at me?",
+        "rte": "It teleports?! That's not in the docs.",
+        "mle": "Is that dialog box... growing?",
+        "shield": "Accepted! I'm basically invincible.",
+        "boss": "That's not a clock. That's my nightmare.",
+        "dead": "Fine. I'll just sleep.",
+        "won": "All test cases passed. Going to bed. Probably."
+      },
+      "hits": [
+        "That one's going on my wall.",
+        "SolveFX, why are you like this?",
+        "One more and I'm switching to Excel."
+      ],
+      "bossHits": [
+        "-1 SECOND!",
+        "-2 SECONDS!",
+        "TIME'S UP FOR YOU!"
+      ],
+      "won": "Accepted. That is SolveFX: every LeetCode verdict gets its own overlay and sound, from a fake shutdown to a crash screen. You just met them all.",
+      "lost": "Time's up. Shutting down... That is SolveFX's real Time Limit screen. Every LeetCode verdict gets its own, and you just met most of them."
+    },
+    "ipl-auction": {
+      "brief": "You're the auctioneer. Nine AI franchises are bidding, with the same personalities as the bots in my real game: Moneyball, Star Chaser, Balanced Builder and Opportunist. They are not okay today.",
+      "how": "Press 1 to 9, or click, to reject any team flashing red: it's bidding money it doesn't have. Press Space on GOING TWICE to bring the hammer down. Too early starts a bid war.",
+      "howTouch": "Tap any team flashing red: it's bidding money it doesn't have. Tap the hammer on GOING TWICE. Too early starts a bid war.",
+      "teams": [
+        [
+          "Null Pointers",
+          "Moneyball"
+        ],
+        [
+          "Merge Conflicts",
+          "Star Chaser"
+        ],
+        [
+          "Segfault Strikers",
+          "Balanced Builder"
+        ],
+        [
+          "Stack Smashers",
+          "Opportunist"
+        ],
+        [
+          "Cache Kings",
+          "Moneyball"
+        ],
+        [
+          "Race Conditions",
+          "Star Chaser"
+        ],
+        [
+          "Deadlock Devils",
+          "Balanced Builder"
+        ],
+        [
+          "Off-by-One XI",
+          "Opportunist"
+        ],
+        [
+          "404 Royals",
+          "Star Chaser"
+        ]
+      ],
+      "lots": [
+        {
+          "name": "Byte Kumar",
+          "role": "Batter",
+          "rating": 84,
+          "base": 2,
+          "cap": 7,
+          "say": "Lot one. Nice and calm. A totally normal auction."
+        },
+        {
+          "name": "Chintu Compiler",
+          "role": "Fast bowler",
+          "rating": 91,
+          "base": 2,
+          "cap": 19,
+          "say": "A 91-rated bowler. The Star Chasers are breathing heavily."
+        },
+        {
+          "name": "Kommana Sriram",
+          "role": "All-rounder (code)",
+          "rating": 99,
+          "base": 2,
+          "cap": 18,
+          "say": "Last lot. Wait... that's me."
+        }
+      ],
+      "overflow": "PURSE OVERFLOW!",
+      "lostMind": "MERGE CONFLICTS HAVE LOST THEIR MINDS!",
+      "rtm": "RTM CARD!",
+      "lag": "LAG SPIKE!",
+      "reconnecting": "Socket.IO reconnecting...",
+      "burst": "EVERY BID AT ONCE!",
+      "war": "BID WAR!!!",
+      "visitor": "A PADDLE FROM OUTSIDE THE ROOM!",
+      "early": "TOO EARLY! BID WAR!",
+      "sniped": "SNIPED AT THE LAST SECOND!",
+      "bankrupt": "BANKRUPT!",
+      "honest": "THAT BID WAS FINE!",
+      "you": "You, the visitor",
+      "nobody": "Nobody",
+      "noBids": "No bids yet",
+      "once": "GOING ONCE...",
+      "twice": "GOING TWICE!",
+      "hit": "HAMMER IT!",
+      "hammer": "WAIT FOR IT...",
+      "paper": "The Auction Times",
+      "wonHead": "Auctioneer survives the most chaotic auction ever",
+      "riotHead": "Auction abandoned as bots riot",
+      "riotSub": "Officials blame purses that were mostly imaginary.",
+      "lines": {
+        "mind": "Star Chaser bots pay for stars. That's a whole purse on one bowler.",
+        "war": "Three teams bidding money they don't have. Catch them!",
+        "visitor": "Hold on. Is that... you? You're bidding on me?",
+        "riot": "I've lost control of the room."
+      },
+      "won": "Sold, to you. In the real game, 9 bots with these personalities bid on 323 players live over Socket.IO, and they mostly behave.",
+      "lost": "The bots won. In the real game they come from reinforcement learning experiments, and they mostly behave. Mostly."
+    },
+    "repomind-ai": {
+      "brief": "This building is the ShopWise codebase: routers on top, services in the middle, repositories at the bottom. Bad commits keep landing on the roof, and the bugs they bring drill shortcuts that skip a layer. RepoMind calls that drift.",
+      "how": "Arrow keys or WASD to run, up and down to change floors. Run into bugs to squash them. Stand on a red shortcut on the SERVICES floor to refactor it. Keep the building up for 36 seconds.",
+      "howTouch": "Tap where you want to go. Run into bugs to squash them. Stand on a red shortcut on the SERVICES floor to refactor it. Keep the building up for 36 seconds.",
+      "hud": "Squash bugs · fix red shortcuts on SERVICES",
+      "commits": [
+        "Email a receipt after payment",
+        "Hotfix: sales report for finance",
+        "Live stock level on the product page",
+        "Admin endpoint listing all users",
+        "Quick fix, will clean up later"
+      ],
+      "force": "FRIDAY 6 PM: git push --force",
+      "violation": "LAYER SKIPPED!",
+      "refactor": "REFACTORED!",
+      "lines": {
+        "force": "Who pushes to main on a Friday?!",
+        "violation": "A router is calling the repository directly. That's drift.",
+        "burning": "The services floor is on fire. This is fine.",
+        "collapse": "It worked on my machine.",
+        "won": "Still standing. RepoMind would have flagged every one of those."
+      },
+      "collapseHead": "Architecture collapsed",
+      "collapseSub": "Health 0. RepoMind would have flagged the first shortcut on the day it was committed.",
+      "wonHead": "Architecture still standing",
+      "wonSub": "The real RepoMind rebuilds this graph at every commit, and caught 150 of 150 seeded violations in its test suite.",
+      "won": "The building held. RepoMind does this for real: it rebuilds a repo's architecture at every commit and flags the moment a layer gets skipped.",
+      "lost": "The building fell. That's why RepoMind exists: it flags the first shortcut on the day it's committed."
+    },
+    "clipper": {
+      "brief": "Congratulations, you're a film director. Clipper found these moments in a real 20-minute interview. Cut the best three into a trailer before the editing software falls apart.",
+      "how": "Click a clip, or press Space when it's under the yellow playhead, to put it in the trailer. Things will break. Press F or click the fan if the GPU overheats.",
+      "howTouch": "Tap a clip to put it in the trailer. Things will break. Tap the fan if the GPU overheats.",
+      "steps": [
+        "Transcribe",
+        "Audio",
+        "Scenes",
+        "Find",
+        "Score",
+        "Select",
+        "Review",
+        "Export"
+      ],
+      "garbled": [
+        "Cricket ka plan banana hai",
+        "Disturbing realization (music)",
+        "Bat ka diet nutrition sir",
+        "[inaudible] clever [inaudible]",
+        "Haan toh basically recovery",
+        "Training ka training hai",
+        "Uh uh uh uh uh",
+        "A misunderstanding about everything"
+      ],
+      "subtitle": "Captions: \"the sauce of the cricket is in the refrigerator\"",
+      "ok": "PIPELINE RUNNING",
+      "noAudio": "AUDIO DRIVER CRASHED",
+      "captions": "TRANSCRIPT: 58% CONFIDENT",
+      "hot": "GPU OVERHEATING!",
+      "hotWord": "OVERHEATING!",
+      "rendering": "RENDERING TRAILER",
+      "frozen": "STUCK AT 99%. MASH IT!",
+      "mash": 10,
+      "lines": {
+        "audio": "Where did the sound go?",
+        "captions": "That is NOT what he said.",
+        "hot": "The GPU is cooking. Cool it down!",
+        "cooled": "Phew. Back to normal speed.",
+        "render": "Rendering... any second now.",
+        "intern": "Out of time. The intern picked the rest.",
+        "good": "Roll credits. I'm a genius.",
+        "bad": "Maybe nobody will watch it."
+      },
+      "premiere": "World premiere · your trailer",
+      "reviews": [
+        [
+          "MASTERPIECE ★★★★☆",
+          "I laughed, I cried, I understood about 58% of it."
+        ],
+        [
+          "DIRECT TO STREAMING ★★★☆☆",
+          "Some of it was a clever plan. Some of it was garbled."
+        ],
+        [
+          "DISASTER ★☆☆☆☆",
+          "Three minutes of a man explaining his diet."
+        ]
+      ],
+      "critic": "— a critic",
+      "won": "Trailer shipped.",
+      "lost": "Trailer flopped.",
+      "twist": "Clipper really scores moments like this, on my own laptop. Its first real run broke the same way: a garbled transcript at 58% confidence (fixed to 78%), and a missing GPU library that made it take 51 minutes instead of 3.6."
     }
   }
 }

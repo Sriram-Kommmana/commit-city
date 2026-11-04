@@ -10,6 +10,14 @@ import data from '../../content/missions.json';
 import projects from '../../content/projects.json';
 import site from '../../content/site.json';
 import { missions, type Result } from './missions';
+import { runArcade, type Game } from './arcade';
+import { hostel } from './games/hostel';
+import { auction } from './games/auction';
+import { codebase } from './games/codebase';
+import { director } from './games/director';
+
+// The stops that are 2D arcade games. They need no WebGL, so they're the same everywhere.
+const ARCADE: Record<string, Game> = { solvefx: hostel, 'ipl-auction': auction, 'repomind-ai': codebase, clipper: director };
 import { createPhone, contactHtml } from './phone';
 import { esc, txt, isTodo } from './util';
 
@@ -346,6 +354,73 @@ export function startGame(startAt?: string) {
     arrow.style.rotate = `${Math.round((turn * 180) / Math.PI)}deg`;
   };
 
+  // --- An arcade stop: a brief card, then the game in a comic panel over the city ---
+  const arcadeScreen = (slug: string) => {
+    const game = ARCADE[slug];
+    const p = projectOf(slug);
+    const touch = matchMedia('(pointer: coarse)').matches;
+    mount(`
+      <div class="g-arcade is-briefing">
+        <div class="g-arcade__frame" data-host></div>
+        <div class="g-arcade__say is-quiet"><img src="${faceUrl}" alt="" /><p class="g-bubble g-bubble--static" aria-live="polite" data-say></p></div>
+        <button class="g-skip g-arcade__skip" data-skip>Skip this stop →</button>
+        <section class="g-brief" aria-labelledby="g-brief-title">
+          <p class="caption">${esc(stops[slug].title)}</p>
+          <h2 id="g-brief-title">${esc(p.title)}</h2>
+          <div class="g-brief__say"><img src="${faceUrl}" alt="" /><p class="g-bubble g-bubble--static">${esc(game.brief)}</p></div>
+          <p class="g-brief__how"><b>How to play:</b> ${esc(touch ? game.howTouch : game.how)}</p>
+          <div class="g-next"><button class="btn btn--yellow" data-start>Start →</button><button class="g-skip" data-skip>Skip this stop</button></div>
+        </section>
+      </div>`);
+    const wrap = screen.querySelector<HTMLElement>('.g-arcade')!;
+    const sayBox = screen.querySelector<HTMLElement>('.g-arcade__say')!;
+    const sayEl = screen.querySelector<HTMLElement>('[data-say]')!;
+    let quiet = 0;
+    let stop: (() => void) | null = null;
+    let finished = false;
+    const say = (text: string) => {
+      sayEl.textContent = text;
+      sayBox.classList.remove('is-quiet');
+      clearTimeout(quiet);
+      quiet = window.setTimeout(() => sayBox.classList.add('is-quiet'), 3800);
+    };
+    const go = () => {
+      if (!wrap.classList.contains('is-briefing')) return;
+      wrap.classList.remove('is-briefing');
+      removeEventListener('keydown', keyStart);
+      stop = runArcade(screen.querySelector<HTMLElement>('[data-host]')!, game, {
+        say,
+        end: (result) => {
+          if (finished) return;
+          finished = true;
+          stamp(slug, result);
+        },
+      });
+      screen.focus({ preventScroll: true });
+    };
+    const keyStart = (e: KeyboardEvent) => {
+      if (e.code === 'Enter' || e.code === 'Space') {
+        e.preventDefault();
+        go();
+      }
+    };
+    addEventListener('keydown', keyStart);
+    screen.querySelector<HTMLElement>('[data-start]')!.onclick = go;
+    screen.querySelector<HTMLElement>('[data-start]')!.focus();
+    screen.querySelectorAll<HTMLElement>('[data-skip]').forEach((btn) => {
+      btn.onclick = () => {
+        finished = true;
+        skipped.add(slug);
+        card(slug, null);
+      };
+    });
+    cleanup = () => {
+      stop?.();
+      clearTimeout(quiet);
+      removeEventListener('keydown', keyStart);
+    };
+  };
+
   // --- A stop's challenge, played at the wheel in the city itself ---
   const challenge = (slug: string, drive: Drive) => {
     const c = (data.challenges as Record<string, { brief: string }>)[slug];
@@ -353,6 +428,7 @@ export function startGame(startAt?: string) {
     let hudEls: { big: HTMLElement; small: HTMLElement; clock: HTMLElement; clockWrap: HTMLElement } | null = null;
     let shown = '';
     let over = false;
+    let sayQuiet = 0;
     const ui: ChallengeUI = {
       hud: (h: Hud) => {
         if (!hudEls) return;
@@ -367,6 +443,14 @@ export function startGame(startAt?: string) {
         hudEls.clockWrap.classList.toggle('is-low', h.clock !== undefined && h.clock < 6);
       },
       word: (text: string) => pop(text),
+      say: (text: string) => {
+        const box = screen.querySelector<HTMLElement>('.g-drive--task .g-drive__say');
+        if (!box) return;
+        box.querySelector('p')!.textContent = text;
+        box.classList.remove('is-quiet');
+        clearTimeout(sayQuiet);
+        sayQuiet = window.setTimeout(() => box.classList.add('is-quiet'), 4000);
+      },
       end: (result) => {
         if (over) return;
         over = true;
@@ -387,6 +471,7 @@ export function startGame(startAt?: string) {
           <i class="g-task__clock" data-clock-wrap hidden><span data-clock></span></i>
           <button class="g-skip" data-skip>Skip this stop →</button>
         </div>
+        <div class="g-drive__say is-quiet"><img src="${faceUrl}" alt="" /><p class="g-bubble g-bubble--static" aria-live="polite"></p></div>
         <canvas class="g-radar" width="320" height="320" aria-hidden="true"></canvas>
         <p class="g-drive__hint" data-hint><b>Arrow keys or WASD</b> to drive.</p>
         ${PAD}
@@ -452,6 +537,7 @@ export function startGame(startAt?: string) {
     const timer = window.setInterval(paint, 83);
     cleanup = () => {
       clearInterval(timer);
+      clearTimeout(sayQuiet);
       unwire();
       removeEventListener('keydown', keyStart);
       root.classList.remove('is-driving');
@@ -605,6 +691,10 @@ export function startGame(startAt?: string) {
   };
 
   const mission = (slug: string) => {
+    if (ARCADE[slug]) {
+      arcadeScreen(slug);
+      return;
+    }
     const drive = cityDrive();
     if (drive && challenge(slug, drive)) return;
     const p = projectOf(slug);
@@ -740,6 +830,6 @@ export function startGame(startAt?: string) {
   root.querySelector<HTMLElement>('[data-exit]')!.onclick = exit;
   root.querySelector<HTMLElement>('[data-phone]')!.onclick = () => phone.toggle();
 
-  if (startAt && missions[startAt]) intoMission(startAt);
+  if (startAt && (missions[startAt] || ARCADE[startAt])) intoMission(startAt);
   else intro();
 }
