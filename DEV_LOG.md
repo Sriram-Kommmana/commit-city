@@ -107,3 +107,5 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   building that bugs keep drilling shortcuts through (RepoMind's drift), you direct a trailer from Clipper's real scored
   moments while the audio, captions and GPU fail like they really did, and the mansion's furniture moves when you're
   not looking. The teams and players in the auction are made up, so nothing belongs to a real league.
+- **No more background music.** The synthesised hip-hop loop never fit, so it's gone. The sound effects stay: wind
+  during the fall, a quiet siren in the chase, the commit line's zip, and hits for cuts and crashes.

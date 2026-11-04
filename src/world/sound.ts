@@ -1,10 +1,5 @@
-// An original soundtrack, synthesised live with no audio files. Off until the visitor asks for it.
-// A slow hip-hop loop plays underneath; wind, sirens and hits react to the journey.
-
-const BPM = 86;
-const STEP = 60 / BPM / 4;
-const BASS = [41, 0, 0, 41, 0, 0, 44, 0, 39, 0, 0, 39, 0, 36, 0, 0];
-const STAB = [65, 68, 72];
+// Sound effects, synthesised live with no audio files. Off until the visitor asks for it.
+// There is no background music: wind, a siren, the commit line's zip and hits react to the journey.
 
 export function createSound() {
   let ctx: AudioContext | null = null;
@@ -14,12 +9,7 @@ export function createSound() {
   let sirenGain: GainNode;
   let sirenOsc: OscillatorNode;
   let noise: AudioBuffer;
-  let step = 0;
-  let nextAt = 0;
-  let timer = 0;
   let on = false;
-
-  const freq = (n: number) => 440 * 2 ** ((n - 69) / 12);
 
   const kick = (t: number) => {
     const o = ctx!.createOscillator();
@@ -45,52 +35,6 @@ export function createSound() {
     s.connect(f).connect(g).connect(master);
     s.start(t);
     s.stop(t + length + 0.02);
-  };
-
-  const bass = (t: number, note: number) => {
-    const o = ctx!.createOscillator();
-    const g = ctx!.createGain();
-    o.type = 'triangle';
-    o.frequency.value = freq(note);
-    g.gain.setValueAtTime(0.42, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + STEP * 2.6);
-    o.connect(g).connect(master);
-    o.start(t);
-    o.stop(t + STEP * 3);
-  };
-
-  const stab = (t: number, shift: number) => {
-    const f = ctx!.createBiquadFilter();
-    f.type = 'lowpass';
-    f.frequency.setValueAtTime(1800, t);
-    f.frequency.exponentialRampToValueAtTime(400, t + 0.3);
-    const g = ctx!.createGain();
-    g.gain.setValueAtTime(0.09, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-    f.connect(g).connect(master);
-    for (const n of STAB) {
-      const o = ctx!.createOscillator();
-      o.type = 'sawtooth';
-      o.frequency.value = freq(n + shift);
-      o.connect(f);
-      o.start(t);
-      o.stop(t + 0.42);
-    }
-  };
-
-  const schedule = () => {
-    if (!ctx) return;
-    while (nextAt < ctx.currentTime + 0.2) {
-      const s = step % 16;
-      const bar = Math.floor(step / 16) % 4;
-      if (s === 0 || s === 7 || (s === 10 && bar % 2 === 1)) kick(nextAt);
-      if (s === 4 || s === 12) burst(nextAt, 0.17, 0.42, 'highpass', 1400);
-      if (s % 2 === 0) burst(nextAt, 0.04, s % 4 === 2 ? 0.13 : 0.07, 'highpass', 7000);
-      if (BASS[s]) bass(nextAt, BASS[s] + (bar === 3 ? -2 : 0));
-      if (s === 3 || s === 11) stab(nextAt, bar === 3 ? -2 : 0);
-      nextAt += STEP;
-      step++;
-    }
   };
 
   const start = () => {
@@ -130,8 +74,6 @@ export function createSound() {
     sirenOsc.connect(lp).connect(sirenGain).connect(master);
     sirenOsc.start();
 
-    nextAt = ctx.currentTime + 0.05;
-    timer = window.setInterval(schedule, 60);
   };
 
   return {
@@ -180,7 +122,6 @@ export function createSound() {
       kick(t);
     },
     stop() {
-      clearInterval(timer);
       ctx?.close();
     },
   };
