@@ -11,7 +11,9 @@
     "build": "astro build",
     "preview": "astro preview --port 4321",
     "snapshot": "node scripts/snapshot-github.mjs",
-    "check:content": "node scripts/check-content.mjs"
+    "check:content": "node scripts/check-content.mjs",
+    "test:notes": "node scripts/test-notes.mjs",
+    "build:notes": "node scripts/build-notes-template.mjs"
   },
   "dependencies": {
     "@fontsource/anton": "^5.3.0",

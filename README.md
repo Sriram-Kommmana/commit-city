@@ -8,6 +8,8 @@ A portfolio you can read in 30 seconds or ride through in 3 minutes. It's my ent
   an auction where the AI franchises lose their minds, keep a collapsing codebase standing, direct a trailer while the
   video software breaks, and hunt for me among furniture that moves when you are not looking.
 - **The skyline is real:** each building is one of my public repos, and each lit window is one commit.
+- **A notes wall:** visitors leave notes that go up instantly, stored in DynamoDB through a Lambda function and an
+  HTTP API, all from one CloudFormation template in [`aws/notes`](aws/notes). Setup: [docs/NOTES_SETUP.md](docs/NOTES_SETUP.md).
 
 ## How it's built
 

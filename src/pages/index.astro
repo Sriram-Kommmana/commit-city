@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Hud from '../components/Hud.astro';
+import NotesWall from '../components/NotesWall.astro';
 import SkylineArt from '../components/SkylineArt.astro';
 import Txt from '../components/Txt.astro';
 import site from '../../content/site.json';
@@ -179,7 +180,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
       </div>
     </section>
 
-    <section class="beat beat--left contact" id="contact" data-p="1" aria-labelledby="contact-title">
+    <section class="beat beat--left contact" id="contact" data-p="0.98" aria-labelledby="contact-title">
       <div class="panel panel--pink">
         <p class="caption">One new call</p>
         <h2 id="contact-title" class="section-title">Got a job for me?</h2>
@@ -191,7 +192,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
               contact.email.startsWith('TODO_USER') ? (
                 <Txt text={contact.email} />
               ) : (
-                <a class="btn" href={`mailto:${contact.email}`}>
+                <a class="btn" href={`mailto:${contact.email}`} data-email={contact.email}>
                   Email
                 </a>
               )
@@ -209,14 +210,30 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
             }
           </li>
         </ul>
+        <p class="contact__copied" role="status" data-copied></p>
+        <p class="contact__wall"><a href="#notes">Or leave a note on the wall ↓</a></p>
       </div>
     </section>
+
+    <NotesWall />
   </main>
 </Base>
 
 <script>
   import '../world/boot';
   import { createSound } from '../world/sound';
+
+  // The Email button opens the visitor's mail app, and also copies the address for anyone who hasn't set one up.
+  document.querySelector<HTMLAnchorElement>('[data-email]')?.addEventListener('click', (e) => {
+    const email = (e.currentTarget as HTMLAnchorElement).dataset.email ?? '';
+    const note = document.querySelector<HTMLElement>('[data-copied]');
+    const tell = (text: string) => {
+      if (note) note.textContent = text;
+    };
+    const fallback = () => tell(`My email: ${email}`);
+    if (navigator.clipboard) navigator.clipboard.writeText(email).then(() => tell(`Copied ${email} to your clipboard.`), fallback);
+    else fallback();
+  });
 
   // Sound stays off until asked for, then reacts to the fall.
   const sound = createSound();
@@ -777,6 +794,17 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
   .contact__note {
     margin-top: 10px;
     font: 700 clamp(1.15rem, 2.4vw, 1.5rem) / 1.3 var(--hand);
+  }
+
+  .contact__copied {
+    min-height: 1.3em;
+    margin-top: 10px;
+    font: 700 1.05rem/1.3 var(--hand);
+  }
+
+  .contact__wall a {
+    color: inherit;
+    font: 700 1.1rem/1.3 var(--hand);
   }
 
   .contact__links {

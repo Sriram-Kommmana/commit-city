@@ -16,3 +16,7 @@ if (found.length) {
   process.exit(1);
 }
 console.log('No placeholders left.');
+
+// Not a failure, because the site works without it, but the notes wall stays closed until it's set.
+const site = JSON.parse(readFileSync('content/site.json', 'utf8'));
+if (!site.notes?.api) console.warn('Reminder: content/site.json notes.api is empty, so the notes wall is closed. See docs/NOTES_SETUP.md.');

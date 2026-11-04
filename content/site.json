@@ -213,5 +213,14 @@
     "email": "kommanasriram735@gmail.com",
     "linkedin": "https://www.linkedin.com/in/sriram-kommana-4bb29028b",
     "lookingFor": "I'm looking for internships and full-time roles."
+  },
+  "notes": {
+    "api": "",
+    "caption": "The wall",
+    "title": "Leave a note",
+    "lead": "Say hi, tell me what you liked, or tell me what broke. Notes go up on the wall straight away, for everyone to see.",
+    "placeholder": "Your note, feedback or a hello...",
+    "submit": "Stick it on the wall",
+    "empty": "No notes yet. Be the first one on the wall."
   }
 }

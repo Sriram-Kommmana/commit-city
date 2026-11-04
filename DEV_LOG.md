@@ -109,3 +109,7 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
   not looking. The teams and players in the auction are made up, so nothing belongs to a real league.
 - **No more background music.** The synthesised hip-hop loop never fit, so it's gone. The sound effects stay: wind
   during the fall, a quiet siren in the chase, the commit line's zip, and hits for cuts and crashes.
+- **A notes wall, on AWS.** Visitors can leave a note, feedback or a hello, and it goes up on the wall at once. It runs on
+  a Lambda function behind an HTTP API, with notes in DynamoDB, all created from one CloudFormation template. Because
+  notes go live instantly, the function refuses links, masks swearing, allows one note per visitor every 30 seconds,
+  and catches bots with a hidden field. The Email button now also copies my address, for people with no mail app.
