@@ -740,7 +740,7 @@ export function startGame(startAt?: string) {
       <article class="g-card">
         <p class="caption">Case file${result ? ` · Build ${result.passed ? 'passed' : 'failed'}` : ''}</p>
         <h2>${esc(p.title)}</h2>
-        <p>${esc(p.oneLiner)}</p>
+        <p>${esc(p.description)}</p>
         <div class="g-card__cols">
           <section><h3>What I built</h3><ul>${p.built.slice(0, 3).map((b) => `<li>${esc(b)}</li>`).join('')}</ul></section>
           ${p.broke.length ? `<section class="g-card__broke"><h3>What broke</h3><ul>${p.broke.map((b) => `<li>${txt(b)}</li>`).join('')}</ul></section>` : ''}

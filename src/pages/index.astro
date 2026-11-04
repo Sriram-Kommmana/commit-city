@@ -88,7 +88,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
                 <a href={`/projects/${p.slug}/`}>{p.title}</a>
               </h3>
               <div class="card__body">
-                <p>{p.oneLiner}</p>
+                <p class="card__desc">{p.description}</p>
                 <ul class="tags">
                   {p.stack.map((t) => (
                     <li>{t}</li>
@@ -131,7 +131,7 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
             more.map((p) => (
               <li>
                 <a href={`/projects/${p.slug}/`}>{p.title}</a>
-                <span>{p.oneLiner}</span>
+                <span>{p.description}</span>
                 {(p.live || p.repo) && (
                   <div class="links links--dark">
                     {p.live && (
@@ -621,6 +621,11 @@ const covers = ['#ff2e88', '#17c4d6', '#ffc917', '#7a2cff', '#f03a2e'];
 
   .card h3 a {
     text-decoration: none;
+  }
+
+  .card__desc {
+    font-size: 1.05rem;
+    line-height: 1.45;
   }
 
   .card__body {

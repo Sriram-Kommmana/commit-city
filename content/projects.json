@@ -6,6 +6,7 @@
     "mission": "auction",
     "district": "Cricket Ground",
     "oneLiner": "A live cricket auction game: bid on 323 players with friends, or solo against 9 AI franchises driven by trained reinforcement learning bots.",
+    "description": "A full IPL mega auction you can play in the browser. Bid live against your friends on 323 players while the server keeps every purse, squad and timer in sync over Socket.IO and Redis. Play solo and you face 9 AI franchises, each with its own bidding personality (Moneyball, Star Chaser, Balanced Builder or Opportunist), and the auction ends with awards and team rankings.",
     "stack": [
       "React",
       "Vite",
@@ -37,6 +38,7 @@
     "mission": "drift",
     "district": "Tech Street",
     "oneLiner": "Builds a temporal knowledge graph of a Git repository to detect architecture drift and reconstruct the decisions behind the code.",
+    "description": "Point it at a Git repository and it builds a knowledge graph of the code in Neo4j: which modules depend on which, and how that changed commit by commit. It checks the architecture rules against the real dependency graph, gives the repo a health score, and finds the exact commit where a layer first got skipped. It also reconstructs the decisions behind the code, writes docs, and answers questions in a chat that shows the queries it ran.",
     "stack": [
       "Python",
       "Neo4j",
@@ -62,6 +64,7 @@
     "mission": "mimic",
     "district": "The Mansion",
     "oneLiner": "A 3D multiplayer prop hunt in the browser, where hiders disguise themselves as furniture in a low-poly mansion.",
+    "description": "A prop hunt for 2 to 10 friends, played in the browser. Hiders disguise themselves as one of 35 pieces of furniture in a 3D mansion with 11 connected areas, and Hunters have to work out which chair or lamp is really a player. The server runs the game and checks every move and shot, so a Hunter never learns where a hider is unless they can see them. It works on phones too, with a joystick and swipe-to-look.",
     "stack": [
       "React",
       "Three.js",
@@ -93,6 +96,7 @@
     "mission": "clipper",
     "district": "Film Market",
     "oneLiner": "A local AI video clipper that finds and scores short moments in long videos, with no paid API and no cloud.",
+    "description": "Give it a long video and it finds the moments worth turning into Shorts or Reels. It transcribes the speech with faster-whisper, analyses the audio and scene changes, asks a local model through Ollama to judge each candidate, and gives every moment a score from 0 to 100. You review the clips in the browser, approve or edit them, and export them with FFmpeg, all on your own machine with no paid API and no cloud.",
     "stack": [
       "Python",
       "faster-whisper",
@@ -124,6 +128,7 @@
     "mission": "verdict",
     "district": "The Hostel",
     "oneLiner": "A Chrome extension that turns LeetCode verdicts into cinematic moments, with a different sound and overlay for each result.",
+    "description": "A Chrome extension that watches your LeetCode submissions and reacts to the verdict. Accepted gets a celebration, Wrong Answer gets “So close. Probably.”, Time Limit Exceeded fakes a system shutdown, and runtime, memory and compile errors each get their own screen and sound. It runs inside LeetCode's own page, so solving problems works exactly as before.",
     "stack": [
       "JavaScript",
       "Chrome Extensions"
@@ -145,6 +150,7 @@
     "mission": null,
     "district": null,
     "oneLiner": "Upload a photo and get a caption, through a serverless pipeline on AWS.",
+    "description": "Upload a photo and a serverless pipeline writes a caption for it. The image is stored in Amazon S3, and a Lambda function asks Amazon Rekognition what is in it, then hands those labels to a model on Amazon Bedrock to write a natural sentence. The caption is saved to DynamoDB, and a small Python front end handles uploads.",
     "stack": [
       "Python",
       "AWS Lambda",
@@ -171,6 +177,7 @@
     "mission": null,
     "district": null,
     "oneLiner": "An agentic job-search platform with a transparent matching engine, and it never submits an application without your approval.",
+    "description": "An agentic job-search platform. It finds jobs, scores each one against your profile with a deterministic matching engine that shows why, and tracks every application through an explicit state machine. Its one hard rule: it never submits an application without your approval of the exact form. Built with FastAPI, PostgreSQL with pgvector, and React.",
     "stack": [
       "Python",
       "Agents",
@@ -193,6 +200,7 @@
     "mission": null,
     "district": null,
     "oneLiner": "An installable, offline-first tracker for workouts, food, sleep, habits and focus.",
+    "description": "A private tracker for your whole day: workouts, food, water, sleep, steps, habits, tasks and focus, with a weekly planner, streaks and statistics. It has about 990 exercises and 7,600 foods built in, including Indian dishes you can log in katoris and bowls. It installs like an app, works offline, and syncs to Firestore, so a new phone never loses your data.",
     "stack": [
       "TypeScript",
       "Offline-first"
@@ -214,6 +222,7 @@
     "mission": null,
     "district": null,
     "oneLiner": "A research platform that pairs a discrete-event simulation of a shop floor with reinforcement learning for scheduling and energy optimisation.",
+    "description": "A research platform for smart manufacturing. A SimPy simulation of a shop floor, with machines, job arrivals, breakdowns and energy use, is wrapped as a Gymnasium environment so reinforcement learning agents can learn to schedule the jobs. It benchmarks six RL algorithms against classic dispatching rules under identical conditions, on both production efficiency and energy.",
     "stack": [
       "Python",
       "Gymnasium",

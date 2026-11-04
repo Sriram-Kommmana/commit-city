@@ -32,6 +32,7 @@ const isUrl = (s: string) => s.startsWith('http');
         {p.mission ? <a class="btn" href={`/#${p.slug}`} data-play={p.slug}>▶ Play mission</a> : null}
       </div>
 
+      <section><h2>What it does</h2><p>{p.description}</p></section>
       {p.why ? <section><h2>Why I built it</h2><p><Txt text={p.why} /></p></section> : null}
 
       <section>
