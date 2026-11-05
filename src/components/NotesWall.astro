@@ -134,7 +134,8 @@ const w = site.notes;
     try {
       const r = await fetch(api, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        // Sent as plain text so the browser skips the CORS preflight; the Lambda reads it as JSON either way.
+        headers: { 'content-type': 'text/plain;charset=UTF-8' },
         body: JSON.stringify({ msg, name: data.get('name'), color: data.get('color'), website: data.get('website') }),
       });
       const body = (await r.json().catch(() => ({}))) as { note?: Note; error?: string };

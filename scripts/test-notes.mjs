@@ -71,6 +71,9 @@ assert.equal(r.body.notes.length, 4);
 assert.equal(r.body.notes[0].msg.length, 240, 'newest first');
 assert.ok(![...items.values()].some((i) => JSON.stringify(i).includes('1.2.3.4')), 'no IP address is stored');
 
+const pre = await handler({ requestContext: { http: { method: 'OPTIONS', sourceIp: '1.2.3.4' } } });
+assert.equal(pre.statusCode, 204, 'CORS preflight is answered');
+
 r = await call('DELETE');
 assert.equal(r.status, 405);
 console.log('notes Lambda: all checks passed');

@@ -32,6 +32,7 @@ exports.handler = async (event) => {
     const notes = (r.Items ?? []).map((i) => ({ id: i.sk.S, name: i.name.S, msg: i.msg.S, color: i.color.S, at: Number(i.at.N) }));
     return out(200, { notes });
   }
+  if (http.method === 'OPTIONS') return { statusCode: 204 };
   if (http.method !== 'POST') return out(405, { error: 'Use GET or POST.' });
 
   let b;

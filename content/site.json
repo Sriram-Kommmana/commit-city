@@ -215,7 +215,7 @@
     "lookingFor": "I'm looking for internships and full-time roles."
   },
   "notes": {
-    "api": "",
+    "api": "https://k4gqqz6geb.execute-api.ap-south-1.amazonaws.com",
     "caption": "The wall",
     "title": "Leave a note",
     "lead": "Say hi, tell me what you liked, or tell me what broke. Notes go up on the wall straight away, for everyone to see.",
