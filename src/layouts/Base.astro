@@ -36,7 +36,10 @@ const home = Astro.url.pathname === '/' ? '' : '/';
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="nav" data-nav>
-      <a class="nav__brand" href={home || '#top'}>Commit City</a>
+      <a class="nav__brand" href={home || '#top'} aria-label="Commit City, home">
+        <img src="/favicon.svg" alt="" width="34" height="34" />
+        <span class="nav__word" aria-hidden="true"><span>Commit</span><b>City</b></span>
+      </a>
       <nav aria-label="Main">
         <a href={`${home}#about`}>About</a>
         <a href={`${home}#skills`}>Skills</a>
@@ -84,20 +87,45 @@ const home = Astro.url.pathname === '/' ? '' : '/';
     color: var(--yellow);
   }
 
-  .nav__brand {
-    color: var(--yellow);
-    font: 400 1.3rem/1 var(--display);
+  /* The logo: the CC badge, then COMMIT in yellow and CITY in white. */
+  .nav .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0;
   }
 
-  .nav .nav__play {
-    padding: 7px 10px 3px;
-    background: var(--yellow);
-    color: var(--ink);
-    font-weight: 700;
+  .nav__brand img {
+    display: block;
+    filter: drop-shadow(2px 2px 0 var(--pink));
+  }
+
+  .nav__word {
+    display: flex;
+    align-items: center;
+    font: 400 1.5rem/1 var(--display);
+    letter-spacing: 0.02em;
+  }
+
+  .nav__word span {
+    color: var(--yellow);
+  }
+
+  .nav__word b {
+    margin-left: 7px;
+    color: var(--paper);
+    font-weight: 400;
+  }
+
+  /* Narrow screens: just the CC badge, then on phones no logo, so the links fit. */
+  @media (max-width: 720px) {
+    .nav__word {
+      display: none;
+    }
   }
 
   @media (max-width: 560px) {
-    .nav__brand {
+    .nav .nav__brand {
       display: none;
     }
 
