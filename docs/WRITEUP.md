@@ -112,6 +112,10 @@ The CloudFormation stack that created the notes backend in Mumbai:
 
 ![AWS CloudFormation: the commit-city-notes stack, CREATE_COMPLETE](screenshots/aws-cloudformation.png)
 
+Its Resources tab: the five things that one template created.
+
+![AWS CloudFormation resources: the HTTP API, the Lambda function and its permission, the IAM role and the DynamoDB table](screenshots/aws-cloudformation-resources.png)
+
 The Lambda function, with API Gateway as its trigger:
 
 ![AWS Lambda: the notes function with its API Gateway trigger](screenshots/aws-lambda.png)
