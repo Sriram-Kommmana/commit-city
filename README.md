@@ -11,7 +11,7 @@ runs on AWS.
 
 In a hurry? About Me, Skills and Projects are all on the first page as plain, readable sections. No game required.
 
-**▶ Live: https://main.d1h3ar9heyq57z.amplifyapp.com/**
+**Live: https://main.d1h3ar9heyq57z.amplifyapp.com/**
 
 Built for the **AWS Student Builder Challenge: Build Your Tech Superpower**, and hosted on AWS Amplify.
 
