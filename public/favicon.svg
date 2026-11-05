@@ -1,1 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#ffc917"/><path d="M6 19c0-7 4-11 10-11h4c4 0 6 4 7 11z" fill="#14110d"/><circle cx="11" cy="23" r="4" fill="#14110d"/><circle cx="23" cy="23" r="4" fill="#14110d"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="tile"><rect width="64" height="64" rx="12"/></clipPath>
+    <pattern id="dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.9" fill="#e07800"/></pattern>
+    <!-- A block C, leaning forward like a comic title. -->
+    <path id="c" d="M8 0H27V9H13V21H27V30H8L0 22V8Z" transform="skewX(-12)"/>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="64" height="64" fill="#ffc917"/>
+    <!-- A comic burst: rays from the middle. -->
+    <g fill="#ff9d00">
+      <path d="M32 32 10 0H22Z"/>
+      <path d="M32 32 42 0H54Z"/>
+      <path d="M32 32 64 14V26Z"/>
+      <path d="M32 32 64 48V60Z"/>
+      <path d="M32 32 0 40V52Z"/>
+      <path d="M32 32 0 6V18Z"/>
+    </g>
+    <rect width="64" height="64" fill="url(#dots)" opacity="0.6"/>
+    <!-- Skyline. -->
+    <path d="M0 46H6V38H12V43H16V33H22V46H38V39H43V31H48V41H53V36H58V43H64V64H0Z" fill="#14110d"/>
+    <g fill="#ffc917">
+      <rect x="18" y="36" width="2" height="2"/><rect x="18" y="40" width="2" height="2"/>
+      <rect x="44.5" y="34" width="2" height="2"/><rect x="2" y="41" width="2" height="2"/>
+    </g>
+    <path d="M0 57H64V64H0Z" fill="#e8322b"/>
+    <!-- The two Cs: red shadow, ink outline, cream face. -->
+    <g stroke="#14110d" stroke-width="2.6" stroke-linejoin="round">
+      <g transform="translate(13 7)">
+        <use href="#c" x="4" y="4" fill="#e8322b"/>
+        <use href="#c" fill="#fff4d6"/>
+      </g>
+      <g transform="translate(29 23)">
+        <use href="#c" x="4" y="4" fill="#e8322b"/>
+        <use href="#c" fill="#fff4d6"/>
+      </g>
+    </g>
+  </g>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="11" fill="none" stroke="#14110d" stroke-width="3"/>
+</svg>
