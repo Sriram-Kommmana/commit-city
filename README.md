@@ -2,6 +2,10 @@
 
 A portfolio you can read in 30 seconds or ride through in 3 minutes. It's my entry for the AWS Student Builder Challenge.
 
+**▶ Live site: https://main.d1h3ar9heyq57z.amplifyapp.com/**
+
+The project write-up, with screenshots and the AWS setup, is in [docs/WRITEUP.md](docs/WRITEUP.md).
+
 - **The portfolio:** About, Skills and Projects are plain HTML on the first page, and every project has its own page.
 - **The creative feature:** press **Hop in** and drive an auto-rickshaw through the city to five of my real projects.
   Each stop is a different, slightly ridiculous game about that project: survive the LeetCode verdicts at 2 AM, run
@@ -23,6 +27,9 @@ A portfolio you can read in 30 seconds or ride through in 3 minutes. It's my ent
 
 ```
 GitHub (main) ──▶ Amplify build (amplify.yml) ──▶ Amplify Hosting CDN ──▶ visitor
+                                                                           │
+                         notes wall: API Gateway (HTTP API) ──▶ Lambda ──▶ DynamoDB
+                                     all created by aws/notes/template.yaml (CloudFormation)
 ```
 
 ## Run it
@@ -65,5 +72,5 @@ using AI, because I think knowing how to work effectively with these tools is be
 For this site, Claude Code was my coding agent. The comic illustration of my face was generated with Gemini, and the
 character's body is drawn in code to match it.
 
-Apart from that face illustration, the art is drawn in code and the soundtrack is synthesised live, so both are original. The fictional franchises are original too. Open-world crime games inspired the structure, but no
+Apart from that face illustration, the art is drawn in code and the sound effects are synthesised live, so both are original. The fictional franchises are original too. Open-world crime games inspired the structure, but no
 assets, logos or audio from them are used.

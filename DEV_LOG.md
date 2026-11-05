@@ -116,3 +116,13 @@ A running record of what broke and how it was fixed. It feeds the "challenges" p
 - **Sound on by default, and no wind.** Sound starts with the visitor's first click, tap or key press, since browsers
   block it before that; until then the button says "Click for sound". The wind during the fall was irritating, so it's
   gone. What's left: the siren in the chase, the commit line's zip, and hits.
+
+## 2026-11-05
+
+- **Deployed.** The site went live on AWS Amplify Hosting from the `main` branch, and the notes stack went up with
+  CloudFormation in Mumbai.
+- **Bug: notes couldn't be posted from the browser.** API Gateway passed the browser's CORS preflight to the Lambda,
+  which answered 405, so the browser blocked every post. The fake API in my tests never sent a preflight, so it only
+  showed up against the real endpoint. Fix: the wall sends notes as plain text, which needs no preflight, and the
+  function's code now answers preflights with 204 too.
+- **A new favicon and navbar logo:** two leaning comic Cs, and COMMIT in yellow with CITY in white.
