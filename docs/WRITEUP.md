@@ -102,12 +102,23 @@ rebuilds the template from the tested code.
 
 ![The notes wall with the first note](screenshots/08-notes-wall.jpg)
 
-<!-- AWS console screenshots go here once they're in docs/screenshots:
-![Amplify: the main branch deployed](screenshots/aws-amplify.png)
-![CloudFormation: the commit-city-notes stack](screenshots/aws-cloudformation.png)
-![DynamoDB: the notes table](screenshots/aws-dynamodb.png)
-![Lambda: the notes function](screenshots/aws-lambda.png)
--->
+### The AWS setup
+
+Amplify Hosting, with the `commit-city` app deployed from the `main` branch:
+
+![AWS Amplify: the commit-city app, deployed from main](screenshots/aws-amplify.png)
+
+The CloudFormation stack that created the notes backend in Mumbai:
+
+![AWS CloudFormation: the commit-city-notes stack, CREATE_COMPLETE](screenshots/aws-cloudformation.png)
+
+The Lambda function, with API Gateway as its trigger:
+
+![AWS Lambda: the notes function with its API Gateway trigger](screenshots/aws-lambda.png)
+
+The DynamoDB table holding the first note on the wall:
+
+![Amazon DynamoDB: the notes table with the first note](screenshots/aws-dynamodb.png)
 
 ## How the site is built
 
